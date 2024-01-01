@@ -1,0 +1,284 @@
+[
+  {
+    "id": "RocketMQ-Broker",
+    "configuration": {
+      "children": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 8,
+          "h": 14,
+          "i": "8",
+          "type": "Widget",
+          "id": "8",
+          "metricTypes": [],
+          "metrics": [],
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "broker produce tps"
+          },
+          "metricMode": "Expression",
+          "metricConfig": [],
+          "expressions": [
+            "meter_rocketmq_broker_produce_tps"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ]
+        },
+        {
+          "x": 8,
+          "y": 0,
+          "w": 8,
+          "h": 14,
+          "i": "9",
+          "type": "Widget",
+          "id": "9",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_consume_qps"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "broker consume qps"
+          }
+        },
+        {
+          "x": 0,
+          "y": 14,
+          "w": 8,
+          "h": 15,
+          "i": "11",
+          "type": "Widget",
+          "id": "11",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_producer_offset"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "producer topic offset"
+          },
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          }
+        },
+        {
+          "x": 8,
+          "y": 14,
+          "w": 8,
+          "h": 15,
+          "i": "12",
+          "type": "Widget",
+          "id": "12",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_consumer_offset"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "consumer topic offset"
+          }
+        },
+        {
+          "x": 0,
+          "y": 29,
+          "w": 8,
+          "h": 13,
+          "i": "13",
+          "type": "Widget",
+          "id": "13",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_producer_message_size/1024/1024"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "producer message size(MB)"
+          },
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          }
+        },
+        {
+          "x": 8,
+          "y": 29,
+          "w": 8,
+          "h": 13,
+          "i": "14",
+          "type": "Widget",
+          "id": "14",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_consumer_message_size/1024/1024"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "consumer_message_size(MB)"
+          },
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          }
+        },
+        {
+          "x": 16,
+          "y": 14,
+          "w": 8,
+          "h": 15,
+          "i": "15",
+          "type": "Widget",
+          "id": "15",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_topic_consumer_tps"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "consumer topic tps"
+          }
+        },
+        {
+          "x": 16,
+          "y": 0,
+          "w": 8,
+          "h": 14,
+          "i": "16",
+          "type": "Widget",
+          "id": "16",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_topic_producer_tps"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "producer topic  tps"
+          },
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          }
+        },
+        {
+          "x": 16,
+          "y": 29,
+          "w": 8,
+          "h": 13,
+          "i": "17",
+          "type": "Widget",
+          "id": "17",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_broker_consumer_latency"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "consumer_latency (ms)"
+          },
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          }
+        }
+      ],
+      "layer": "ROCKETMQ",
+      "entity": "ServiceInstance",
+      "name": "RocketMQ-Broker",
+      "id": "RocketMQ-Broker"
+    }
+  }
+]
