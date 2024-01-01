@@ -1,0 +1,107 @@
+version: "3"
+
+services:
+  rocketmq-namesrv-1:
+    image: apache/rocketmq:4.9.4
+    container_name: rocketmq-namesrv-1
+    ports:
+      - "9876:9876"
+    volumes:
+      - /home/data/rocketmq/namesrv/logs:/root/logs
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: sh mqnamesrv
+    networks:
+      - e2e
+  rocketmq-broker-1:
+    image: apache/rocketmq:4.9.4
+    container_name: rocketmq-broker-1
+    ports:
+      - "10911:10911"
+      - "10909:10909"
+    volumes:
+      - /home/data/rocketmq/broker/broke1/logs:/root/logs
+      - /home/data/rocketmq/conf/broker1.conf:/opt/rocketmq-4.9.4/conf/broker.conf
+    environment:
+      TZ: Asia/Shanghai
+      NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: sh mqbroker -c /opt/rocketmq-4.9.4/conf/broker.conf
+    depends_on:
+      - rocketmq-namesrv-1
+    networks:
+      - e2e
+  rocketmq-broker-2:
+    image: apache/rocketmq:4.9.4
+    container_name: rocketmq-broker-2
+    ports:
+      - "11911:10911"
+      - "11909:10909"
+    volumes:
+      - /home/data/rocketmq/broker/broke2/logs:/root/logs
+      - /home/data/rocketmq/conf/broker2.conf:/opt/rocketmq-4.9.4/conf/broker.conf
+    environment:
+      TZ: Asia/Shanghai
+      NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: sh mqbroker -c /opt/rocketmq-4.9.4/conf/broker.conf
+    depends_on:
+      - rocketmq-namesrv-1
+    networks:
+      - e2e
+  rocketmq-exporter:
+    image: hfuiewiu/rocketmq-exporter:latest
+    container_name: rocketmq-exporter
+    ports:
+      - "5557:5557"
+    environment:
+      TZ: Asia/Shanghai
+      rocketmq.config.namesrvAddr: "rocketmq-namesrv-1:9876"
+    depends_on:
+      - rocketmq-namesrv-1
+    networks:
+      - e2e
+
+  rocketmq-producer-perf-test:
+    image: apache/rocketmq:4.9.4
+    container_name: rocketmq-producer-perf-test
+    environment:
+      TZ: Asia/Shanghai
+      NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: sh tools.sh org.apache.rocketmq.example.quickstart.Producer
+    depends_on:
+      - rocketmq-broker-1
+    networks:
+      - e2e
+
+  rocketmq-consumer-perf-test:
+    image: apache/rocketmq:4.9.4
+    container_name: rocketmq-consumer-perf-test
+    environment:
+      TZ: Asia/Shanghai
+      NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: sh tools.sh org.apache.rocketmq.example.quickstart.Consumer
+    depends_on:
+      - rocketmq-broker-1
+    networks:
+      - e2e
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.87.0
+    networks:
+      - e2e
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    expose:
+      - 55678
+    depends_on:
+      oap:
+        condition: service_healthy
+
+networks:
+  rocketmq:
+    driver: bridge
