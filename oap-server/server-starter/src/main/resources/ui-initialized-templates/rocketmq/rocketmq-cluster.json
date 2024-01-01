@@ -34,7 +34,7 @@
                   "widget": {
                     "title": "Messages Produced Today",
                     "tips": "The number of the cluster messages produced today",
-                    "name": "messages_produced_today"
+                    "name": "messages produced today"
                   },
                   "metricMode": "Expression",
                   "metricConfig": [],
@@ -65,7 +65,7 @@
                   "widget": {
                     "title": "Messages Consumed Today",
                     "tips": "The number of the cluster messages consumed today",
-                    "name": "messages_consumed_today"
+                    "name": "messages consumed today"
                   },
                   "metricMode": "Expression",
                   "metricConfig": [],
@@ -94,7 +94,7 @@
                   "widget": {
                     "title": "Total Producer Tps",
                     "tips": "The number of messages produced per second per broker",
-                    "name": "total_producer_tps"
+                    "name": "total producer tps"
                   },
                   "expressions": [
                     "meter_rocketmq_total_producer_tps"
@@ -127,7 +127,7 @@
                   "widget": {
                     "title": "Total Consume Tps",
                     "tips": "The number of messages consumed per second per broker",
-                    "name": "total_consumer_tps"
+                    "name": "total consumer tps"
                   },
                   "expressions": [
                     "meter_rocketmq_total_consumer_tps"
@@ -144,7 +144,7 @@
                 },
                 {
                   "x": 0,
-                  "y": 61,
+                  "y": 47,
                   "w": 12,
                   "h": 14,
                   "i": "12",
@@ -172,7 +172,7 @@
                 },
                 {
                   "x": 12,
-                  "y": 61,
+                  "y": 47,
                   "w": 12,
                   "h": 14,
                   "i": "13",
@@ -196,73 +196,6 @@
                     "name": "consumer_message_size_per_second",
                     "title": "Consumer Message Size(MB)",
                     "tips": "The size of the consumed message per second per broker"
-                  }
-                },
-                {
-                  "x": 0,
-                  "y": 33,
-                  "w": 12,
-                  "h": 14,
-                  "i": "14",
-                  "type": "Widget",
-                  "id": "0-0-14",
-                  "metricTypes": [],
-                  "metrics": [],
-                  "metricMode": "Expression",
-                  "moved": false,
-                  "expressions": [
-                    "meter_rocketmq_producer_offset"
-                  ],
-                  "typesOfMQE": [
-                    "TIME_SERIES_VALUES"
-                  ],
-                  "graph": {
-                    "type": "Line",
-                    "step": false,
-                    "smooth": false,
-                    "showSymbol": true,
-                    "showXAxis": true,
-                    "showYAxis": true
-                  },
-                  "widget": {
-                    "name": "producer_offset",
-                    "title": "Producer Offset",
-                    "tips": "The progress of a topic's production message"
-                  }
-                },
-                {
-                  "x": 12,
-                  "y": 33,
-                  "w": 12,
-                  "h": 14,
-                  "i": "15",
-                  "type": "Widget",
-                  "id": "0-0-15",
-                  "metricTypes": [],
-                  "metrics": [],
-                  "metricMode": "Expression",
-                  "moved": false,
-                  "expressions": [
-                    "meter_rocketmq_consumer_offset"
-                  ],
-                  "typesOfMQE": [
-                    "TIME_SERIES_VALUES"
-                  ],
-                  "graph": {
-                    "type": "Line",
-                    "step": false,
-                    "smooth": false,
-                    "showSymbol": true,
-                    "showXAxis": true,
-                    "showYAxis": true,
-                    "legend": {
-                      "asTable": false
-                    }
-                  },
-                  "widget": {
-                    "name": "meter_rocketmq_consumer_offset",
-                    "title": "Consumer Offset",
-                    "tips": "Progress of consumption message for a consumer group"
                   }
                 },
                 {
@@ -356,7 +289,7 @@
                   },
                   "widget": {
                     "name": "meter_rocketmq_max_consumer_latency",
-                    "title": "meter_rocketmq_max_consumer_latency",
+                    "title": "Max Consumer Latency",
                     "tips": "meter_rocketmq_max_consumer_latency"
                   }
                 },
@@ -387,8 +320,8 @@
                     "showUnit": true
                   },
                   "widget": {
-                    "name": "meter_rocketmq_max_commitLog_disk_ratio",
-                    "title": "meter_rocketmq_max_commitLog_disk_ratio",
+                    "name": "max commitLog disk ratio",
+                    "title": "Max CommitLog Disk Ratio",
                     "tips": "The max utilization ratio of the commit log disk"
                   },
                   "typesOfMQE": [
@@ -446,18 +379,20 @@
                     "showYAxis": true
                   },
                   "expressions": [
-                    "meter_rocketmq_commitlog_disk_ratio"
+                    "meter_rocketmq_commitLog_disk_ratio"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
                   ],
                   "widget": {
-                    "title": "commitlog_disk_ratio(%)"
+                    "name": "commitLog disk ratio",
+                    "title": "CommitLog Disk Ratio(%)",
+                    "tips": "The utilization ratio of commit log disk per brokerIp"
                   }
                 },
                 {
                   "x": 0,
-                  "y": 47,
+                  "y": 33,
                   "w": 12,
                   "h": 14,
                   "i": "22",
@@ -489,7 +424,7 @@
                 },
                 {
                   "x": 12,
-                  "y": 47,
+                  "y": 33,
                   "w": 12,
                   "h": 14,
                   "i": "23",

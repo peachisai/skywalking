@@ -72,8 +72,8 @@ metricsRules:
   - name: commitLog_disk_ratio
     exp: rocketmq_brokeruntime_commitlog_disk_ratio.sum(['cluster','brokerIP'])*100
 
-  - name: pull_threadpoolqueue_headwait_timemills
+  - name: pull_threadPool_queue_head_wait_time
     exp: rocketmq_brokeruntime_pull_threadpoolqueue_headwait_timemills.sum(['cluster','brokerIP'])
 
-  - name: send_threadpoolqueue_headwait_timemills
+  - name: send_threadPool_queue_head_wait_time
     exp: rocketmq_brokeruntime_send_threadpoolqueue_headwait_timemills.sum(['cluster','brokerIP'])

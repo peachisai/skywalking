@@ -213,7 +213,7 @@ public enum Layer {
     /**
      * Nginx is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server.
      */
-    NGINX(34, true);
+    NGINX(34, true),
 
     /**
      * A cloud native messaging and streaming platform, making it simple to build event-driven applications.
