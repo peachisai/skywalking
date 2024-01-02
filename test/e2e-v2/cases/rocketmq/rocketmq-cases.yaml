@@ -19,10 +19,8 @@ cases:
   # service cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
     expected: expected/service.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_today_msg_produce_count --service-name=rocketmq::rocketmq-cluster 
-    expected: expected/service.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_today_msg_consume_count --service-name=rocketmq::rocketmq-cluster
-    expected: expected/service.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_total_producer_tps --service-name=rocketmq::rocketmq-cluster
+    expected: expected/service.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_producer_message_size --service-name=rocketmq::rocketmq-cluster
     expected: expected/service.yml
 
