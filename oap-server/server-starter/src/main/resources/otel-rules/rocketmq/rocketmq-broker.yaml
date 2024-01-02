@@ -46,7 +46,7 @@ metricsRules:
   - name: topic_producer_tps
     exp: rocketmq_producer_tps.sum(['cluster','broker','topic'])
 
-  - name: producer_offset
+  - name: producer_topic_offset
     exp: rocketmq_producer_offset.sum(['cluster', 'broker','topic']).rate('PT1M')
 
   - name: consumer_offset

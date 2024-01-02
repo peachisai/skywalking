@@ -23,7 +23,9 @@
             "showYAxis": true
           },
           "widget": {
-            "title": "broker produce tps"
+            "title": "Produce Tps",
+            "tips": "The number of broker produces messages per second",
+            "name": "produce qps"
           },
           "metricMode": "Expression",
           "metricConfig": [],
@@ -61,7 +63,9 @@
             "showYAxis": true
           },
           "widget": {
-            "title": "broker consume qps"
+            "title": "Consume Qps",
+            "tips": "The number of broker consumes messages per second",
+            "name": "consume qps"
           }
         },
         {
@@ -77,13 +81,15 @@
           "metricMode": "Expression",
           "moved": false,
           "expressions": [
-            "meter_rocketmq_broker_producer_offset"
+            "meter_rocketmq_broker_producer_topic_offset"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "title": "producer topic offset"
+            "title": "Producer Topic Offset",
+            "tips": "The progress of a topic's production message",
+            "name": "producer topic offset"
           },
           "graph": {
             "type": "Line",
