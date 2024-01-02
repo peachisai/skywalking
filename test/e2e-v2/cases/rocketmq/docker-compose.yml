@@ -30,8 +30,6 @@ services:
     container_name: rocketmq-namesrv-1
     ports:
       - "9876:9876"
-    volumes:
-      - /home/data/rocketmq/namesrv/logs:/root/logs
     environment:
       TZ: Asia/Shanghai
       JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
@@ -129,5 +127,4 @@ services:
         condition: service_healthy
 
 networks:
-  rocketmq:
-    driver: bridge
+  e2e:
