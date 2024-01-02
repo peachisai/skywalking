@@ -155,7 +155,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_producer_message_size_per_second/1024/1024"
+                    "meter_rocketmq_producer_message_size/1024/1024"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -165,7 +165,7 @@
                     "showBackground": true
                   },
                   "widget": {
-                    "name": "producer_message_size_per_second",
+                    "name": "producer message size",
                     "title": "Producer Message Size(MB)",
                     "tips": "The size of a message produced per second per broker"
                   }
@@ -183,7 +183,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_consumer_message_size_per_second/1024/1024"
+                    "meter_rocketmq_consumer_message_size/1024/1024"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -193,7 +193,7 @@
                     "showBackground": true
                   },
                   "widget": {
-                    "name": "consumer_message_size_per_second",
+                    "name": "consumer message size",
                     "title": "Consumer Message Size(MB)",
                     "tips": "The size of the consumed message per second per broker"
                   }
@@ -442,7 +442,7 @@
                   ],
                   "widget": {
                     "name": "send threadPool queue head wait time",
-                    "title": "send ThreadPool Queue Head Wait Time(ms)",
+                    "title": "Send ThreadPool Queue Head Wait Time(ms)",
                     "tips": "The wait time in milliseconds for sending ThreadPool Queue"
                   },
                   "graph": {

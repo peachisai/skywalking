@@ -113,7 +113,7 @@
           "metricMode": "Expression",
           "moved": false,
           "expressions": [
-            "meter_rocketmq_broker_consumer_offset"
+            "meter_rocketmq_broker_consumer_topic_group_offset"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
@@ -127,7 +127,9 @@
             "showYAxis": true
           },
           "widget": {
-            "title": "consumer topic offset"
+            "title": "Consumer Topic Group Offset",
+            "tips": "The progress of a topic's consumption message for a consumer group",
+            "name": "consumer topic group offset"
           }
         },
         {
@@ -149,7 +151,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "title": "producer message size(MB)"
+            "name": "producer_message_size_per_second",
+            "title": "Producer Message Size(MB)",
+            "tips": "The size of a message produced per second per broker per topic"
           },
           "graph": {
             "type": "Line",
@@ -179,7 +183,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "title": "consumer_message_size(MB)"
+            "name": "consumer message size",
+            "title": "Consumer Message Size(MB)",
+            "tips": "The size of the consumed message per second per broker per topic"
           },
           "graph": {
             "type": "Line",
@@ -203,7 +209,7 @@
           "metricMode": "Expression",
           "moved": false,
           "expressions": [
-            "meter_rocketmq_broker_topic_consumer_tps"
+            "meter_rocketmq_broker_topic_group_consumer_tps"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
@@ -217,7 +223,9 @@
             "showYAxis": true
           },
           "widget": {
-            "title": "consumer topic tps"
+            "title": "Topic Group Consumer Tps",
+            "name": "topic group consumer tps",
+            "tips": "The number of messages consumed per second by a consumer group"
           }
         },
         {
@@ -239,7 +247,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "title": "producer topic  tps"
+            "title": "Producer Topic Tps",
+            "name": "Producer topic tps",
+            "tips": "The number of messages produced per second per topic"
           },
           "graph": {
             "type": "Line",

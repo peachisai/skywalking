@@ -48,10 +48,10 @@ metricsRules:
   - name: total_consumer_tps
     exp: rocketmq_consumer_tps.sum(['cluster','broker'])
 
-  - name: producer_message_size_per_second
+  - name: producer_message_size
     exp: rocketmq_producer_message_size.sum(['cluster','broker'])
 
-  - name: consumer_message_size_per_second
+  - name: consumer_message_size
     exp: rocketmq_consumer_message_size.sum(['cluster','broker'])
 
   - name: yesterday_msg_produce_count
@@ -67,7 +67,7 @@ metricsRules:
     exp: rocketmq_brokeruntime_commitlog_disk_ratio.max(['cluster','brokerIP'])*100
 
   - name: backlogged_msg_count
-    exp: rocketmq_producer_offset.sum(['cluster','broker'])-rocketmq_consumer_offset.sum(['cluster','broker'])
+    exp: rocketmq_producer_offset.sum(['cluster','broker'])-rocketmq_consumer_offset.sum(['cluster','broker','group'])
 
   - name: commitLog_disk_ratio
     exp: rocketmq_brokeruntime_commitlog_disk_ratio.sum(['cluster','brokerIP'])*100

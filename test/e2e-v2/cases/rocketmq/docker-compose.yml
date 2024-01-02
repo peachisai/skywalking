@@ -27,7 +27,7 @@ services:
 
   rocketmq-namesrv-1:
     image: apache/rocketmq:4.9.4
-    container_name: rocketmq-namesrv-1
+    hostname: rocketmq-namesrv-1
     ports:
       - "9876:9876"
     environment:
@@ -39,7 +39,7 @@ services:
 
   rocketmq-broker-1:
     image: apache/rocketmq:4.9.4
-    container_name: rocketmq-broker-1
+    hostname: rocketmq-broker-1
     ports:
       - "10911:10911"
       - "10909:10909"
@@ -57,7 +57,7 @@ services:
       - e2e
   rocketmq-broker-2:
     image: apache/rocketmq:4.9.4
-    container_name: rocketmq-broker-2
+    hostname: rocketmq-broker-2
     ports:
       - "11911:10911"
       - "11909:10909"
@@ -76,7 +76,7 @@ services:
 
   rocketmq-exporter:
     image: hfuiewiu/rocketmq-exporter:latest
-    container_name: rocketmq-exporter
+    hostname: rocketmq-exporter
     ports:
       - "5557:5557"
     environment:
@@ -89,7 +89,7 @@ services:
 
   rocketmq-producer-perf-test:
     image: apache/rocketmq:4.9.4
-    container_name: rocketmq-producer-perf-test
+    hostname: rocketmq-producer-perf-test
     environment:
       TZ: Asia/Shanghai
       NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
@@ -102,7 +102,7 @@ services:
 
   rocketmq-consumer-perf-test:
     image: apache/rocketmq:4.9.4
-    container_name: rocketmq-consumer-perf-test
+    hostname: rocketmq-consumer-perf-test
     environment:
       TZ: Asia/Shanghai
       NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
