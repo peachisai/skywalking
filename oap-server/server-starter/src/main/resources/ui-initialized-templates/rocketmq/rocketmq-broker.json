@@ -279,7 +279,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "title": "consumer_latency (ms)"
+            "title": "Consumer Latency(ms)",
+            "name": "consumer latency",
+            "tips": "Consumption delay time of a consumer group"
           },
           "graph": {
             "type": "Line",

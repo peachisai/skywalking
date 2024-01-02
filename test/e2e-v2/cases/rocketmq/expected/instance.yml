@@ -19,9 +19,4 @@
   instanceuuid: {{ notEmpty .instanceuuid }}
   attributes: []
   language: UNKNOWN
-- id: {{ notEmpty .id }}
-  name: rocketmq-broker-2:10911
-  instanceuuid: {{ notEmpty .instanceuuid }}
-  attributes: []
-  language: UNKNOWN
 {{- end }}

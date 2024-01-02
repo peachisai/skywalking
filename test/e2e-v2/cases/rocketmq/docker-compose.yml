@@ -43,32 +43,11 @@ services:
     ports:
       - "10911:10911"
       - "10909:10909"
-    volumes:
-      - /home/data/rocketmq/broker/broke1/logs:/root/logs
-      - /home/data/rocketmq/conf/broker1.conf:/opt/rocketmq-4.9.4/conf/broker.conf
     environment:
       TZ: Asia/Shanghai
       NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
       JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
-    command: sh mqbroker -c /opt/rocketmq-4.9.4/conf/broker.conf
-    depends_on:
-      - rocketmq-namesrv-1
-    networks:
-      - e2e
-  rocketmq-broker-2:
-    image: apache/rocketmq:4.9.4
-    hostname: rocketmq-broker-2
-    ports:
-      - "11911:10911"
-      - "11909:10909"
-    volumes:
-      - /home/data/rocketmq/broker/broke2/logs:/root/logs
-      - /home/data/rocketmq/conf/broker2.conf:/opt/rocketmq-4.9.4/conf/broker.conf
-    environment:
-      TZ: Asia/Shanghai
-      NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
-      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
-    command: sh mqbroker -c /opt/rocketmq-4.9.4/conf/broker.conf
+    command: sh mqbroker
     depends_on:
       - rocketmq-namesrv-1
     networks:
