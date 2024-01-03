@@ -53,8 +53,14 @@ services:
       NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
       JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
     command: sh mqbroker
+    healthcheck:
+      test: [ "CMD", "nc", "-nz", "127.0.0.1", "10911" ]
+      interval: 15s
+      timeout: 10s
+      retries: 120
     depends_on:
-      - rocketmq-namesrv-1
+      rocketmq-namesrv-1:
+        condition: service_healthy
     networks:
       - e2e
 
@@ -67,7 +73,8 @@ services:
       JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
     command: sh tools.sh org.apache.rocketmq.example.quickstart.Producer
     depends_on:
-      - rocketmq-broker-1
+      rocketmq-broker-1:
+        condition: service_healthy
     networks:
       - e2e
 
