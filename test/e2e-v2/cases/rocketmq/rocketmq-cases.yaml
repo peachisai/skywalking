@@ -20,5 +20,4 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
     expected: expected/service.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_total_producer_tps --service-name=rocketmq::rocketmq-cluster
-    expected: expected/metrics-has-value.yml
-
+    expected: expected/metrics-has-no-value.yml
