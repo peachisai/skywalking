@@ -37,10 +37,10 @@ metricPrefix: meter_rocketmq
 metricsRules:
 
   - name: messages_produced_today
-    exp: rocketmq_brokeruntime_msg_put_total_today_now.sum(['cluster'])-rocketmq_brokeruntime_msg_puttotal_yesterdaymorning.sum(['cluster'])
+    exp: rocketmq_brokeruntime_msg_put_total_today_now.sum(['cluster'])
 
   - name: messages_consumed_today
-    exp: rocketmq_brokeruntime_msg_gettotal_today_now.sum(['cluster'])-rocketmq_brokeruntime_msg_gettotal_yesterdaymorning.sum(['cluster'])
+    exp: rocketmq_brokeruntime_msg_gettotal_today_now.sum(['cluster'])
 
   - name: total_producer_tps
     exp: rocketmq_producer_tps.sum(['cluster','broker'])
