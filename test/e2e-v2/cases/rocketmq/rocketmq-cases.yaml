@@ -32,9 +32,13 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_commitLog_disk_ratio --service-name=rocketmq::rocketmq-cluster
     expected: expected/metrics-has-value-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_yesterday_msg_produce_count --service-name=rocketmq::rocketmq-cluster
-    expected: expected/metrics-has-no-value.yml
+    expected: expected/metrics-has-value-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_yesterday_msg_consume_count --service-name=rocketmq::rocketmq-cluster
-    expected: expected/metrics-has-no-value.yml
+    expected: expected/metrics-has-value-label.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_pull_threadPool_queue_head_wait_time --service-name=rocketmq::rocketmq-cluster
+    expected: expected/metrics-has-value-label.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_send_threadPool_queue_head_wait_time --service-name=rocketmq::rocketmq-cluster
+    expected: expected/metrics-has-value-label.yml
 
   # instance cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-name=rocketmq::rocketmq-cluster
