@@ -27,7 +27,7 @@ receivers:
               replacement: rocketmq-cluster
             - source_labels: [ __address__ ]
               regex: (.+)
-              target_label: node
+              target_label: broker
               replacement: $$1
 
 exporters:
