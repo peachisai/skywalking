@@ -20,8 +20,8 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
     expected: expected/service.yml
 
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-name=rocketmq::rocketmq-cluster
-    expected: expected/instance.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_messages_produced_today --service-name=rocketmq::rocketmq-cluster
+    expected: expected/metrics-has-value-label.yml
 
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_commitLog_disk_ratio --service-name=rocketmq::rocketmq-cluster
     expected: expected/metrics-has-value-label.yml
