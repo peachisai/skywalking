@@ -1,36 +1,36 @@
-# Pulsar monitoring
+# RocketMQ monitoring
 
-SkyWalking leverages OpenTelemetry Collector to collect metrics data in Prometheus format from the Pulsar and transfer the metrics to
+SkyWalking leverages rocketmq-exporter for collecting metrics data from RocketMQ. It leverages OpenTelemetry
+Collector to transfer the metrics to
 [OpenTelemetry receiver](opentelemetry-receiver.md) and into the [Meter System](./../../concepts-and-designs/meter.md).
-Kafka entity as a `Service` in OAP and on the `Layer: PULSAR.
 
 ## Data flow
 
-1. Pulsar exposes metrics through Prometheus endpoint.
-2. OpenTelemetry Collector fetches metrics from Pulsar cluster via Prometheus Receiver and pushes metrics to SkyWalking OAP Server via OpenTelemetry gRPC exporter.
+1. The `rocketmq-exporter` collects metrics data from RocketMQ, The RocketMQ version is required to be 4.3.2+.
+2. OpenTelemetry Collector fetches metrics from rocketmq-exporter via Prometheus Receiver and pushes metrics to
+   SkyWalking OAP Server via OpenTelemetry gRPC exporter.
 3. The SkyWalking OAP Server parses the expression with [MAL](../../concepts-and-designs/mal.md) to
-   filter/calculate/aggregate and store the results.`
+   filter/calculate/aggregate and store the results.
 
 ## Setup
 
-1. Set up [Pulsar Cluster](https://pulsar.apache.org/docs/3.1.x/getting-started-docker-compose/). (Pulsar cluster includes pulsar broker cluster and Bookkeeper bookie cluster.)
-2. Set up [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/getting-started/#kubernetes). The example
-   for OpenTelemetry Collector configuration, refer
-   to [here](../../../../test/e2e-v2/cases/pulsar/otel-collector-config.yaml).
+1. Setup [mongodb-exporter](https://github.com/percona/mongodb_exporter).
+2. Set up [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/getting-started/#docker). The example for OpenTelemetry Collector configuration, refer
+   to [here](../../../../test/e2e-v2/cases/mongodb/otel-collector-config.yaml).
 3. Config SkyWalking [OpenTelemetry receiver](opentelemetry-receiver.md).
 
-## Pulsar Monitoring
+## RocketMQ Monitoring
 
-Pulsar monitoring provides multidimensional metrics monitoring of Pulsar cluster as `Layer: PULSAR` `Service` in
-the OAP. In each cluster, the nodes are represented as `Instance`.
+RocketMQ monitoring provides multidimensional metrics monitoring of RocketMQ cluster as `Layer: PULSAR` `Service` in
+the OAP. In each cluster, the broker are represented as `Instance`.
 
-### Pulsar Cluster Supported Metrics
+### RocketMQ Cluster Supported Metrics
 
 | Monitoring Panel     | Metric Name                                | Description                                                                                            | Data Source    |
-|----------------------|--------------------------------------------|--------------------------------------------------------------------------------------------------------|----------------|
-| Total Topics         | meter_pulsar_total_topics                  | The number of Pulsar topics in this cluster.                                                           | Pulsar Cluster |
-| Total Subscriptions  | meter_pulsar_total_subscriptions           | The number of Pulsar subscriptions in this cluster.                                                    | Pulsar Cluster |
-| Total Producers      | meter_pulsar_total_producers               | The number of active producers connected to this cluster.                                              | Pulsar Cluster |
+|-------------------------------|-----------------------------------|--------------------------------------------------------------------------------------------------------|----------------|
+| Messages Produced Today         | meter_rocketmq_messages_produced_today                  | The number of the cluster messages produced today.                                                           | Pulsar Cluster |
+| Messages Consumed Today  | meter_rocketmq_messages_consumed_today           | The number of the cluster messages consumed today.                                                    | Pulsar Cluster |
+| Total Producer Tps      | meter_rocketmq_total_producer_tps               | The number of messages produced per second per broker.                                              | Pulsar Cluster |
 | Total Consumers      | meter_pulsar_total_consumers               | The number of active consumers connected to this cluster.                                              | Pulsar Cluster |
 | Message Rate In      | meter_pulsar_message_rate_in               | The total message rate coming into this cluster (message per second).                                  | Pulsar Cluster |
 | Message Rate Out     | meter_pulsar_message_rate_out              | The total message rate going out from this cluster (message per second).                               | Pulsar Cluster |
@@ -42,7 +42,7 @@ the OAP. In each cluster, the nodes are represented as `Instance`.
 | Storage Read Rate    | meter_pulsar_storage_read_rate             | The total message batches (entries) read from the storage for this broker (message batch per second).  | Pulsar Cluster |
 
 
-### Pulsar Node Supported Metrics
+### RocketMQ Node Supported Metrics
 
 
 | Monitoring Panel                | Metric Name                                                                                                                                                                         | Description                                             | Data Source    |
@@ -63,5 +63,5 @@ the OAP. In each cluster, the nodes are represented as `Instance`.
 
 You can customize your own metrics/expression/dashboard panel.
 The metrics definition and expression rules are found
-in `otel-rules/pulsar/pulsar-cluster.yaml, otel-rules/pulsar/pulsar-broker.yaml`.
-The RabbitMQ dashboard panel configurations are found in `ui-initialized-templates/pulsar`.
+in `otel-rules/rocketmq/rocketmq-cluster.yaml, otel-rules/rocketmq/rocketmq-broker.yaml`.
+The RocketMQ dashboard panel configurations are found in `ui-initialized-templates/rocketmq`.
