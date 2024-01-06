@@ -217,15 +217,15 @@
                     "showUnit": true
                   },
                   "expressions": [
-                    "meter_rocketmq_yesterday_msg_produce_count"
+                    "meter_rocketmq_messages_produced_yesterday"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
                   ],
                   "widget": {
-                    "name": "yesterday_msg_produce_count",
-                    "title": "Yesterday Messages Produced Count",
-                    "tips": "The total number of messages written until 12 o'clock last night"
+                    "name": "messages produced yesterday",
+                    "title": "Messages Produced Yesterday",
+                    "tips": "The number of the cluster messages produced yesterday"
                   }
                 },
                 {
@@ -247,7 +247,7 @@
                     "showUnit": true
                   },
                   "expressions": [
-                    "meter_rocketmq_yesterday_msg_consume_count"
+                    "meter_rocketmq_messages_consumed_today"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"

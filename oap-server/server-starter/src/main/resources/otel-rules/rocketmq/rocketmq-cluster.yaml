@@ -54,11 +54,11 @@ metricsRules:
   - name: consumer_message_size
     exp: rocketmq_consumer_message_size.sum(['cluster','broker'])
 
-  - name: yesterday_msg_produce_count
-    exp: rocketmq_brokeruntime_msg_puttotal_yesterdaymorning.sum(['cluster'])
+  - name: messages_produced_yesterday
+    exp: rocketmq_brokeruntime_msg_puttotal_yesterdaymorning
 
-  - name: yesterday_msg_consume_count
-    exp: rocketmq_brokeruntime_msg_gettotal_yesterdaymorning.sum(['cluster'])
+  - name: messages_consumed_today
+    exp: rocketmq_brokeruntime_msg_gettotal_yesterdaymorning
 
   - name: max_consumer_latency
     exp: rocketmq_group_get_latency_by_storetime.max(['cluster','broker','topic','group'])
