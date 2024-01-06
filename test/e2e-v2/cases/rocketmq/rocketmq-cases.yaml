@@ -54,9 +54,9 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_consume_qps --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-exporter:5557
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_producer_message_size --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-exporter:5557
-    expected: expected/metrics-has-value.yml
+    expected: expected/metrics-has-value-instance-label.yml.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_consumer_message_size --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-exporter:5557
-    expected: expected/metrics-has-value.yml
+    expected: expected/metrics-has-value-instance-label.yml.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_topic_group_consumer_tps --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-exporter:5557
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_topic_producer_tps --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-exporter:5557
