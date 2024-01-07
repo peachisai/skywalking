@@ -15,7 +15,7 @@
 
 {{- contains . }}
 - id: {{ notEmpty .id }}
-  name: rocketmq-exporter:5557
+  name: rocketmq-broker-1
   instanceuuid: {{ notEmpty .instanceuuid }}
   attributes: []
   language: UNKNOWN

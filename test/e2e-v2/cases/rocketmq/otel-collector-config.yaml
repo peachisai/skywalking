@@ -25,10 +25,6 @@ receivers:
             - source_labels: [ ]
               target_label: cluster
               replacement: rocketmq-cluster
-            - source_labels: [ __address__ ]
-              regex: (.+)
-              target_label: broker
-              replacement: $$1
 
 exporters:
   otlp:
