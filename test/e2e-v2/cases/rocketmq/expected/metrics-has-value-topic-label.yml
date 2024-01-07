@@ -19,7 +19,7 @@ results:
   - metric:
       labels:
         - key: _
-          value: rocketmq-broker-1
+          value: TopicTest
     values:
       {{- contains .values }}
       - id: {{ notEmpty .id }}
