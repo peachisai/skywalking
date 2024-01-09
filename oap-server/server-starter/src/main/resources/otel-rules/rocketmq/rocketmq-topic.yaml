@@ -30,14 +30,36 @@
 # </pre>
 
 filter: "{ tags -> tags.job_name == 'rocketmq-monitoring' }" # The OpenTelemetry job name
-expSuffix: tag({tags -> tags.cluster = 'rocketmq::' + tags.cluster}).endpoint(['cluster'], ['topic'], Layer.ELASTICSEARCH)
+expSuffix: tag({tags -> tags.cluster = 'rocketmq::' + tags.cluster}).endpoint(['cluster'], ['topic'], Layer.ROCKETMQ)
 metricPrefix: meter_rocketmq_topic
 
 # Metrics Rules
 metricsRules:
 
+  - name: max_producer_message_size
+    exp: rocketmq_producer_message_size.max(['cluster','topic'])
+
+  - name: max_consumer_message_size
+    exp: rocketmq_consumer_message_size.max(['cluster','topic','group'])
+
+  - name: consumer_latency
+    exp: rocketmq_group_get_latency_by_storetime.sum(['cluster','topic','group'])
+
+  - name: producer_tps
+    exp: rocketmq_producer_tps.sum(['cluster','topic'])
+
+  - name: consumer_group_tps
+    exp: rocketmq_consumer_tps.sum(['cluster','broker','topic'])
+
+  - name: producer_offset
+    exp: rocketmq_producer_offset.sum(['cluster','topic'])
+
+  - name: consumer_group_offset
+    exp: rocketmq_consumer_offset.sum(['cluster','topic','group'])
+
+  - name: producer_message_size
+    exp: rocketmq_producer_message_size.sum(['cluster','topic'])
+
   - name: consumer_message_size
     exp: rocketmq_consumer_message_size.sum(['cluster','topic','group'])
 
-  - name: consumer_topic_group_offset
-    exp: rocketmq_consumer_offset.sum(['cluster','topic','group'])

@@ -40,24 +40,9 @@ metricsRules:
   - name: consume_qps
     exp: rocketmq_broker_qps.sum(['cluster','broker'])
 
-  - name: producer_topic_offset
-    exp: rocketmq_producer_offset.sum(['cluster', 'broker','topic'])
-
-  - name: consumer_topic_group_offset
-    exp: rocketmq_consumer_offset.sum(['cluster', 'broker','topic','group'])
-
   - name: producer_message_size
-    exp: rocketmq_producer_message_size.sum(['cluster','broker','topic'])
+    exp: rocketmq_producer_message_size.sum(['cluster','broker'])
 
   - name: consumer_message_size
-    exp: rocketmq_consumer_message_size.sum(['cluster','broker','topic'])
-
-  - name: topic_group_consumer_tps
-    exp: rocketmq_consumer_tps.sum(['cluster','broker','topic'])
-
-  - name: topic_producer_tps
-    exp: rocketmq_producer_tps.sum(['cluster','broker','topic'])
-
-  - name: consumer_latency
-    exp: rocketmq_group_get_latency_by_storetime.sum(['cluster','broker','topic'])
+    exp: rocketmq_consumer_message_size.sum(['cluster','broker'])
 

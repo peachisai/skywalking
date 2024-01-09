@@ -67,3 +67,7 @@ cases:
     expected: expected/metrics-has-value-topic-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_consumer_latency --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-broker-1
     expected: expected/metrics-has-value-topic-label.yml
+
+  # endpoint cases
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql endpoint ls --service-name=rocketmq::rocketmq-cluster
+    expected: expected/endpoint.yml

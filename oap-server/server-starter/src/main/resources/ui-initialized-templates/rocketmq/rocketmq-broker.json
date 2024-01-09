@@ -304,24 +304,6 @@
                   }
                 }
               ]
-            },
-            {
-              "name": "Topic",
-              "children": [
-                {
-                  "x": 0,
-                  "y": 0,
-                  "w": 24,
-                  "h": 48,
-                  "i": "0",
-                  "type": "Widget",
-                  "graph": {
-                    "type": "ProcessList",
-                    "dashboardName": "RocketMQ-Topic",
-                    "fontSize": 12
-                  }
-                }
-              ]
             }
           ]
         }
