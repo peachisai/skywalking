@@ -31,16 +31,16 @@
 
 filter: "{ tags -> tags.job_name == 'rocketmq-monitoring' }" # The OpenTelemetry job name
 expSuffix: tag({tags -> tags.cluster = 'rocketmq::' + tags.cluster}).service(['cluster'], Layer.ROCKETMQ)
-metricPrefix: meter_rocketmq
+metricPrefix: meter_rocketmq_cluster
 
 # Metrics Rules
 metricsRules:
 
   - name: messages_produced_today
-    exp: rocketmq_brokeruntime_msg_put_total_today_now-rocketmq_brokeruntime_msg_puttotal_yesterdaymorning
+    exp: rocketmq_brokeruntime_msg_put_total_today_now.sum((['cluster']))-rocketmq_brokeruntime_msg_puttotal_yesterdaymorning.sum(['cluster'])
 
   - name: messages_consumed_today
-    exp: rocketmq_brokeruntime_msg_gettotal_today_now-rocketmq_brokeruntime_msg_gettotal_yesterdaymorning
+    exp: rocketmq_brokeruntime_msg_gettotal_today_now.sum(['cluster'])-rocketmq_brokeruntime_msg_gettotal_yesterdaymorning.sum(['cluster'])
 
   - name: total_producer_tps
     exp: rocketmq_producer_tps.sum(['cluster','broker'])
@@ -54,11 +54,11 @@ metricsRules:
   - name: consumer_message_size
     exp: rocketmq_consumer_message_size.sum(['cluster','broker'])
 
-  - name: messages_produced_yesterday
-    exp: rocketmq_brokeruntime_msg_puttotal_yesterdaymorning
+  - name: messages_produced_until_yesterday
+    exp: rocketmq_brokeruntime_msg_puttotal_yesterdaymorning.sum(['cluster'])
 
-  - name: messages_consumed_today
-    exp: rocketmq_brokeruntime_msg_gettotal_yesterdaymorning
+  - name: messages_consumed_until_yesterday
+    exp: rocketmq_brokeruntime_msg_gettotal_yesterdaymorning.sum(['cluster'])
 
   - name: max_consumer_latency
     exp: rocketmq_group_get_latency_by_storetime.max(['cluster','broker','topic','group'])
@@ -66,8 +66,11 @@ metricsRules:
   - name: max_commitLog_disk_ratio
     exp: rocketmq_brokeruntime_commitlog_disk_ratio.max(['cluster','brokerIP'])*100
 
-  - name: backlogged_msg_count
-    exp: rocketmq_producer_offset.sum(['cluster','broker'])-rocketmq_consumer_offset.sum(['cluster','broker','group'])
+  - name: min_group_consumer_offset
+    exp: rocketmq_consumer_offset.sum(['cluster','broker','topic','group'])
+
+  - name: producer_offset
+    exp: rocketmq_producer_offset.sum(['cluster','broker','topic'])
 
   - name: commitLog_disk_ratio
     exp: rocketmq_brokeruntime_commitlog_disk_ratio.sum(['cluster','brokerIP'])*100

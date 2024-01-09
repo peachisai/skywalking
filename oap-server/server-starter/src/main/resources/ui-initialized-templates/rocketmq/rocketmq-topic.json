@@ -1,0 +1,14 @@
+[
+  {
+    "id": "RocketMQ-Topic",
+    "configuration": {
+      "children": [
+
+      ],
+      "layer": "ROCKETMQ",
+      "entity": "ServiceInstance",
+      "name": "RocketMQ-Topic",
+      "id": "RocketMQ-Topic"
+    }
+  }
+]
