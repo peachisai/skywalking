@@ -30,11 +30,14 @@
 # </pre>
 
 filter: "{ tags -> tags.job_name == 'rocketmq-monitoring' }" # The OpenTelemetry job name
-expSuffix: tag({tags -> tags.cluster = 'rocketmq::' + tags.cluster}).process(['cluster'], ['broker'], ['topic'], 'ROCKETMQ')
+expSuffix: tag({tags -> tags.cluster = 'rocketmq::' + tags.cluster}).endpoint(['cluster'], ['topic'], Layer.ELASTICSEARCH)
 metricPrefix: meter_rocketmq_topic
 
 # Metrics Rules
 metricsRules:
 
   - name: consumer_message_size
-    exp: rocketmq_consumer_message_size.sum(['cluster','broker','topic','ROCKETMQ','group'])
+    exp: rocketmq_consumer_message_size.sum(['cluster','topic','group'])
+
+  - name: consumer_topic_group_offset
+    exp: rocketmq_consumer_offset.sum(['cluster','topic','group'])

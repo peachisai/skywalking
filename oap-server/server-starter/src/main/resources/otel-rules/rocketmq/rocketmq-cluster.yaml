@@ -66,12 +66,6 @@ metricsRules:
   - name: max_commitLog_disk_ratio
     exp: rocketmq_brokeruntime_commitlog_disk_ratio.max(['cluster','brokerIP'])*100
 
-  - name: min_group_consumer_offset
-    exp: rocketmq_consumer_offset.sum(['cluster','broker','topic','group'])
-
-  - name: producer_offset
-    exp: rocketmq_producer_offset.sum(['cluster','broker','topic'])
-
   - name: commitLog_disk_ratio
     exp: rocketmq_brokeruntime_commitlog_disk_ratio.sum(['cluster','brokerIP'])*100
 

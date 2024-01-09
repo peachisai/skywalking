@@ -39,7 +39,7 @@
                   "metricMode": "Expression",
                   "metricConfig": [],
                   "expressions": [
-                    "meter_rocketmq_messages_produced_today"
+                    "meter_rocketmq_cluster_messages_produced_today"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -70,7 +70,7 @@
                   "metricMode": "Expression",
                   "metricConfig": [],
                   "expressions": [
-                    "meter_rocketmq_messages_consumed_today"
+                    "meter_rocketmq_cluster_messages_consumed_today"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -97,7 +97,7 @@
                     "name": "total producer tps"
                   },
                   "expressions": [
-                    "meter_rocketmq_total_producer_tps"
+                    "meter_rocketmq_cluster_total_producer_tps"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -130,7 +130,7 @@
                     "name": "total consumer tps"
                   },
                   "expressions": [
-                    "meter_rocketmq_total_consumer_tps"
+                    "meter_rocketmq_cluster_total_consumer_tps"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -155,7 +155,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_producer_message_size/1024/1024"
+                    "meter_rocketmq_cluster_producer_message_size/1024/1024"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -183,7 +183,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_consumer_message_size/1024/1024"
+                    "meter_rocketmq_cluster_consumer_message_size/1024/1024"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -217,7 +217,7 @@
                     "showUnit": true
                   },
                   "expressions": [
-                    "meter_rocketmq_messages_produced_until_yesterday"
+                    "meter_rocketmq_cluster_messages_produced_until_yesterday"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -247,7 +247,7 @@
                     "showUnit": true
                   },
                   "expressions": [
-                    "meter_rocketmq_messages_consumed_until_yesterday"
+                    "meter_rocketmq_cluster_messages_consumed_until_yesterday"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -276,7 +276,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_max_consumer_latency"
+                    "meter_rocketmq_cluster_max_consumer_latency"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -288,9 +288,9 @@
                     "showUnit": true
                   },
                   "widget": {
-                    "name": "meter_rocketmq_max_consumer_latency",
+                    "name": "max consumer latency",
                     "title": "Max Consumer Latency",
-                    "tips": "meter_rocketmq_max_consumer_latency"
+                    "tips": "The max number of consumer latency"
                   }
                 },
                 {
@@ -311,7 +311,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_max_commitLog_disk_ratio"
+                    "meter_rocketmq_cluster_max_commitLog_disk_ratio"
                   ],
                   "graph": {
                     "type": "Card",
@@ -347,7 +347,7 @@
                     "showYAxis": true
                   },
                   "expressions": [
-                    "meter_rocketmq_commitLog_disk_ratio"
+                    "meter_rocketmq_cluster_commitLog_disk_ratio"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -371,7 +371,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_pull_threadPool_queue_head_wait_time"
+                    "meter_rocketmq_cluster_pull_threadPool_queue_head_wait_time"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -387,7 +387,7 @@
                   "widget": {
                     "name": "pull threadPool queue head wait time",
                     "title": "Pull ThreadPool Queue Head Wait Time(ms)",
-                    "tips": "The wait time in milliseconds for pulling ThreadPool Queue"
+                    "tips": "The wait time in milliseconds for pulling threadPool queue"
                   }
                 },
                 {
@@ -403,7 +403,7 @@
                   "metricMode": "Expression",
                   "moved": false,
                   "expressions": [
-                    "meter_rocketmq_send_threadPool_queue_head_wait_time"
+                    "meter_rocketmq_cluster_send_threadPool_queue_head_wait_time"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -411,7 +411,7 @@
                   "widget": {
                     "name": "send threadPool queue head wait time",
                     "title": "Send ThreadPool Queue Head Wait Time(ms)",
-                    "tips": "The wait time in milliseconds for sending ThreadPool Queue"
+                    "tips": "The wait time in milliseconds for sending threadPool queue"
                   },
                   "graph": {
                     "type": "Line",
@@ -431,7 +431,7 @@
                   "x": 0,
                   "y": 0,
                   "w": 24,
-                  "h": 48,
+                  "h": 30,
                   "i": "0",
                   "type": "Widget",
                   "graph": {
@@ -441,9 +441,28 @@
                   },
                   "metrics": [],
                   "metricTypes": [],
-                  "metricConfig": [],
-                  "id": "0-1-0",
-                  "moved": false
+                  "metricConfig": []
+                }
+              ]
+            },
+            {
+              "name": "Topic",
+              "children": [
+                {
+                  "x": 0,
+                  "y": 16,
+                  "w": 24,
+                  "h": 48,
+                  "i": "0",
+                  "type": "Widget",
+                  "graph": {
+                    "type": "EndpointList",
+                    "dashboardName": "RocketMQ-Topic",
+                    "fontSize": 12
+                  },
+                  "metrics": [],
+                  "metricTypes": [],
+                  "metricConfig": []
                 }
               ]
             }
