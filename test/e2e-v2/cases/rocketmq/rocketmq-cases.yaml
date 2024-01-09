@@ -31,9 +31,9 @@ cases:
     expected: expected/metrics-has-value-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_consumer_message_size --service-name=rocketmq::rocketmq-cluster
     expected: expected/metrics-has-value-label.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_messages_produced_yesterday --service-name=rocketmq::rocketmq-cluster
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_messages_produced_until_yesterday --service-name=rocketmq::rocketmq-cluster
     expected: expected/metrics-has-value.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_messages_consumed_today --service-name=rocketmq::rocketmq-cluster
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_messages_consumed_until_yesterday --service-name=rocketmq::rocketmq-cluster
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_max_consumer_latency --service-name=rocketmq::rocketmq-cluster
     expected: expected/metrics-has-value-label.yml
@@ -67,3 +67,8 @@ cases:
     expected: expected/metrics-has-value-topic-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_consumer_latency --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-broker-1
     expected: expected/metrics-has-value-topic-label.yml
+
+
+  # endpoint cases
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql endpoint ls --service-name=rocketmq::rocketmq-cluster
+    expected: expected/instance.yml
