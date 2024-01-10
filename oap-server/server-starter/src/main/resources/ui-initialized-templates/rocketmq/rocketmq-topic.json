@@ -79,6 +79,11 @@
               "typesOfMQE": [
                 "UNKNOWN"
               ],
+              "widget": {
+                "name": "max_consumer_message_size",
+                "title": "max Consumer Message Size",
+                "tips": "The size of the consumed message per second per broker per topic"
+              },
               "graph": {
                 "type": "Card",
                 "fontSize": 14,
@@ -104,6 +109,11 @@
               "typesOfMQE": [
                 "UNKNOWN"
               ],
+              "widget": {
+                "name": "max_producer_message_size",
+                "title": "max_producer_message_size",
+                "tips": "The size of the consumed message per second per broker per topic"
+              },
               "graph": {
                 "type": "Card",
                 "fontSize": 14,
@@ -129,6 +139,11 @@
               "typesOfMQE": [
                 "UNKNOWN"
               ],
+              "widget": {
+                "name": "consumer_latency",
+                "title": "Consumer Latency",
+                "tips": "Consumption delay time of a consumer group per topic"
+              },
               "graph": {
                 "type": "Line",
                 "step": false,
@@ -165,8 +180,9 @@
                 "showYAxis": true
               },
               "widget": {
-                "title": "Producer Tps",
-                "name": "producer_tps"
+                "title": "Producer Offset",
+                "name": "producer_offset",
+                "tips": "The progress of a topic's production message"
               }
             },
             {
@@ -187,6 +203,11 @@
               "typesOfMQE": [
                 "TIME_SERIES_VALUES"
               ],
+              "widget": {
+                "title": "Consumer Group Offset",
+                "name": "consumer_group_offset",
+                "tips": "The progress of a topic's consumption message for a consumer group"
+              },
               "graph": {
                 "type": "Line",
                 "step": false,
@@ -194,9 +215,6 @@
                 "showSymbol": true,
                 "showXAxis": true,
                 "showYAxis": true
-              },
-              "widget": {
-                "title": "Consumer Group Tps"
               }
             },
             {
@@ -217,6 +235,11 @@
               "typesOfMQE": [
                 "UNKNOWN"
               ],
+              "widget": {
+                "title": "Consumer Group Tps",
+                "name": "consumer_group_tps",
+                "tips": "The progress of a topic's consumption message for a consumer group"
+              },
               "graph": {
                 "type": "Line",
                 "step": false,
@@ -244,6 +267,11 @@
               "typesOfMQE": [
                 "UNKNOWN"
               ],
+              "widget": {
+                "title": "Producer Tps",
+                "name": "producer_tps",
+                "tips": "The number of messages produced per second"
+              },
               "graph": {
                 "type": "Line",
                 "step": false,
