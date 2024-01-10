@@ -70,21 +70,26 @@
           "metricTypes": [],
           "metrics": [],
           "metricMode": "Expression",
+          "metricConfig": [
+            {
+              "unit": "MB"
+            }
+          ],
           "moved": false,
           "expressions": [
-            "meter_rocketmq_topic_max_consumer_message_size"
+            "meter_rocketmq_topic_max_consumer_message_size/1024/1024"
           ],
           "typesOfMQE": [
-            "UNKNOWN"
+            "TIME_SERIES_VALUES"
           ],
           "widget": {
             "name": "max_consumer_message_size",
-            "title": "max Consumer Message Size",
-            "tips": "The size of the consumed message per second per broker per topic"
+            "title": "Max Consumer Message Size",
+            "tips": "The max number of messages consumed"
           },
           "graph": {
             "type": "Card",
-            "fontSize": 14,
+            "fontSize": 40,
             "textAlign": "center",
             "showUnit": true
           }
@@ -99,22 +104,27 @@
           "id": "3",
           "metricTypes": [],
           "metrics": [],
+          "metricConfig": [
+            {
+              "unit": "MB"
+            }
+          ],
           "metricMode": "Expression",
           "moved": false,
           "expressions": [
-            "meter_rocketmq_topic_max_producer_message_size"
+            "meter_rocketmq_topic_max_producer_message_size/1024/1024"
           ],
           "typesOfMQE": [
-            "UNKNOWN"
+            "TIME_SERIES_VALUES"
           ],
           "widget": {
             "name": "max_producer_message_size",
-            "title": "max_producer_message_size",
-            "tips": "The size of the consumed message per second per broker per topic"
+            "title": "Max Producer Message Size",
+            "tips": "The max number of messages produced"
           },
           "graph": {
             "type": "Card",
-            "fontSize": 14,
+            "fontSize": 40,
             "textAlign": "center",
             "showUnit": true
           }
@@ -132,14 +142,14 @@
           "metricMode": "Expression",
           "moved": false,
           "expressions": [
-            "meter_rocketmq_topic_consumer_latency"
+            "meter_rocketmq_topic_consumer_latency/1000"
           ],
           "typesOfMQE": [
-            "UNKNOWN"
+            "TIME_SERIES_VALUES"
           ],
           "widget": {
             "name": "consumer_latency",
-            "title": "Consumer Latency",
+            "title": "Consumer Latency(s)",
             "tips": "Consumption delay time of a consumer group per topic"
           },
           "graph": {
