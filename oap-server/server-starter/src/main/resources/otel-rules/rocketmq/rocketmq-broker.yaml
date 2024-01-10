@@ -45,4 +45,3 @@ metricsRules:
 
   - name: consumer_message_size
     exp: rocketmq_consumer_message_size.sum(['cluster','broker'])
-
