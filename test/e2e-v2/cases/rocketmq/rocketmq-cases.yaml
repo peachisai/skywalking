@@ -54,10 +54,12 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_consume_qps --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-broker-1
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_producer_message_size --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-broker-1
-    expected: expected/metrics-has-value-topic-label.yml
+    expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_broker_consumer_message_size --service-name=rocketmq::rocketmq-cluster --instance-name=rocketmq-broker-1
-    expected: expected/metrics-has-value-topic-label.yml
+    expected: expected/metrics-has-value.yml
 
   # endpoint cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql endpoint ls --service-name=rocketmq::rocketmq-cluster
     expected: expected/endpoint.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_topic_max_producer_message_size --service-name=rocketmq::rocketmq-cluster --endpoint-name=TopicTest
+    expected: expected/metrics-has-value.yml
