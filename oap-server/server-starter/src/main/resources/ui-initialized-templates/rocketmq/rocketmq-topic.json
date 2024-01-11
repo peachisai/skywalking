@@ -85,7 +85,7 @@
           "widget": {
             "name": "max_consumer_message_size",
             "title": "Max Consumer Message Size",
-            "tips": "The max number of messages consumed"
+            "tips": "The maximum number of messages consumed"
           },
           "graph": {
             "type": "Card",
@@ -214,7 +214,7 @@
           "widget": {
             "title": "Consumer Group Offset",
             "name": "consumer_group_offset",
-            "tips": "The progress of a topic's consumption message for a consumer group"
+            "tips": "The progress of a topic's consumption message per consumer group"
           },
           "graph": {
             "type": "Line",
@@ -246,7 +246,7 @@
           "widget": {
             "title": "Consumer Group Tps",
             "name": "consumer_group_tps",
-            "tips": "The number of messages consumed per second by a consumer group"
+            "tips": "The number of messages consumed per second per consumer group"
           },
           "graph": {
             "type": "Line",

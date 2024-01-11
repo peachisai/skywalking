@@ -32,7 +32,6 @@ services:
       - "9876:9876"
     environment:
       TZ: Asia/Shanghai
-      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
     command: sh mqnamesrv
     healthcheck:
       test: [ "CMD", "nc", "-nz", "127.0.0.1", "9876" ]
@@ -51,7 +50,6 @@ services:
     environment:
       TZ: Asia/Shanghai
       NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
-      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
     command: sh mqbroker
     healthcheck:
       test: [ "CMD", "nc", "-nz", "127.0.0.1", "10911" ]
@@ -70,7 +68,6 @@ services:
     environment:
       TZ: Asia/Shanghai
       NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
-      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
     command: sh tools.sh org.apache.rocketmq.example.quickstart.Producer
     depends_on:
       rocketmq-broker-1:
@@ -84,7 +81,6 @@ services:
     environment:
       TZ: Asia/Shanghai
       NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
-      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
     command: sh tools.sh org.apache.rocketmq.example.quickstart.Consumer
     depends_on:
       - rocketmq-producer-perf-test

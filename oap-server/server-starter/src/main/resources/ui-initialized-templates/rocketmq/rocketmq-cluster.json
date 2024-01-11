@@ -93,7 +93,7 @@
                   },
                   "widget": {
                     "title": "Total Producer Tps",
-                    "tips": "The number of messages produced per second per broker",
+                    "tips": "The number of messages produced per second",
                     "name": "total producer tps"
                   },
                   "expressions": [
@@ -126,7 +126,7 @@
                   },
                   "widget": {
                     "title": "Total Consume Tps",
-                    "tips": "The number of messages consumed per second per broker",
+                    "tips": "The number of messages consumed per second",
                     "name": "total consumer tps"
                   },
                   "expressions": [
@@ -167,7 +167,7 @@
                   "widget": {
                     "name": "producer message size",
                     "title": "Producer Message Size(MB)",
-                    "tips": "The size of a message produced per second per broker"
+                    "tips": "The size of a message produced per second"
                   }
                 },
                 {
@@ -195,7 +195,7 @@
                   "widget": {
                     "name": "consumer message size",
                     "title": "Consumer Message Size(MB)",
-                    "tips": "The size of the consumed message per second per broker"
+                    "tips": "The size of the consumed message per second"
                   }
                 },
                 {
