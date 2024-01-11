@@ -14,15 +14,15 @@ Collector to transfer the metrics to
 
 ## Setup
 
-1. Setup [mongodb-exporter](https://github.com/percona/mongodb_exporter).
+1. Setup [rocketmq-exporter](https://github.com/apache/rocketmq-exporter).
 2. Set up [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/getting-started/#docker). The example for OpenTelemetry Collector configuration, refer
-   to [here](../../../../test/e2e-v2/cases/mongodb/otel-collector-config.yaml).
+   to [here](../../../../test/e2e-v2/cases/rocketmq/otel-collector-config.yaml).
 3. Config SkyWalking [OpenTelemetry receiver](opentelemetry-receiver.md).
 
 ## RocketMQ Monitoring
 
 RocketMQ monitoring provides multidimensional metrics monitoring of RocketMQ Exporter as `Layer: RocketMQ` `Service` in
-the OAP. In each cluster, the broker are represented as `Instance`.
+the OAP. In each cluster, the broker is represented as `Instance` and the topic is represented as `Endpoint`.
 
 ### RocketMQ Cluster Supported Metrics
 
@@ -31,16 +31,16 @@ the OAP. In each cluster, the broker are represented as `Instance`.
 | Messages Produced Today                    | Count      | meter_rocketmq_cluster_messages_produced_today                          | The number of the cluster messages produced today.                                                     | RocketMQ Exporter |
 | Messages Consumed Today                    | Count      | meter_rocketmq_cluster_messages_consumed_today                          | The number of the cluster messages consumed today.                                                     | RocketMQ Exporter |
 | Total Producer Tps                         | Msg/sec    | meter_rocketmq_cluster_total_producer_tps                               | The number of messages produced per second per broker.                                                 | RocketMQ Exporter |
-| Total Consume Tps                          | Msg/sec    | meter_rocketmq_cluster_total_producer_tps                               | The number of messages consumed per second per broker.                                                 | RocketMQ Exporter |
+| Total Consume Tps                          | Msg/sec    | meter_rocketmq_cluster_total_consumer_tps                               | The number of messages consumed per second per broker.                                                 | RocketMQ Exporter |
 | Producer Message Size                      | Bytes/sec  | meter_rocketmq_cluster_producer_message_size                            | The size of a message produced per broker.                                                             | RocketMQ Exporter |
 | Consumer Message Size                      | Bytes/sec  | meter_rocketmq_cluster_consumer_message_size                            | The size of the consumed message per broker (byte per second).                                         | RocketMQ Exporter |
 | Messages Produced Until Yesterday          | Count      | meter_rocketmq_cluster_messages_produced_until_yesterday                | The total number of messages put until 12 o'clock last night.                                          | RocketMQ Exporter |
 | Messages Consumed Until Yesterday          | Count      | meter_rocketmq_cluster_messages_consumed_until_yesterday                | The total number of messages read until 12 o'clock last night.                                         | RocketMQ Exporter |
-| Max Consumer Latency                       | ms         | meter_rocketmq_cluster_max_consumer_latency                             | The max number of consumer latency.                                                                    | RocketMQ Exporter |
+| Max Consumer Latency                       | Ms         | meter_rocketmq_cluster_max_consumer_latency                             | The max number of consumer latency.                                                                    | RocketMQ Exporter |
 | Max CommitLog Disk Ratio                   | %          | meter_rocketmq_cluster_max_commitLog_disk_ratio                         | The max utilization ratio of the commit log disk.                                                      | RocketMQ Exporter |
 | CommitLog Disk Ratio                       | %          | meter_rocketmq_cluster_commitLog_disk_ratio                             | The utilization ratio of commit log disk per brokerIp.                                                 | RocketMQ Exporter |
-| Pull ThreadPool Queue Head Wait Time       | ms         | meter_rocketmq_cluster_pull_threadPool_queue_head_wait_time             | The wait time in milliseconds for pulling threadPool queue (millisecond unit).                         | RocketMQ Exporter |
-| Send ThreadPool Queue Head Wait Time       | ms         | meter_rocketmq_cluster_send_threadPool_queue_head_wait_time             | The wait time in milliseconds for sending threadPool queue (millisecond unit).                         | RocketMQ Exporter |
+| Pull ThreadPool Queue Head Wait Time       | Ms         | meter_rocketmq_cluster_pull_threadPool_queue_head_wait_time             | The wait time in milliseconds for pulling threadPool queue per brokerIp.                                            | RocketMQ Exporter |
+| Send ThreadPool Queue Head Wait Time       | Ms         | meter_rocketmq_cluster_send_threadPool_queue_head_wait_time             | The wait time in milliseconds for sending threadPool queue per brokerIp.                                            | RocketMQ Exporter |
 
 ### RocketMQ Broker Supported Metrics
 
@@ -55,19 +55,15 @@ the OAP. In each cluster, the broker are represented as `Instance`.
 
 | Monitoring Panel                           |Unit        | Metric Name                                                             | Description                                                                                            | Data Source      |
 |--------------------------------------------|------------|-------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------|
-| Max Producer Message Size                    | Count      | meter_rocketmq_cluster_messages_produced_today                          | The number of the cluster messages produced today.                                                     | RocketMQ Exporter |
-| Max Consumer Message Size                    | Count      | meter_rocketmq_cluster_messages_consumed_today                          | The number of the cluster messages consumed today.                                                     | RocketMQ Exporter |
-| Total Producer Tps                         | Count      | meter_rocketmq_cluster_total_producer_tps                               | The number of messages produced per second per broker.                                                 | RocketMQ Exporter |
-| Total Consume Tps                          | Count      | meter_rocketmq_cluster_total_producer_tps                               | The number of messages consumed per second per broker.                                                 | RocketMQ Exporter |
-| Producer Message Size                      | Bytes/sec  | meter_rocketmq_cluster_producer_message_size                            | The size of a message produced per broker.                                                             | RocketMQ Exporter |
-| Consumer Message Size                      | Bytes/sec  | meter_rocketmq_cluster_consumer_message_size                            | The size of the consumed message per broker (byte per second).                                         | RocketMQ Exporter |
-| Messages Produced Until Yesterday          | Count      | meter_rocketmq_cluster_messages_produced_until_yesterday                | The total number of messages put until 12 o'clock last night.                                          | RocketMQ Exporter |
-| Messages Consumed Until Yesterday          | Count      | meter_rocketmq_cluster_messages_consumed_until_yesterday                | The total number of messages read until 12 o'clock last night.                                         | RocketMQ Exporter |
-| Max Consumer Latency                       | ms         | meter_rocketmq_cluster_max_consumer_latency                             | The max number of consumer latency.                                                                    | RocketMQ Exporter |
-| Max CommitLog Disk Ratio                   | %          | meter_rocketmq_cluster_max_commitLog_disk_ratio                         | The max utilization ratio of the commit log disk.                                                      | RocketMQ Exporter |
-| CommitLog Disk Ratio                       | %          | meter_rocketmq_cluster_commitLog_disk_ratio                             | The utilization ratio of commit log disk per brokerIp.                                                 | RocketMQ Exporter |
-| Pull ThreadPool Queue Head Wait Time       | ms         | meter_rocketmq_cluster_pull_threadPool_queue_head_wait_time             | The wait time in milliseconds for pulling threadPool queue (millisecond unit).                         | RocketMQ Exporter |
-| Send ThreadPool Queue Head Wait Time       | ms         | meter_rocketmq_cluster_send_threadPool_queue_head_wait_time             | The wait time in milliseconds for sending threadPool queue (millisecond unit).                         | RocketMQ Exporter |
+| Max Producer Message Size                  | Byte       | meter_rocketmq_topic_max_producer_message_size                          | The maximum number of messages produced.                                                               | RocketMQ Exporter |
+| Max Consumer Message Size                  | Byte       | meter_rocketmq_topic_max_consumer_message_size                          | The maximum number of messages consumed.                                                               | RocketMQ Exporter |
+| Consumer Latency                           | Ms         | meter_rocketmq_topic_consumer_latency                                   | Consumption delay time of a consumer group.                                                            | RocketMQ Exporter |
+| Producer Tps                               | Msg/sec    | meter_rocketmq_topic_producer_tps                                       | The number of messages produced per second.                                                            | RocketMQ Exporter |
+| Consumer Group Tps                         | Msg/sec    | meter_rocketmq_topic_consumer_group_tps                                 | The number of messages consumed per second per consumer group.                                          | RocketMQ Exporter |
+| Producer Offset                            | Count      | meter_rocketmq_topic_producer_offset                                    | The progress of a topic's production message.                                                          | RocketMQ Exporter |
+| Consumer Group Offset                      | Count      | meter_rocketmq_topic_consumer_group_offset                              | The progress of a topic's consumption message per consumer group.                                      | RocketMQ Exporter |
+| Producer Message Size                      | Byte       | meter_rocketmq_topic_producer_message_size                              | The size of messages produced per second.                                                              | RocketMQ Exporter |
+| Consumer Message Size                      | Byte       | meter_rocketmq_topic_consumer_message_size                              | The size of messages consumed per second.                                                              | RocketMQ Exporter |
 
 ## Customizations
 

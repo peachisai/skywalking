@@ -27,7 +27,7 @@
           ],
           "widget": {
             "title": "Producer Message Size(MB)",
-            "tips": "The size of a message produced per second per broker per topic",
+            "tips": "The size of messages produced per second",
             "name": "producer_message_size"
           }
         },
@@ -56,7 +56,7 @@
           "widget": {
             "name": "consumer_message_size",
             "title": "Consumer Message Size(MB)",
-            "tips": "The size of the consumed message per second per broker per topic"
+            "tips": "The size of messages consumed per second "
           }
         },
         {
@@ -120,7 +120,7 @@
           "widget": {
             "name": "max_producer_message_size",
             "title": "Max Producer Message Size",
-            "tips": "The max number of messages produced"
+            "tips": "The maximum number of messages produced"
           },
           "graph": {
             "type": "Card",
@@ -150,7 +150,7 @@
           "widget": {
             "name": "consumer_latency",
             "title": "Consumer Latency(s)",
-            "tips": "Consumption delay time of a consumer group per topic"
+            "tips": "Consumption delay time of a consumer group"
           },
           "graph": {
             "type": "Line",
@@ -246,7 +246,7 @@
           "widget": {
             "title": "Consumer Group Tps",
             "name": "consumer_group_tps",
-            "tips": "The progress of a topic's consumption message for a consumer group"
+            "tips": "The number of messages consumed per second by a consumer group"
           },
           "graph": {
             "type": "Line",
