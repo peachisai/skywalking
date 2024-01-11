@@ -43,16 +43,16 @@ metricsRules:
     exp: rocketmq_brokeruntime_msg_gettotal_today_now.sum(['cluster'])-rocketmq_brokeruntime_msg_gettotal_yesterdaymorning.sum(['cluster'])
 
   - name: total_producer_tps
-    exp: rocketmq_producer_tps.sum(['cluster','broker'])
+    exp: rocketmq_producer_tps.sum(['cluster'])
 
   - name: total_consumer_tps
-    exp: rocketmq_consumer_tps.sum(['cluster','broker'])
+    exp: rocketmq_consumer_tps.sum(['cluster'])
 
   - name: producer_message_size
-    exp: rocketmq_producer_message_size.sum(['cluster','broker'])
+    exp: rocketmq_producer_message_size.sum(['cluster'])
 
   - name: consumer_message_size
-    exp: rocketmq_consumer_message_size.sum(['cluster','broker'])
+    exp: rocketmq_consumer_message_size.sum(['cluster'])
 
   - name: messages_produced_until_yesterday
     exp: rocketmq_brokeruntime_msg_puttotal_yesterdaymorning.sum(['cluster'])
