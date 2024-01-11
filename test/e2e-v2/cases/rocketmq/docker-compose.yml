@@ -26,7 +26,7 @@ services:
       - e2e
 
   rocketmq-namesrv-1:
-    image: apache/rocketmq:5.1.0
+    image: apache/rocketmq:4.9.4
     hostname: rocketmq-namesrv-1
     ports:
       - "9876:9876"
@@ -42,7 +42,7 @@ services:
       - e2e
 
   rocketmq-broker-1:
-    image: apache/rocketmq:5.1.0
+    image: apache/rocketmq:4.9.4
     hostname: rocketmq-broker-1
     ports:
       - "10911:10911"
@@ -63,7 +63,7 @@ services:
       - e2e
 
   rocketmq-producer-perf-test:
-    image: apache/rocketmq:5.1.0
+    image: apache/rocketmq:4.9.4
     hostname: rocketmq-producer-perf-test
     environment:
       TZ: Asia/Shanghai
@@ -76,7 +76,7 @@ services:
       - e2e
 
   rocketmq-consumer-perf-test:
-    image: apache/rocketmq:5.1.0
+    image: apache/rocketmq:4.9.4
     hostname: rocketmq-consumer-perf-test
     environment:
       TZ: Asia/Shanghai
