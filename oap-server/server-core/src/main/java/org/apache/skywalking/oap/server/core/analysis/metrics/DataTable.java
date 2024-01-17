@@ -183,4 +183,17 @@ public class DataTable implements StorageDataComplexObject<DataTable> {
         });
         return this;
     }
+
+    public DataTable appendCount(DataTable dataTable) {
+        dataTable.data.forEach((key, value) -> {
+            Long current = this.data.get(key);
+            if (current == null) {
+                current = 1L;
+            } else {
+                current++;
+            }
+            this.data.put(key, current);
+        });
+        return this;
+    }
 }

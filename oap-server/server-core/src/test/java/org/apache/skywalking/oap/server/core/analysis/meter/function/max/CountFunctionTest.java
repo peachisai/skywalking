@@ -38,7 +38,7 @@ import java.util.Map;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class MaxFunctionTest {
+public class CountFunctionTest {
 
     private static final Long LARGE_VALUE = 1597113447737L;
 
