@@ -22,6 +22,7 @@
 * Support handler eBPF access log protocol.
 * Fix SumPerMinFunctionTest error function.
 * Add `max` and `min` functions for MAL down sampling.
+* Support Apache RocketMQ server monitoring.
 
 #### UI
 
