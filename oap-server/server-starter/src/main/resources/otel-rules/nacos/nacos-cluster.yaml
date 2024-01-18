@@ -30,16 +30,24 @@
 # </pre>
 filter: "{ tags -> tags.job_name == 'nacos-monitoring' }" # The OpenTelemetry job name
 expSuffix: tag({tags -> tags.cluster = 'nacos::' + tags.cluster}).service(['cluster'], Layer.NACOS)
-metricPrefix: meter_rabbitmq
+metricPrefix: meter_nacos_cluster
 metricsRules:
 
   # naming
-  - name: memory_available_before_publisher_blocked
-    exp: nacos_monitor.tagEqual('name', 'ipCount')
+  - name: instance_count
+    exp: nacos_monitor.tagEqual('name', 'ipCount').sum(['cluster'])
+  - name: service_count
+    exp: nacos_monitor.tagEqual('name', 'serviceCount').sum(['cluster'])
   - name: failed_push_count
-    exp: nacos_monitor.tagEqual('name', 'failedPush')
-  - name: memory_available_before_publisher_blocked
-    exp: nacos_monitor.tagEqual('name', 'ipCount')
+    exp: nacos_monitor.tagEqual('name', 'failedPush').sum(['cluster'])
+  - name: success_push
+    exp: nacos_monitor.tagEqual('name', 'totalPush').sum(['cluster'])
+  - name: max_push_cost
+    exp: nacos_monitor.tagEqual('name', 'maxPushCost').sum(['cluster'])
+  - name: avg_push_cost
+    exp: nacos_monitor.tagEqual('name', 'avgPushCost').sum(['cluster'])
+  - name: subscriber_count
+    exp: nacos_monitor.tagEqual('name', 'subscriberCount').sum(['cluster'])
 
   # http request
   - name: http_success_requests_count
@@ -49,55 +57,16 @@ metricsRules:
 
   # config
   - name: config_count
-    exp: nacos_monitor.tagMatch("name", "configCount").sum(['cluster','node'])
+    exp: nacos_monitor.tagMatch("name", "configCount").sum(['cluster'])
+  - name: config_read_count
+    exp: nacos_monitor.tagMatch("name", "getConfig").sum(['cluster'])
+  - name: config_write_count
+    exp: nacos_monitor.tagMatch("name", "publish").sum(['cluster'])
+
+  # core
+  - name: total_connection_count
+    exp: nacos_monitor.tagMatch("name", "longConnection").sum(['cluster','node'])
   - name: config_read_count
     exp: nacos_monitor.tagMatch("name", "getConfig").sum(['cluster','node'])
   - name: config_write_count
     exp: nacos_monitor.tagMatch("name", "publish").sum(['cluster','node'])
-
-
-  - name: message_ready_delivered_consumers
-    exp: rabbitmq_queue_messages_ready.sum(['cluster', 'node'])
-  - name: message_unacknowledged_delivered_consumers
-    exp: rabbitmq_queue_messages_unacked.sum(['cluster', 'node'])
-
-
-
-  - name: messages_published
-    exp: rabbitmq_global_messages_received_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: messages_confirmed
-    exp: rabbitmq_global_messages_confirmed_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: messages_routed
-    exp: rabbitmq_global_messages_routed_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: messages_unconfirmed
-    exp: rabbitmq_global_messages_received_confirm_total.sum(['cluster', 'node']).rate('PT1M') - rabbitmq_global_messages_confirmed_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: messages_unroutable_dropped
-    exp: rabbitmq_global_messages_unroutable_dropped_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: messages_unroutable_returned
-    exp: rabbitmq_global_messages_unroutable_returned_total.sum(['cluster', 'node']).rate('PT1M')
-
-  # queues
-  - name: queues
-    exp: rabbitmq_queues.sum(['cluster', 'node'])
-  - name: queues_declared_total
-    exp: rabbitmq_queues_declared_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: queues_created_total
-    exp: rabbitmq_queues_created_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: queues_deleted_total
-    exp: rabbitmq_queues_deleted_total.sum(['cluster', 'node']).rate('PT1M')
-
-  # channels
-  - name: channels
-    exp: rabbitmq_channels.sum(['cluster', 'node'])
-  - name: channels_opened_total
-    exp: rabbitmq_channels_opened_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: channels_closed_total
-    exp: rabbitmq_channels_closed_total.sum(['cluster', 'node']).rate('PT1M')
-
-  # connections
-  - name: connections
-    exp: rabbitmq_connections.sum(['cluster', 'node'])
-  - name: connections_opened_total
-    exp: rabbitmq_connections_opened_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: connections_closed_total
-    exp: rabbitmq_connections_closed_total.sum(['cluster', 'node']).rate('PT1M')

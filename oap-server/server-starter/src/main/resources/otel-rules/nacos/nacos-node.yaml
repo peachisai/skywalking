@@ -43,46 +43,9 @@ metricsRules:
   - name: gc_time
     exp: (jvm_gc_pause_seconds_sum * 1000).sum(['cluster', 'node']).increase('PT1M')
 
-
-
   - name: thread_count
     exp: jvm_threads_daemon_threads.sum(['cluster', 'node'])
   - name: http_success_requests_count
     exp: http_server_requests_seconds_count.tagMatch("exception", "none").sum(['cluster', 'node','method'])
   - name: http_exception_requests_count
     exp: http_server_requests_seconds_count.tagNotMatch("exception", "none").sum(['cluster', 'node','method'])
-
-  - name: outgoing_messages_total
-    exp: rabbitmq_global_messages_redelivered_total.sum(['cluster', 'node']).rate('PT1M') + rabbitmq_global_messages_delivered_consume_auto_ack_total.sum(['cluster', 'node']).rate('PT1M') + rabbitmq_global_messages_delivered_consume_manual_ack_total.sum(['cluster', 'node']).rate('PT1M') + rabbitmq_global_messages_delivered_get_auto_ack_total.sum(['cluster', 'node']).rate('PT1M') + rabbitmq_global_messages_delivered_get_auto_ack_total.sum(['cluster', 'node']).rate('PT1M') + rabbitmq_global_messages_delivered_get_manual_ack_total.sum(['cluster', 'node']).rate('PT1M')
-  - name: consumer_total
-    exp: rabbitmq_consumers.sum(['cluster', 'node'])
-  - name: channel_total
-    exp: rabbitmq_channels.sum(['cluster', 'node'])
-
-  - name: allocated_used_percent
-    exp: erlang_vm_allocators.tagEqual('usage' , 'blocks_size').sum(['cluster', 'node']) / erlang_vm_allocators.tagEqual('usage' , 'carriers_size').sum(['cluster', 'node']) * 10000
-  - name: allocated_unused_percent
-    exp: (erlang_vm_allocators.tagEqual('usage' , 'carriers_size').sum(['cluster', 'node']) - erlang_vm_allocators.tagEqual('usage' , 'blocks_size').sum(['cluster', 'node'])) / erlang_vm_allocators.tagEqual('usage' , 'carriers_size').sum(['cluster', 'node']) * 10000
-  - name: allocated_used_bytes
-    exp: erlang_vm_allocators.tagEqual('usage' , 'blocks_size').sum(['cluster', 'node'])
-  - name: allocated_unused_bytes
-    exp: erlang_vm_allocators.tagEqual('usage' , 'carriers_size').sum(['cluster', 'node']) - erlang_vm_allocators.tagEqual('usage' , 'blocks_size').sum(['cluster', 'node'])
-  - name: allocated_total_bytes
-    exp: erlang_vm_allocators.tagEqual('usage' , 'carriers_size').sum(['cluster', 'node'])
-  - name: process_resident_memory_bytes
-    exp: rabbitmq_process_resident_memory_bytes.sum(['cluster', 'node'])
-
-  - name: allocated_by_type
-    exp: erlang_vm_allocators.tagEqual('usage' , 'carriers_size').sum(['cluster', 'node', 'alloc'])
-  - name: allocated_multiblock_used
-    exp: erlang_vm_allocators.tagEqual('usage' , 'blocks_size' , 'kind', 'mbcs').sum(['cluster', 'node', 'alloc'])
-  - name: allocated_multiblock_unused
-    exp: erlang_vm_allocators.tagEqual('usage' , 'carriers_size' , 'kind', 'mbcs').sum(['cluster', 'node', 'alloc'])
-  - name: allocated_multiblock_pool_used
-    exp: erlang_vm_allocators.tagEqual('usage' , 'blocks_size' , 'kind', 'mbcs_pool').sum(['cluster', 'node', 'alloc'])
-  - name: allocated_multiblock_pool_unused
-    exp: erlang_vm_allocators.tagEqual('usage' , 'carriers_size' , 'kind', 'mbcs_pool').sum(['cluster', 'node', 'alloc'])
-  - name: allocated_singleblock_used
-    exp: erlang_vm_allocators.tagEqual('usage' , 'blocks_size' , 'kind', 'mbcs').sum(['cluster', 'node', 'alloc'])
-  - name: allocated_singleblock_unused
-    exp: erlang_vm_allocators.tagEqual('usage' , 'carriers_size' , 'kind', 'mbcs').sum(['cluster', 'node', 'alloc'])
