@@ -49,12 +49,6 @@ metricsRules:
   - name: subscriber_count
     exp: nacos_monitor.tagEqual('name', 'subscriberCount').sum(['cluster'])
 
-  # http request
-  - name: http_success_requests_count
-    exp: http_server_requests_seconds_count.tagMatch("exception", "none").sum(['cluster','method'])
-  - name: http_exception_requests_count
-    exp: http_server_requests_seconds_count.tagNotMatch("exception", "none").sum(['cluster','method'])
-
   # config
   - name: config_count
     exp: nacos_monitor.tagMatch("name", "configCount").sum(['cluster'])
@@ -65,4 +59,4 @@ metricsRules:
 
   # core
   - name: total_connection_count
-    exp: nacos_monitor.tagMatch("name", "longConnection").sum(['cluster','node'])
+    exp: nacos_monitor.tagMatch("name", "longConnection").sum(['cluster'])

@@ -42,10 +42,19 @@ metricsRules:
     exp: jvm_gc_pause_seconds_count.sum(['cluster', 'node']).increase('PT1M')
   - name: gc_time
     exp: (jvm_gc_pause_seconds_sum * 1000).sum(['cluster', 'node']).increase('PT1M')
-
   - name: thread_count
     exp: jvm_threads_daemon_threads.sum(['cluster', 'node'])
+  - name: thread_state_count
+    exp: jvm_threads_states_threads.sum(['cluster', 'node','state'])
+
+  # http request
   - name: http_success_requests_count
-    exp: http_server_requests_seconds_count.tagMatch("exception", "none").sum(['cluster', 'node','method'])
+    exp: http_server_requests_seconds_count.tagMatch("exception", "none").sum(['cluster','method'])
   - name: http_exception_requests_count
-    exp: http_server_requests_seconds_count.tagNotMatch("exception", "none").sum(['cluster', 'node','method'])
+    exp: http_server_requests_seconds_count.tagNotMatch("exception", "none").sum(['cluster','method'])
+
+  # raft
+  - name: read_from_leader_count
+    exp: nacos_monitor_count.tagMatch("name", "raft_read_from_leader").sum(['cluster', 'node']).increase('PT1M')
+  - name: read_index_failed_count
+    exp: nacos_monitor_count.tagMatch("name", "raft_read_index_failed").sum(['cluster', 'node']).increase('PT1M')

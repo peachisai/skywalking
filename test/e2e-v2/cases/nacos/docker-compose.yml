@@ -25,24 +25,21 @@ services:
     networks:
       - e2e
 
-  rocketmq-broker-1:
-    image: apache/rocketmq:4.9.4
-    hostname: rocketmq-broker-1
+  nacos-1:
+    image: nacos/nacos-server:V2.2.0
+    hostname: nacos-1
     ports:
-      - "10911:10911"
-      - "10909:10909"
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
     environment:
-      TZ: Asia/Shanghai
-      NAMESRV_ADDR: "rocketmq-namesrv-1:9876"
-    command: sh mqbroker
+      MODE: standalone
+      management.endpoints.web.exposure.include: *
     healthcheck:
-      test: [ "CMD", "nc", "-nz", "127.0.0.1", "10911" ]
+      test: [ "CMD", "nc", "-nz", "127.0.0.1", "8848" ]
       interval: 15s
       timeout: 10s
       retries: 120
-    depends_on:
-      rocketmq-namesrv-1:
-        condition: service_healthy
     networks:
       - e2e
 
