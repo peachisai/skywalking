@@ -213,6 +213,11 @@ menus:
         description: Provide RocketMQ monitoring through OpenTelemetry's Prometheus Receiver.
         documentLink: https://skywalking.apache.org/docs/main/next/en/setup/backend/backend-rocketmq-monitoring/
         i18nKey: mq_rocketmq
+      - title: Nacos
+        layer: NACOS
+        description: Provide NACOS monitoring through OpenTelemetry's Prometheus Receiver.
+        documentLink: https://skywalking.apache.org/docs/main/next/en/setup/backend/backend-nacos-monitoring/
+        i18nKey: mq_nacos
   - title: Self Observability
     icon: self_observability
     description: Self Observability provides the observabilities for running components and servers from the SkyWalking ecosystem.

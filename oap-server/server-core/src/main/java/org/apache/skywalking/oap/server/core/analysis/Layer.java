@@ -218,7 +218,9 @@ public enum Layer {
     /**
      * A cloud native messaging and streaming platform, making it simple to build event-driven applications.
      */
-    ROCKETMQ(35, true);
+    ROCKETMQ(35, true),
+
+    NACOS(36,true);
 
     private final int value;
     /**
