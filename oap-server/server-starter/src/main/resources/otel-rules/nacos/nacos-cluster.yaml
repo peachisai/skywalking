@@ -40,7 +40,7 @@ metricsRules:
     exp: nacos_monitor.tagEqual('name', 'serviceCount').sum(['cluster'])
   - name: failed_push_count
     exp: nacos_monitor.tagEqual('name', 'failedPush').sum(['cluster'])
-  - name: success_push
+  - name: success_push_count
     exp: nacos_monitor.tagEqual('name', 'totalPush').sum(['cluster'])
   - name: max_push_cost
     exp: nacos_monitor.tagEqual('name', 'maxPushCost').sum(['cluster'])
@@ -51,12 +51,12 @@ metricsRules:
 
   # config
   - name: config_count
-    exp: nacos_monitor.tagMatch("name", "configCount").sum(['cluster'])
+    exp: nacos_monitor.tagEqual("name", "configCount").sum(['cluster'])
   - name: config_read_count
-    exp: nacos_monitor.tagMatch("name", "getConfig").sum(['cluster'])
+    exp: nacos_monitor.tagEqual("name", "getConfig").sum(['cluster'])
   - name: config_write_count
-    exp: nacos_monitor.tagMatch("name", "publish").sum(['cluster'])
+    exp: nacos_monitor.tagEqual("name", "publish").sum(['cluster'])
 
   # core
   - name: total_connection_count
-    exp: nacos_monitor.tagMatch("name", "longConnection").sum(['cluster'])
+    exp: nacos_monitor.tagEqual("name", "longConnection").sum(['cluster'])

@@ -33,7 +33,7 @@
 			}
 		}],
 		"id": "Nacos-Root",
-		"layer": "Nacos",
+		"layer": "NACOS",
 		"entity": "All",
 		"name": "Nacos-Root",
 		"isRoot": true
