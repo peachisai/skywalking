@@ -28,7 +28,7 @@
 #    "-P6H3M"    -- parses as "-6 hours and -3 minutes"
 #    "-P-6H+3M"  -- parses as "+6 hours and -3 minutes"
 # </pre>
-filter: "{ tags -> tags.job_name == 'nacos-node' }" # The OpenTelemetry job name
+filter: "{ tags -> tags.job_name == 'nacos-monitoring' }" # The OpenTelemetry job name
 expSuffix: tag({tags -> tags.cluster = 'nacos::' + tags.cluster}).instance(['cluster'], ['node'], Layer.NACOS)
 metricPrefix: meter_nacos_node
 metricsRules:
@@ -36,7 +36,7 @@ metricsRules:
   # jvm metrics
   - name: cpu_usage
     exp: system_cpu_usage.sum(['cluster', 'node'])*100
-  - name: memory_usage_percentage
+  - name: memory_usage
     exp: (jvm_memory_used_bytes * 100).tagMatch("area", "heap").sum(['cluster', 'node', 'area']) / (jvm_memory_max_bytes).tagMatch("area", "heap").sum(['cluster', 'broker', 'area'])
   - name: gc_count
     exp: jvm_gc_pause_seconds_count.sum(['cluster', 'node']).increase('PT1M')
