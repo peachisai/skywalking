@@ -35,13 +35,6 @@
   normal: false
   layers:
     - VIRTUAL_DATABASE
-- id: {{ b64enc "oap-server" }}.1
-  name: oap-server
-  group: ""
-  shortname: oap-server
-  normal: true
-  layers:
-    - SO11Y_OAP
 - id: {{ b64enc "satellite-service" }}.1
   name: satellite-service
   group: ""
