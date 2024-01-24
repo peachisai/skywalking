@@ -16,7 +16,7 @@
 # under the License.
 
 {{- contains .}}
-- id: {{ b64enc "oap-server" }}.1_{{ b64enc "http://localhost:1234" }}
+- id: {{ b64enc "satellite-service" }}.1_{{ b64enc "http://localhost:1234" }}
   name: http://localhost:1234
   attributes: []
   language: UNKNOWN
