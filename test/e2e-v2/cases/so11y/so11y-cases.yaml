@@ -43,5 +43,5 @@
     - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_oap_jvm_class_total_loaded_count --instance-name=http://localhost:1234 --service-name=satellite-service
       expected: expected/metrics-has-value.yml
     # service instance list
-    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance list --service-name=localhost:-1
+    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance list --service-name=e2e-service-provider
       expected: expected/service-instance.yml
