@@ -32,23 +32,25 @@ receivers:
               target_label: broker
               replacement: $$1
 
-exporters:
-  otlp:
-    endpoint: oap:11800
-    tls:
-      insecure: true
-    logging:
-      logLevel: debug
-
 processors:
   batch:
+
+exporters:
+  otlp:
+    # The OAP Server address
+    endpoint: "oap:11800"
+    # The config format of OTEL version prior to 0.34.0, eg. 0.29.0, should be:
+    # insecure: true
+    tls:
+      insecure: true
+    #insecure: true
+  # Exports data to the console
+  logging:
+    logLevel: debug
+
 service:
   pipelines:
     metrics:
-      receivers:
-        - prometheus
-      processors:
-        - batch
-      exporters:
-        - otlp
-        - logging
+      receivers: [prometheus]
+      processors: [batch]
+      exporters: [otlp, logging]
