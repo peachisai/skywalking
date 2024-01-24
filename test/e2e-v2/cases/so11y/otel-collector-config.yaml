@@ -18,7 +18,7 @@ receivers:
     config:
      scrape_configs:
        - job_name: 'skywalking-so11y'
-         scrape_interval: 5s
+         scrape_interval: 15s
          static_configs:
            - targets: ['oap:1234']
              labels:
