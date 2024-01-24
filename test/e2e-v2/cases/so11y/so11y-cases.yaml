@@ -20,7 +20,9 @@
     # service list
     - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
       expected: expected/service.yml
-
+    # service instance list
+    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance list --service-name=oap-server
+      expected: expected/service-instance.yml
     # service instance metrics
     - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_oap_instance_cpu_percentage --instance-name=http://localhost:1234 --service-name=satellite-service
       expected: expected/metrics-has-value.yml
@@ -38,10 +40,8 @@
       expected: expected/metrics-has-value.yml
     - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_oap_jvm_thread_runnable_count --instance-name=http://localhost:1234 --service-name=satellite-service
       expected: expected/metrics-has-value.yml
-    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_oap_jvm_class_loaded_count --instance-name=http://localhost:1234 --service-name=satellite-service
+    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_oap_jvm_class_loaded_count --instance-name=http://localhost:1234 --service-name=oap-server
       expected: expected/metrics-has-value.yml
-    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_oap_jvm_class_total_loaded_count --instance-name=http://localhost:1234 --service-name=satellite-service
+    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_oap_jvm_class_total_loaded_count --instance-name=http://localhost:1234 --service-name=oap-server
       expected: expected/metrics-has-value.yml
-    # service instance list
-    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance list --service-name=e2e-service-provider
-      expected: expected/service-instance.yml
+

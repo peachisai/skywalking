@@ -44,5 +44,5 @@ verify:
     interval: 3s
   cases:
     - includes:
-        - so11y-cases.yaml
         - satellite-cases.yaml
+        - so11y-cases.yaml
