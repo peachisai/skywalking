@@ -116,10 +116,6 @@ services:
     expose:
       - 55678
     depends_on:
-      broker1:
-        condition: service_healthy
-      broker2:
-        condition: service_healthy
       oap:
         condition: service_healthy
 
