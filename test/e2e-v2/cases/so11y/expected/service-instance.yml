@@ -20,5 +20,5 @@
   name: http://localhost:1234
   attributes: []
   language: UNKNOWN
-  instanceuuid: {{ b64enc "oap-server" }}.1_{{ b64enc "http://localhost:1234" }}
+  instanceuuid: {{ b64enc "satellite-service" }}.1_{{ b64enc "http://localhost:1234" }}
 {{- end}}
