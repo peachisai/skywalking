@@ -107,7 +107,7 @@ services:
         kafka-consumer-perf-test.sh --broker-list broker1:9092,broker2:9093 --topic perftest --messages 100000
 
   otel-collector:
-    image: otel/opentelemetry-collector:0.50.0
+    image: otel/opentelemetry-collector:0.92.0
     networks:
       - e2e
     command: [ "--config=/etc/otel-collector-config.yaml" ]
@@ -116,8 +116,13 @@ services:
     expose:
       - 55678
     depends_on:
-      - broker1
-      - broker2
+      broker1:
+        condition: service_healthy
+      broker2:
+        condition: service_healthy
+      oap:
+        condition: service_healthy
+
 
 networks:
   e2e:
