@@ -116,9 +116,8 @@ services:
     expose:
       - 55678
     depends_on:
-      oap:
-        condition: service_healthy
-
+      - broker1
+      - broker2
 
 networks:
   e2e:
