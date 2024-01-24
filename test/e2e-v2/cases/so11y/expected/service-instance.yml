@@ -16,9 +16,9 @@
 # under the License.
 
 {{- contains .}}
-- id: {{ b64enc "satellite-service" }}.1_{{ b64enc "http://localhost:1234" }}
+- id: {{ notEmpty .id }}
   name: http://localhost:1234
   attributes: []
   language: UNKNOWN
-  instanceuuid: {{ b64enc "satellite-service" }}.1_{{ b64enc "http://localhost:1234" }}
+  instanceuuid: {{ notEmpty .instanceuuid }}
 {{- end}}
