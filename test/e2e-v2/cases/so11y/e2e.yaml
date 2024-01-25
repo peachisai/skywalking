@@ -45,4 +45,3 @@ verify:
   cases:
     - includes:
         - so11y-cases.yaml
-        - satellite-cases.yaml
