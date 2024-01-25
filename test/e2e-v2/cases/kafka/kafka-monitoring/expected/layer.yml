@@ -14,18 +14,5 @@
 # limitations under the License.
 
 {{- contains . }}
-- id: {{ b64enc "oapServer" }}.1
-  name: oapServer
-  group: ""
-  shortname: oapServer
-  normal: false
-  layers:
-    - SO11Y_OAP
-- id: {{ b64enc "oap-server" }}.1
-  name: oap-server
-  group: ""
-  shortname: oap-server
-  normal: false
-  layers:
-    - SO11Y_OAP
+- KAFKA
 {{- end }}

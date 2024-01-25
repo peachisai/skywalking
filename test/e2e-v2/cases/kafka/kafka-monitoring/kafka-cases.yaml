@@ -17,6 +17,8 @@
 
 cases:
   # service cases
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql layer ls
+    expected: expected/layer.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
     expected: expected/service.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_kafka_under_replicated_partitions --service-name=kafka::kafka-cluster

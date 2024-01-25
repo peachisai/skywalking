@@ -20,7 +20,7 @@ receivers:
         - job_name: "kafka-monitoring"
           scrape_interval: 30s
           static_configs:
-            - targets: ['rocketmq-exporter:5557']
+            - targets: ['kafka-broker2:7072','kafka-broker1:7071']
           relabel_configs:
             - source_labels: [ ]
               target_label: cluster
