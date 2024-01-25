@@ -14,10 +14,10 @@
 # limitations under the License.
 
   {{- contains . }}
-- id: {{ b64enc "kafka::kafka-cluster" }}.1
-  name: kafka::kafka-cluster
+- id: {{ b64enc "kafka::kafkaCluster" }}.1
+  name: kafka::kafkaCluster
   group: kafka
-  shortname: kafka-cluster
+  shortname: kafkaCluster
   layers:
     - KAFKA
   normal: true
