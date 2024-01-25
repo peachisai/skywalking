@@ -26,6 +26,8 @@ services:
     ports:
       - 12800
       - 1234
+    networks:
+      - e2e
 
   otel-collector:
     image: otel/opentelemetry-collector:${OTEL_COLLECTOR_VERSION}
