@@ -23,7 +23,7 @@ receivers:
            - targets: ['oap:1234']
              labels:
                host_name: http://localhost:1234
-               service: oapServer
+               service: oap-server
 processors:
   batch:
 

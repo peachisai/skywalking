@@ -39,12 +39,12 @@ services:
       timeout: 60s
       retries: 120
 
-  broker1:
+  kafka-broker1:
     build:
       context: .
     expose:
-      - 9092
-      - 7071
+      - "9092:9092"
+      - "7071:7071"
     networks:
       - e2e
     environment:
@@ -60,12 +60,12 @@ services:
        timeout: 60s
        retries: 120
     
-  broker2:
+  kafka-broker2:
     build:
       context: .
     expose:
-      - 9093
-      - 7072
+      - "9093:9093"
+      - "7072:7072"
     networks:
       - e2e
     environment:
@@ -86,8 +86,8 @@ services:
     networks:
       - e2e
     depends_on:
-      - broker1
-      - broker2
+      - kafka-broker1
+      - kafka-broker2
     command:
       - bash
       - -c
@@ -107,7 +107,7 @@ services:
         kafka-consumer-perf-test.sh --broker-list broker1:9092,broker2:9093 --topic perftest --messages 100000
 
   otel-collector:
-    image: otel/opentelemetry-collector:0.92.0
+    image: otel/opentelemetry-collector:0.70.0
     networks:
       - e2e
     command: [ "--config=/etc/otel-collector-config.yaml" ]
@@ -116,8 +116,8 @@ services:
     expose:
       - 55678
     depends_on:
-      - broker1
-      - broker2
+      oap:
+        condition: service_healthy
 
 networks:
   e2e:
