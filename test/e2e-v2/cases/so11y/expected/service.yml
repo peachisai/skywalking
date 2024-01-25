@@ -35,4 +35,11 @@
   normal: false
   layers:
     - VIRTUAL_DATABASE
+- id: {{ b64enc "oapServer" }}.1
+  name: oapServer
+  group: ""
+  shortname: oapServer
+  normal: false
+  layers:
+    - SO11Y_OAP
 {{- end }}
