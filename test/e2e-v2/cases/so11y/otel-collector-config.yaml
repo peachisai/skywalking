@@ -21,9 +21,14 @@ receivers:
          scrape_interval: 5s
          static_configs:
            - targets: ['oap:1234']
-             labels:
-               host_name: http://localhost:1234
-               service: oap-server
+         relabel_configs:
+           - source_labels: [ ]
+             target_label: cluster
+             replacement: oap-server
+           - source_labels: [ ]
+             target_label: host_name
+             replacement: http://localhost:1234
+
 processors:
   batch:
 
