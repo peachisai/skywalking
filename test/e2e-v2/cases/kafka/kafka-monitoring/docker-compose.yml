@@ -42,7 +42,7 @@ services:
   kafka-broker1:
     build:
       context: .
-    expose:
+    ports:
       - "9092:9092"
       - "7071:7071"
     networks:
@@ -63,7 +63,7 @@ services:
   kafka-broker2:
     build:
       context: .
-    expose:
+    ports:
       - "9093:9093"
       - "7072:7072"
     networks:
