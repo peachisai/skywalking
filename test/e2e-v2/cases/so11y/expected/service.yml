@@ -28,10 +28,10 @@
   normal: true
   layers:
     - GENERAL
-- id: {{ b64enc "oap-server" }}.1
-  name: oap-server
+- id: {{ b64enc "_blank" }}.1
+  name: ""
   group: ""
-  shortname: oap-server
+  shortname: ""
   normal: true
   layers:
     - SO11Y_OAP
