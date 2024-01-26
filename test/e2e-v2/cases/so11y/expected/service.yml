@@ -15,9 +15,9 @@
 
 {{- contains . }}
 - id: {{ b64enc "oap-server" }}.1
-  name: oap-server
+  name: not null
   group: ""
-  shortname: oap-server
+  shortname: not null
   normal: true
   layers:
     - SO11Y_OAP
