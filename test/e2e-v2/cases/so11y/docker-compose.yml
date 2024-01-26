@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '3'
+version: '2.1'
 
 services:
   oap:
@@ -27,9 +27,6 @@ services:
     ports:
       - 12800
       - 1234
-      - 11800
-    networks:
-      - e2e
 
   provider:
     extends:
@@ -37,8 +34,6 @@ services:
       service: provider
     ports:
       - 9090
-    networks:
-      - e2e
     environment:
       SW_AGENT_COLLECTOR_BACKEND_SERVICES: satellite:11800
     depends_on:
@@ -55,8 +50,6 @@ services:
       - 9092
     environment:
       SW_AGENT_COLLECTOR_BACKEND_SERVICES: satellite:11800
-    networks:
-      - e2e
     depends_on:
       provider:
         condition: service_healthy
