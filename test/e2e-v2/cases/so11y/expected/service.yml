@@ -18,7 +18,7 @@
   name: oap-server
   group: ""
   shortname: oap-server
-  normal: false
+  normal: true
   layers:
     - SO11Y_OAP
 {{- end }}
