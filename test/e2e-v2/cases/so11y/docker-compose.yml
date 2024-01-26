@@ -34,7 +34,7 @@ services:
     ports:
       - 9090
     environment:
-      SW_AGENT_COLLECTOR_BACKEND_SERVICES: satellite:11800
+      SW_AGENT_COLLECTOR_BACKEND_SERVICES: oap:11800
     depends_on:
       oap:
         condition: service_healthy
@@ -48,7 +48,7 @@ services:
     ports:
       - 9092
     environment:
-      SW_AGENT_COLLECTOR_BACKEND_SERVICES: satellite:11800
+      SW_AGENT_COLLECTOR_BACKEND_SERVICES: oap:11800
     depends_on:
       provider:
         condition: service_healthy
