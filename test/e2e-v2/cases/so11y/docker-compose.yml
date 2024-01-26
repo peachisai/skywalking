@@ -70,7 +70,7 @@ services:
       context: ../satellite
       dockerfile: Dockerfile.satellite
       args:
-        - SW_AGENT_SATELLITE_COMMIT=0.70.0
+        - SW_AGENT_SATELLITE_COMMIT=${SW_AGENT_SATELLITE_COMMIT}
     expose:
       - 11800
     environment:
