@@ -339,6 +339,8 @@ jobs:
         test:
           - name: So11y
             config: test/e2e-v2/cases/so11y/e2e.yaml
+          - name: Kafka
+            config: test/e2e-v2/cases/kafka/kafka-monitoring/e2e.yaml
 
     steps:
       - uses: actions/checkout@v3
