@@ -24,6 +24,12 @@ receivers:
              labels:
                host_name: http://localhost:1234
                service: oap-server
+         relabel_configs:
+           - source_labels: [ ]
+             target_label: service
+             replacement: oapServer
+
+
 processors:
   batch:
 
@@ -33,7 +39,7 @@ exporters:
     tls:
       insecure: true
   logging:
-    logLevel: debug
+    loglevel: debug
 
 service:
   pipelines:
