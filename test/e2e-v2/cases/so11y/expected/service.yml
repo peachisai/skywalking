@@ -15,9 +15,9 @@
 
 {{- contains . }}
 - id: {{ b64enc "_blank" }}.1
-  name: not null
+  name: ""
   group: ""
-  shortname: not null
+  shortname: ""
   normal: true
   layers:
     - SO11Y_OAP
