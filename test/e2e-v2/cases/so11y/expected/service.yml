@@ -14,7 +14,7 @@
 # limitations under the License.
 
 {{- contains . }}
-- id: {{ b64enc "oap-server" }}.1
+- id: {{ b64enc "_blank" }}.1
   name: not null
   group: ""
   shortname: not null
