@@ -28,6 +28,13 @@
   normal: true
   layers:
     - GENERAL
+- id: {{ b64enc "localhost:-1" }}.0
+  name: localhost:-1
+  group: ""
+  shortname: localhost:-1
+  normal: false
+  layers:
+    - VIRTUAL_DATABASE
 - id: {{ b64enc "_blank" }}.1
   name: ""
   group: ""
