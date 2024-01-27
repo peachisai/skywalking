@@ -46,7 +46,7 @@ exporters:
     #insecure: true
   # Exports data to the console
   logging:
-    loglevel: debug
+    logLevel: debug
 
 service:
   pipelines:
