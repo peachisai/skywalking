@@ -25,8 +25,10 @@ services:
       SW_TELEMETRY: prometheus
       SW_METER_ANALYZER_ACTIVE_FILES: satellite
     ports:
-      - 12800
-      - 1234
+      - "12800:12800"
+      - "1234:1234"
+    networks:
+      - e2e
 
   provider:
     extends:
@@ -41,6 +43,8 @@ services:
         condition: service_healthy
       satellite:
         condition: service_healthy
+    networks:
+      - e2e
 
   consumer:
     extends:
@@ -53,6 +57,8 @@ services:
     depends_on:
       provider:
         condition: service_healthy
+    networks:
+      - e2e
 
   otel-collector:
     image: otel/opentelemetry-collector:0.50.0
