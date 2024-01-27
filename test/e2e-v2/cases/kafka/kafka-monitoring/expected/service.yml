@@ -14,7 +14,7 @@
 # limitations under the License.
 
   {{- contains . }}
-- id: {{ b64enc "kafka::kafka-cluster" }}.1
+- id: {{ notEmpty .id }}
   name: kafka::kafka-cluster
   group: kafka
   shortname: kafka-cluster

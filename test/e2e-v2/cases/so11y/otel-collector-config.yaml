@@ -27,7 +27,7 @@ receivers:
          relabel_configs:
            - source_labels: [ ]
              target_label: service
-             replacement: oapServer
+             replacement: oap-server
 
 
 processors:
