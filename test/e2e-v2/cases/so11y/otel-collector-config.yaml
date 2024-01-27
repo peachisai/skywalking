@@ -23,12 +23,10 @@ receivers:
            - targets: ['oap:1234']
              labels:
                host_name: http://localhost:1234
-               service: oap-server
          relabel_configs:
            - source_labels: [ ]
              target_label: service
              replacement: oap-server
-
 
 processors:
   batch:
