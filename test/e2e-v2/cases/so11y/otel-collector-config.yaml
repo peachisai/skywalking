@@ -20,7 +20,7 @@ receivers:
        - job_name: 'skywalking-so11y'
          scrape_interval: 5s
          static_configs:
-           - targets: ['oap:1234']
+           - targets: ['oap-server:1234']
              labels:
                host_name: http://localhost:1234
                service: oap-server
@@ -33,7 +33,7 @@ exporters:
     tls:
       insecure: true
   logging:
-    logLevel: debug
+    loglevel: debug
 
 service:
   pipelines:
