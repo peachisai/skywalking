@@ -63,7 +63,7 @@ metricsRules:
     exp: rocketmq_consumer_message_size.sum(['cluster','topic','group']).downsampling(MAX)
 
   - name: consumer_group_count
-    exp: rocketmq_consumer_offset.downsampling(COUNT)
+    exp: latest(rocketmq_consumer_offset.sum(['cluster','topic','broker']).downsampling(COUNT))
 
   - name: backlog_message_count
     exp: rocketmq_producer_offset.sum(['cluster','topic'])*consumer_group_count - rocketmq_consumer_offset.sum(['cluster','topic'])
