@@ -29,6 +29,7 @@ import org.apache.skywalking.oap.server.core.analysis.meter.function.AcceptableV
 import org.apache.skywalking.oap.server.core.analysis.meter.function.MeterFunction;
 import org.apache.skywalking.oap.server.core.analysis.metrics.DataTable;
 import org.apache.skywalking.oap.server.core.analysis.metrics.LabeledValueHolder;
+import org.apache.skywalking.oap.server.core.analysis.metrics.LongValueHolder;
 import org.apache.skywalking.oap.server.core.analysis.metrics.Metrics;
 import org.apache.skywalking.oap.server.core.query.sql.Function;
 import org.apache.skywalking.oap.server.core.remote.grpc.proto.RemoteData;
@@ -43,7 +44,7 @@ import java.util.Objects;
 
 @MeterFunction(functionName = "countLabeled")
 @ToString
-public abstract class CountLabeledFunction extends Meter implements AcceptableValue<DataTable>, LabeledValueHolder {
+public abstract class CountLabeledFunction extends Meter implements AcceptableValue<DataTable>, LongValueHolder {
 
     public static final String VALUE = "datatable_value";
 
@@ -63,14 +64,10 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
 
     @Getter
     @Setter
-    @Column(name = VALUE, dataType = Column.ValueDataType.COMMON_VALUE, function = Function.MAX)
+    @Column(name = VALUE, dataType = Column.ValueDataType.COMMON_VALUE, function = Function.None)
     @BanyanDB.MeasureField
     private long value;
 
-    @Getter
-    @Setter
-    @Column(name = VALUE, dataType = Column.ValueDataType.LABELED_VALUE, storageOnly = true)
-    @BanyanDB.MeasureField
     private DataTable dataTable = new DataTable(30);
 
     @Override
