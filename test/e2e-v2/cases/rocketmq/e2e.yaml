@@ -34,4 +34,4 @@ verify:
     interval: 3s
   cases:
     - includes:
-        - ./rocketmq-cases.yaml
+        - ./nacos-cases.yaml

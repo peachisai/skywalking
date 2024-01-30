@@ -30,6 +30,7 @@ import org.apache.skywalking.oap.server.core.analysis.meter.function.MeterFuncti
 import org.apache.skywalking.oap.server.core.analysis.metrics.DataTable;
 import org.apache.skywalking.oap.server.core.analysis.metrics.LabeledValueHolder;
 import org.apache.skywalking.oap.server.core.analysis.metrics.Metrics;
+import org.apache.skywalking.oap.server.core.query.sql.Function;
 import org.apache.skywalking.oap.server.core.remote.grpc.proto.RemoteData;
 import org.apache.skywalking.oap.server.core.storage.StorageID;
 import org.apache.skywalking.oap.server.core.storage.annotation.BanyanDB;
@@ -62,21 +63,27 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
 
     @Getter
     @Setter
+    @Column(name = VALUE, dataType = Column.ValueDataType.COMMON_VALUE, function = Function.MAX)
+    @BanyanDB.MeasureField
+    private long value;
+
+    @Getter
+    @Setter
     @Column(name = VALUE, dataType = Column.ValueDataType.LABELED_VALUE, storageOnly = true)
     @BanyanDB.MeasureField
-    private DataTable value = new DataTable(30);
+    private DataTable dataTable = new DataTable(30);
 
     @Override
     public void accept(final MeterEntity entity, final DataTable value) {
         setEntityId(entity.id());
         setServiceId(entity.serviceId());
-        this.value.appendCount(value);
+        this.dataTable.appendCount(value);
     }
 
     @Override
     public final boolean combine(Metrics metrics) {
         final CountLabeledFunction countLabeledFunction = (CountLabeledFunction) metrics;
-        this.value.setMaxValue(countLabeledFunction.getValue());
+        this.dataTable.appendCount(countLabeledFunction.dataTable);
         return true;
     }
 
@@ -91,7 +98,7 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
         metrics.setEntityId(getEntityId());
         metrics.setTimeBucket(toTimeBucketInHour());
         metrics.setServiceId(getServiceId());
-        metrics.getValue().copyFrom(getValue());
+        metrics.setValue(getValue());
         return metrics;
     }
 
@@ -101,7 +108,7 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
         metrics.setEntityId(getEntityId());
         metrics.setTimeBucket(toTimeBucketInDay());
         metrics.setServiceId(getServiceId());
-        metrics.getValue().copyFrom(getValue());
+        metrics.setValue(getValue());
         return metrics;
     }
 
@@ -114,8 +121,8 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
 
     @Override
     public void deserialize(final RemoteData remoteData) {
-        setValue(new DataTable(remoteData.getDataObjectStrings(0)));
-        setTimeBucket(remoteData.getDataLongs(0));
+        setValue(remoteData.getDataLongs(0));
+        setTimeBucket(remoteData.getDataLongs(1));
 
         setEntityId(remoteData.getDataStrings(0));
         setServiceId(remoteData.getDataStrings(1));
@@ -124,7 +131,7 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
     @Override
     public RemoteData.Builder serialize() {
         final RemoteData.Builder remoteBuilder = RemoteData.newBuilder();
-        remoteBuilder.addDataObjectStrings(value.toStorageData());
+        remoteBuilder.addDataLongs(dataTable.size());
         remoteBuilder.addDataLongs(getTimeBucket());
 
         remoteBuilder.addDataStrings(entityId);
@@ -152,7 +159,7 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
                     throw new UnexpectedException("createNew should not be called");
                 }
             };
-            metrics.setValue(new DataTable((String) converter.get(VALUE)));
+            metrics.setValue(((Number) converter.get(VALUE)).longValue());
             metrics.setTimeBucket(((Number) converter.get(TIME_BUCKET)).longValue());
             metrics.setServiceId((String) converter.get(InstanceTraffic.SERVICE_ID));
             metrics.setEntityId((String) converter.get(ENTITY_ID));

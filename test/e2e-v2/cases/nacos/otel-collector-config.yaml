@@ -26,14 +26,15 @@ receivers:
               target_label: cluster
               replacement: nacos-cluster
 
+processors:
+  batch:
+
 exporters:
   otlp:
     endpoint: oap:11800
     tls:
       insecure: true
 
-processors:
-  batch:
 service:
   pipelines:
     metrics:
