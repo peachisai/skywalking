@@ -65,7 +65,7 @@ public abstract class CountLabeledFunction extends Meter implements AcceptableVa
 
     @Getter
     @Setter
-    @Column(name = VALUE, dataType = Column.ValueDataType.COMMON_VALUE, function = Function.MAX)
+    @Column(name = VALUE, dataType = Column.ValueDataType.COMMON_VALUE)
     @BanyanDB.MeasureField
     private long value;
 
