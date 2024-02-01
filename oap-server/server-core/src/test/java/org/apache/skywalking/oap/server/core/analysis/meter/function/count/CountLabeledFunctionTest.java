@@ -45,8 +45,6 @@ public class CountLabeledFunctionTest {
 
     private static final DataTable HTTP_CODE_COUNT_2 = new DataTable("200,1|301,4|404,5|502,1|505,1");
 
-    private static final DataTable HTTP_CODE_COUNT_3 = new DataTable("200,2|301,4|404,5|502,4|505,1");
-
     private CountLabeledFunction function;
 
     @BeforeAll
@@ -69,10 +67,10 @@ public class CountLabeledFunctionTest {
     @Test
     public void testAccept() {
         function.accept(MeterEntity.newService("service-test", Layer.GENERAL), HTTP_CODE_COUNT_1);
-        assertThat(function.getValue()).isEqualTo(HTTP_CODE_COUNT_1);
+        assertThat(function.getValue()).isEqualTo(HTTP_CODE_COUNT_1.size());
 
         function.accept(MeterEntity.newService("service-test", Layer.GENERAL), HTTP_CODE_COUNT_2);
-        assertThat(function.getValue()).isEqualTo(HTTP_CODE_COUNT_3);
+        assertThat(function.getValue()).isEqualTo(HTTP_CODE_COUNT_2.size());
     }
 
     @Test
@@ -81,7 +79,7 @@ public class CountLabeledFunctionTest {
         function.accept(MeterEntity.newService("service-test", Layer.GENERAL), HTTP_CODE_COUNT_2);
         function.calculate();
 
-        assertThat(function.getValue()).isEqualTo(HTTP_CODE_COUNT_3);
+        assertThat(function.getValue()).isEqualTo(HTTP_CODE_COUNT_2.size());
     }
 
     @Test
@@ -93,7 +91,7 @@ public class CountLabeledFunctionTest {
         final CountLabeledFunction hourFunction = (CountLabeledFunction) function.toHour();
         hourFunction.calculate();
 
-        assertThat(hourFunction.getValue()).isEqualTo(HTTP_CODE_COUNT_3);
+        assertThat(hourFunction.getValue()).isEqualTo(HTTP_CODE_COUNT_2.size());
     }
 
     @Test
@@ -111,7 +109,7 @@ public class CountLabeledFunctionTest {
         final CountLabeledFunction dayFunction = (CountLabeledFunction) function.toDay();
         dayFunction.calculate();
 
-        assertThat(dayFunction.getValue()).isEqualTo(HTTP_CODE_COUNT_3);
+        assertThat(dayFunction.getValue()).isEqualTo(HTTP_CODE_COUNT_2.size());
     }
 
     @Test
@@ -137,7 +135,7 @@ public class CountLabeledFunctionTest {
         final HashMapConverter.ToStorage toStorage = new HashMapConverter.ToStorage();
         storageBuilder.entity2Storage(function, toStorage);
         final Map<String, Object> map = toStorage.obtain();
-        map.put(CountLabeledFunction.VALUE, ((DataTable) map.get(CountLabeledFunction.VALUE)).toStorageData());
+        map.put(CountLabeledFunction.VALUE, map.get(CountLabeledFunction.VALUE));
 
         CountLabeledFunction function2 = storageBuilder.storage2Entity(new HashMapConverter.ToEntity(map));
 
