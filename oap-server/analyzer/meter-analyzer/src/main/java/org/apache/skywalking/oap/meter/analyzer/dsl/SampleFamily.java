@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 
+import com.google.common.collect.ImmutableCollection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.skywalking.oap.meter.analyzer.dsl.EntityDescription.EndpointEntityDescription;
 import org.apache.skywalking.oap.meter.analyzer.dsl.EntityDescription.EntityDescription;
@@ -39,6 +40,7 @@ import org.apache.skywalking.oap.server.core.analysis.Layer;
 import org.apache.skywalking.oap.server.core.analysis.meter.MeterEntity;
 import org.apache.skywalking.oap.server.core.analysis.meter.ScopeType;
 import org.apache.skywalking.oap.server.core.source.DetectPoint;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,11 +49,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -216,6 +220,43 @@ public class SampleFamily {
         return aggregate(by, Double::min);
     }
 
+    public SampleFamily count(List<String> by) {
+        ExpressionParsingContext.get().ifPresent(ctx -> ctx.aggregationLabels.addAll(by));
+        if (this == EMPTY) {
+            return EMPTY;
+        }
+        if (by == null) {
+            double result = Arrays.stream(samples).mapToDouble(Sample::getValue).average().orElse(0.0D);
+            return SampleFamily.build(
+                    this.context, InternalOps.newSample(samples[0].name, ImmutableMap.of(), samples[0].timestamp, result));
+        }
+
+        for (Sample sample : samples) {
+            ImmutableMap<String, String> labels = sample.labels;
+            ImmutableCollection<String> values = labels.values();
+            Arrays.stream(samples).collect(groupingBy(it -> InternalOps.getLabels()))
+        }
+
+        Stream<Map.Entry<ImmutableMap<String, String>, List<Sample>>> stream = Arrays.stream(samples)
+                .collect(groupingBy(it -> InternalOps.getLabels(by, it), mapping(identity(), toList())))
+                .entrySet().stream();
+
+        Sample[] array = stream
+                .map(entry -> InternalOps.newSample(
+                        entry.getValue().get(0).getName(),
+                        entry.getKey(),
+                        entry.getValue().get(0).getTimestamp(),
+                        entry.getValue().size()
+                ))
+                .toArray(Sample[]::new);
+
+        SampleFamily sampleFamily = SampleFamily.build(
+                this.context,
+                array
+        );
+        return sampleFamily;
+    }
+
     public SampleFamily avg(List<String> by) {
         ExpressionParsingContext.get().ifPresent(ctx -> ctx.aggregationLabels.addAll(by));
         if (this == EMPTY) {
@@ -224,21 +265,21 @@ public class SampleFamily {
         if (by == null) {
             double result = Arrays.stream(samples).mapToDouble(Sample::getValue).average().orElse(0.0D);
             return SampleFamily.build(
-                this.context, InternalOps.newSample(samples[0].name, ImmutableMap.of(), samples[0].timestamp, result));
+                    this.context, InternalOps.newSample(samples[0].name, ImmutableMap.of(), samples[0].timestamp, result));
         }
 
         return SampleFamily.build(
-            this.context,
-            Arrays.stream(samples)
-                  .collect(groupingBy(it -> InternalOps.getLabels(by, it), mapping(identity(), toList())))
-                  .entrySet().stream()
-                  .map(entry -> InternalOps.newSample(
-                      entry.getValue().get(0).getName(),
-                      entry.getKey(),
-                      entry.getValue().get(0).getTimestamp(),
-                      entry.getValue().stream().mapToDouble(Sample::getValue).average().orElse(0.0D)
-                  ))
-                  .toArray(Sample[]::new)
+                this.context,
+                Arrays.stream(samples)
+                        .collect(groupingBy(it -> InternalOps.getLabels(by, it), mapping(identity(), toList())))
+                        .entrySet().stream()
+                        .map(entry -> InternalOps.newSample(
+                                entry.getValue().get(0).getName(),
+                                entry.getKey(),
+                                entry.getValue().get(0).getTimestamp(),
+                                entry.getValue().stream().mapToDouble(Sample::getValue).average().orElse(0.0D)
+                        ))
+                        .toArray(Sample[]::new)
         );
     }
 
@@ -250,20 +291,20 @@ public class SampleFamily {
         if (by == null) {
             double result = Arrays.stream(samples).mapToDouble(s -> s.value).reduce(aggregator).orElse(0.0D);
             return SampleFamily.build(
-                this.context, InternalOps.newSample(samples[0].name, ImmutableMap.of(), samples[0].timestamp, result));
+                    this.context, InternalOps.newSample(samples[0].name, ImmutableMap.of(), samples[0].timestamp, result));
         }
         return SampleFamily.build(
-            this.context,
-            Arrays.stream(samples)
-                  .collect(groupingBy(it -> InternalOps.getLabels(by, it), mapping(identity(), toList())))
-                  .entrySet().stream()
-                  .map(entry -> InternalOps.newSample(
-                      entry.getValue().get(0).getName(),
-                      entry.getKey(),
-                      entry.getValue().get(0).getTimestamp(),
-                      entry.getValue().stream().mapToDouble(Sample::getValue).reduce(aggregator).orElse(0.0D)
-                  ))
-                  .toArray(Sample[]::new)
+                this.context,
+                Arrays.stream(samples)
+                        .collect(groupingBy(it -> InternalOps.getLabels(by, it), mapping(identity(), toList())))
+                        .entrySet().stream()
+                        .map(entry -> InternalOps.newSample(
+                                entry.getValue().get(0).getName(),
+                                entry.getKey(),
+                                entry.getValue().get(0).getTimestamp(),
+                                entry.getValue().stream().mapToDouble(Sample::getValue).reduce(aggregator).orElse(0.0D)
+                        ))
+                        .toArray(Sample[]::new)
         );
     }
 
@@ -274,14 +315,14 @@ public class SampleFamily {
             return EMPTY;
         }
         return SampleFamily.build(
-            this.context,
-            Arrays.stream(samples)
-                  .map(sample -> sample.increase(
-                      range,
-                      context.metricName,
-                      (lowerBoundValue, unused) -> sample.value - lowerBoundValue
-                  ))
-                  .toArray(Sample[]::new)
+                this.context,
+                Arrays.stream(samples)
+                        .map(sample -> sample.increase(
+                                range,
+                                context.metricName,
+                                (lowerBoundValue, unused) -> sample.value - lowerBoundValue
+                        ))
+                        .toArray(Sample[]::new)
         );
     }
 
@@ -291,17 +332,17 @@ public class SampleFamily {
             return EMPTY;
         }
         return SampleFamily.build(
-            this.context,
-            Arrays.stream(samples)
-                  .map(sample -> sample.increase(
-                      range,
-                      context.metricName,
-                      (lowerBoundValue, lowerBoundTime) -> {
-                          final long timeDiff = (sample.timestamp - lowerBoundTime) / 1000;
-                          return timeDiff < 1L ? 0.0 : (sample.value - lowerBoundValue) / timeDiff;
-                      }
-                  ))
-                  .toArray(Sample[]::new)
+                this.context,
+                Arrays.stream(samples)
+                        .map(sample -> sample.increase(
+                                range,
+                                context.metricName,
+                                (lowerBoundValue, lowerBoundTime) -> {
+                                    final long timeDiff = (sample.timestamp - lowerBoundTime) / 1000;
+                                    return timeDiff < 1L ? 0.0 : (sample.value - lowerBoundValue) / timeDiff;
+                                }
+                        ))
+                        .toArray(Sample[]::new)
         );
     }
 
@@ -310,16 +351,16 @@ public class SampleFamily {
             return EMPTY;
         }
         return SampleFamily.build(
-            this.context,
-            Arrays.stream(samples)
-                  .map(sample -> sample.increase(
-                      context.metricName,
-                      (lowerBoundValue, lowerBoundTime) -> {
-                          final long timeDiff = (sample.timestamp - lowerBoundTime) / 1000;
-                          return timeDiff < 1L ? 0.0 : (sample.value - lowerBoundValue) / timeDiff;
-                      }
-                  ))
-                  .toArray(Sample[]::new)
+                this.context,
+                Arrays.stream(samples)
+                        .map(sample -> sample.increase(
+                                context.metricName,
+                                (lowerBoundValue, lowerBoundTime) -> {
+                                    final long timeDiff = (sample.timestamp - lowerBoundTime) / 1000;
+                                    return timeDiff < 1L ? 0.0 : (sample.value - lowerBoundValue) / timeDiff;
+                                }
+                        ))
+                        .toArray(Sample[]::new)
         );
     }
 
@@ -329,20 +370,20 @@ public class SampleFamily {
             return EMPTY;
         }
         return SampleFamily.build(
-            this.context,
-            Arrays.stream(samples)
-                  .map(sample -> {
-                      Object delegate = new Object();
-                      Closure<?> c = cl.rehydrate(delegate, sample, delegate);
-                      Map<String, String> arg = Maps.newHashMap(sample.labels);
-                      Object r = c.call(arg);
-                      return sample.toBuilder()
-                                   .labels(
-                                       ImmutableMap.copyOf(
-                                           Optional.ofNullable((r instanceof Map) ? (Map<String, String>) r : null)
-                                                   .orElse(arg)))
-                                   .build();
-                  }).toArray(Sample[]::new)
+                this.context,
+                Arrays.stream(samples)
+                        .map(sample -> {
+                            Object delegate = new Object();
+                            Closure<?> c = cl.rehydrate(delegate, sample, delegate);
+                            Map<String, String> arg = Maps.newHashMap(sample.labels);
+                            Object r = c.call(arg);
+                            return sample.toBuilder()
+                                    .labels(
+                                            ImmutableMap.copyOf(
+                                                    Optional.ofNullable((r instanceof Map) ? (Map<String, String>) r : null)
+                                                            .orElse(arg)))
+                                    .build();
+                        }).toArray(Sample[]::new)
         );
     }
 
@@ -351,8 +392,8 @@ public class SampleFamily {
             return EMPTY;
         }
         final Sample[] filtered = Arrays.stream(samples)
-                                        .filter(it -> filter.call(it.labels))
-                                        .toArray(Sample[]::new);
+                .filter(it -> filter.call(it.labels))
+                .toArray(Sample[]::new);
         if (filtered.length == 0) {
             return EMPTY;
         }
@@ -372,7 +413,7 @@ public class SampleFamily {
         }
 
         return SampleFamily.build(
-            this.context, type.execute(samples, newLabelName, existingLabelName, namespaceLabelName));
+                this.context, type.execute(samples, newLabelName, existingLabelName, namespaceLabelName));
     }
 
     public SampleFamily histogram() {
@@ -391,26 +432,26 @@ public class SampleFamily {
             return EMPTY;
         }
         return SampleFamily.build(
-            this.context,
-            Stream.concat(
-                Arrays.stream(samples).filter(s -> !s.labels.containsKey(le)),
-                Arrays.stream(samples)
-                      .filter(s -> s.labels.containsKey(le))
-                      .sorted(Comparator.comparingDouble(s -> Double.parseDouble(s.labels.get(le))))
-                      .map(s -> {
-                          double r = s.value;
-                          ImmutableMap<String, String> ll = ImmutableMap.<String, String>builder()
-                                                                        .putAll(Maps.filterKeys(s.labels,
-                                                                                                key -> !Objects.equals(
-                                                                                                    key, le)
-                                                                        ))
-                                                                        .put(
-                                                                            "le",
-                                                                            String.valueOf((long) ((Double.parseDouble(s.labels.get(le))) * scale)))
-                                                                        .build();
-                          return InternalOps.newSample(s.name, ll, s.timestamp, r);
-                      })
-            ).toArray(Sample[]::new)
+                this.context,
+                Stream.concat(
+                        Arrays.stream(samples).filter(s -> !s.labels.containsKey(le)),
+                        Arrays.stream(samples)
+                                .filter(s -> s.labels.containsKey(le))
+                                .sorted(Comparator.comparingDouble(s -> Double.parseDouble(s.labels.get(le))))
+                                .map(s -> {
+                                    double r = s.value;
+                                    ImmutableMap<String, String> ll = ImmutableMap.<String, String>builder()
+                                            .putAll(Maps.filterKeys(s.labels,
+                                                    key -> !Objects.equals(
+                                                            key, le)
+                                            ))
+                                            .put(
+                                                    "le",
+                                                    String.valueOf((long) ((Double.parseDouble(s.labels.get(le))) * scale)))
+                                            .build();
+                                    return InternalOps.newSample(s.name, ll, s.timestamp, r);
+                                })
+                ).toArray(Sample[]::new)
         );
     }
 
@@ -419,7 +460,7 @@ public class SampleFamily {
         int[] p = percentiles.stream().mapToInt(i -> i).toArray();
         ExpressionParsingContext.get().ifPresent(ctx -> {
             Preconditions.checkState(
-                ctx.isHistogram, "histogram() should be invoked before invoking histogram_percentile()");
+                    ctx.isHistogram, "histogram() should be invoked before invoking histogram_percentile()");
             ctx.percentiles = p;
         });
         return this;
@@ -463,7 +504,7 @@ public class SampleFamily {
             return EMPTY;
         }
         return createMeterSamples(new InstanceEntityDescription(
-            serviceKeys, instanceKeys, layer, serviceDelimiter, instanceDelimiter, propertiesExtractor));
+                serviceKeys, instanceKeys, layer, serviceDelimiter, instanceDelimiter, propertiesExtractor));
     }
 
     public SampleFamily instance(List<String> serviceKeys, List<String> instanceKeys, Layer layer) {
@@ -570,14 +611,14 @@ public class SampleFamily {
     private SampleFamily createMeterSamples(EntityDescription entityDescription) {
         Map<MeterEntity, Sample[]> meterSamples = new HashMap<>();
         Arrays.stream(samples)
-              .collect(groupingBy(it -> InternalOps.getLabels(entityDescription.getLabelKeys(), it),
-                                  mapping(identity(), toList())
-              ))
-              .forEach((labels, samples) -> {
-                  MeterEntity meterEntity = InternalOps.buildMeterEntity(samples, entityDescription);
-                  meterSamples.put(
-                      meterEntity, InternalOps.left(samples, entityDescription.getLabelKeys()));
-              });
+                .collect(groupingBy(it -> InternalOps.getLabels(entityDescription.getLabelKeys(), it),
+                        mapping(identity(), toList())
+                ))
+                .forEach((labels, samples) -> {
+                    MeterEntity meterEntity = InternalOps.buildMeterEntity(samples, entityDescription);
+                    meterSamples.put(
+                            meterEntity, InternalOps.left(samples, entityDescription.getLabelKeys()));
+                });
 
         this.context.setMeterSamples(meterSamples);
         //This samples is original, The grouped samples is in context which mapping with MeterEntity
@@ -591,13 +632,13 @@ public class SampleFamily {
             ll.put(labels[i], labels[i + 1]);
         }
         Sample[] ss = Arrays.stream(samples)
-                            .filter(sample -> ll.entrySet()
-                                                .stream()
-                                                .allMatch(
-                                                    entry -> op.apply(sample.labels.getOrDefault(entry.getKey(), ""),
-                                                                      entry.getValue()
-                                                    )))
-                            .toArray(Sample[]::new);
+                .filter(sample -> ll.entrySet()
+                        .stream()
+                        .allMatch(
+                                entry -> op.apply(sample.labels.getOrDefault(entry.getKey(), ""),
+                                        entry.getValue()
+                                )))
+                .toArray(Sample[]::new);
         return ss.length > 0 ? SampleFamily.build(this.context, ss) : EMPTY;
     }
 
@@ -605,7 +646,7 @@ public class SampleFamily {
                                     double compValue,
                                     Function3<CompType, Double, Double, Boolean> op) {
         Sample[] ss = Arrays.stream(samples)
-                            .filter(sample -> op.apply(compType, sample.value, compValue)).toArray(Sample[]::new);
+                .filter(sample -> op.apply(compType, sample.value, compValue)).toArray(Sample[]::new);
         return ss.length > 0 ? SampleFamily.build(this.context, ss) : EMPTY;
     }
 
@@ -622,15 +663,15 @@ public class SampleFamily {
 
     private SampleFamily newValue(SampleFamily another, Function2<Double, Double, Double> transform) {
         Sample[] ss = Arrays.stream(samples)
-                            .flatMap(cs -> io.vavr.collection.Stream.of(another.samples)
-                                                                    .find(as -> cs.labels.equals(as.labels))
-                                                                    .map(as -> cs.toBuilder()
-                                                                                 .value(transform.apply(cs.value,
-                                                                                                        as.value
-                                                                                 )))
-                                                                    .map(Sample.SampleBuilder::build)
-                                                                    .toJavaStream())
-                            .toArray(Sample[]::new);
+                .flatMap(cs -> io.vavr.collection.Stream.of(another.samples)
+                        .find(as -> cs.labels.equals(as.labels))
+                        .map(as -> cs.toBuilder()
+                                .value(transform.apply(cs.value,
+                                        as.value
+                                )))
+                        .map(Sample.SampleBuilder::build)
+                        .toJavaStream())
+                .toArray(Sample[]::new);
         return ss.length > 0 ? SampleFamily.build(this.context, ss) : EMPTY;
     }
 
@@ -653,8 +694,8 @@ public class SampleFamily {
 
         static RunningContext instance() {
             return RunningContext.builder()
-                                 .defaultHistogramBucketUnit(TimeUnit.SECONDS)
-                                 .build();
+                    .defaultHistogramBucketUnit(TimeUnit.SECONDS)
+                    .build();
         }
 
         private String metricName;
@@ -670,19 +711,19 @@ public class SampleFamily {
         private static Sample[] left(List<Sample> samples, List<String> labelKeys) {
             return samples.stream().map(s -> {
                 ImmutableMap<String, String> ll = ImmutableMap.<String, String>builder()
-                                                              .putAll(Maps.filterKeys(s.labels,
-                                                                                      key -> !labelKeys.contains(key)
-                                                              ))
-                                                              .build();
+                        .putAll(Maps.filterKeys(s.labels,
+                                key -> !labelKeys.contains(key)
+                        ))
+                        .build();
                 return s.toBuilder().labels(ll).build();
             }).toArray(Sample[]::new);
         }
 
         private static String dim(List<Sample> samples, List<String> labelKeys, String delimiter) {
             String name = labelKeys.stream()
-                                   .map(k -> samples.get(0).labels.getOrDefault(k, ""))
-                                   .filter(v -> !StringUtil.isEmpty(v))
-                                   .collect(Collectors.joining(StringUtil.isEmpty(delimiter) ? Const.POINT : delimiter));
+                    .map(k -> samples.get(0).labels.getOrDefault(k, ""))
+                    .filter(v -> !StringUtil.isEmpty(v))
+                    .collect(Collectors.joining(StringUtil.isEmpty(delimiter) ? Const.POINT : delimiter));
             return name;
         }
 
@@ -692,8 +733,8 @@ public class SampleFamily {
                 case SERVICE:
                     ServiceEntityDescription serviceEntityDescription = (ServiceEntityDescription) entityDescription;
                     return MeterEntity.newService(
-                        InternalOps.dim(samples, serviceEntityDescription.getServiceKeys(), serviceEntityDescription.getDelimiter()),
-                        serviceEntityDescription.getLayer()
+                            InternalOps.dim(samples, serviceEntityDescription.getServiceKeys(), serviceEntityDescription.getDelimiter()),
+                            serviceEntityDescription.getLayer()
                     );
                 case SERVICE_INSTANCE:
                     InstanceEntityDescription instanceEntityDescription = (InstanceEntityDescription) entityDescription;
@@ -702,35 +743,35 @@ public class SampleFamily {
                         properties = instanceEntityDescription.getPropertiesExtractor().call(samples.get(0).labels);
                     }
                     return MeterEntity.newServiceInstance(
-                        InternalOps.dim(samples, instanceEntityDescription.getServiceKeys(), instanceEntityDescription.getServiceDelimiter()),
-                        InternalOps.dim(samples, instanceEntityDescription.getInstanceKeys(), instanceEntityDescription.getInstanceDelimiter()),
-                        instanceEntityDescription.getLayer(),
-                        properties
+                            InternalOps.dim(samples, instanceEntityDescription.getServiceKeys(), instanceEntityDescription.getServiceDelimiter()),
+                            InternalOps.dim(samples, instanceEntityDescription.getInstanceKeys(), instanceEntityDescription.getInstanceDelimiter()),
+                            instanceEntityDescription.getLayer(),
+                            properties
                     );
                 case ENDPOINT:
                     EndpointEntityDescription endpointEntityDescription = (EndpointEntityDescription) entityDescription;
                     return MeterEntity.newEndpoint(
-                        InternalOps.dim(samples, endpointEntityDescription.getServiceKeys(), endpointEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, endpointEntityDescription.getEndpointKeys(), endpointEntityDescription.getDelimiter()),
-                        endpointEntityDescription.getLayer()
+                            InternalOps.dim(samples, endpointEntityDescription.getServiceKeys(), endpointEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, endpointEntityDescription.getEndpointKeys(), endpointEntityDescription.getDelimiter()),
+                            endpointEntityDescription.getLayer()
                     );
                 case PROCESS:
                     final ProcessEntityDescription processEntityDescription = (ProcessEntityDescription) entityDescription;
                     return MeterEntity.newProcess(
-                        InternalOps.dim(samples, processEntityDescription.getServiceKeys(), processEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, processEntityDescription.getServiceInstanceKeys(), processEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, processEntityDescription.getProcessKeys(), processEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, List.of(processEntityDescription.getLayerKey()), processEntityDescription.getDelimiter())
+                            InternalOps.dim(samples, processEntityDescription.getServiceKeys(), processEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, processEntityDescription.getServiceInstanceKeys(), processEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, processEntityDescription.getProcessKeys(), processEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, List.of(processEntityDescription.getLayerKey()), processEntityDescription.getDelimiter())
                     );
                 case SERVICE_RELATION:
                     ServiceRelationEntityDescription serviceRelationEntityDescription = (ServiceRelationEntityDescription) entityDescription;
                     final String serviceRelationComponentValue = InternalOps.dim(samples,
-                        Collections.singletonList(serviceRelationEntityDescription.getComponentIdKey()), serviceRelationEntityDescription.getDelimiter());
+                            Collections.singletonList(serviceRelationEntityDescription.getComponentIdKey()), serviceRelationEntityDescription.getDelimiter());
                     int serviceRelationComponentId = StringUtil.isNotEmpty(serviceRelationComponentValue) ? Integer.parseInt(serviceRelationComponentValue) : 0;
                     return MeterEntity.newServiceRelation(
-                        InternalOps.dim(samples, serviceRelationEntityDescription.getSourceServiceKeys(), serviceRelationEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, serviceRelationEntityDescription.getDestServiceKeys(), serviceRelationEntityDescription.getDelimiter()),
-                        serviceRelationEntityDescription.getDetectPoint(), serviceRelationEntityDescription.getLayer(), serviceRelationComponentId
+                            InternalOps.dim(samples, serviceRelationEntityDescription.getSourceServiceKeys(), serviceRelationEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, serviceRelationEntityDescription.getDestServiceKeys(), serviceRelationEntityDescription.getDelimiter()),
+                            serviceRelationEntityDescription.getDetectPoint(), serviceRelationEntityDescription.getLayer(), serviceRelationComponentId
                     );
                 case PROCESS_RELATION:
                     final ProcessRelationEntityDescription processRelationEntityDescription = (ProcessRelationEntityDescription) entityDescription;
@@ -739,16 +780,16 @@ public class SampleFamily {
                     final String componentValue = InternalOps.dim(samples, Collections.singletonList(processRelationEntityDescription.getComponentKey()), processRelationEntityDescription.getDelimiter());
                     final int componentId = StringUtil.isNotEmpty(componentValue) ? Integer.parseInt(componentValue) : 0;
                     return MeterEntity.newProcessRelation(
-                        InternalOps.dim(samples, processRelationEntityDescription.getServiceKeys(), processRelationEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, processRelationEntityDescription.getInstanceKeys(), processRelationEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, Collections.singletonList(processRelationEntityDescription.getSourceProcessIdKey()), processRelationEntityDescription.getDelimiter()),
-                        InternalOps.dim(samples, Collections.singletonList(processRelationEntityDescription.getDestProcessIdKey()), processRelationEntityDescription.getDelimiter()),
-                        componentId,
-                        point
+                            InternalOps.dim(samples, processRelationEntityDescription.getServiceKeys(), processRelationEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, processRelationEntityDescription.getInstanceKeys(), processRelationEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, Collections.singletonList(processRelationEntityDescription.getSourceProcessIdKey()), processRelationEntityDescription.getDelimiter()),
+                            InternalOps.dim(samples, Collections.singletonList(processRelationEntityDescription.getDestProcessIdKey()), processRelationEntityDescription.getDelimiter()),
+                            componentId,
+                            point
                     );
                 default:
                     throw new UnexpectedException(
-                        "Unexpected scope type of entityDescription " + entityDescription);
+                            "Unexpected scope type of entityDescription " + entityDescription);
             }
         }
 
@@ -757,11 +798,11 @@ public class SampleFamily {
                                         long timestamp,
                                         double newValue) {
             return Sample.builder()
-                         .value(newValue)
-                         .labels(labels)
-                         .timestamp(timestamp)
-                         .name(name)
-                         .build();
+                    .value(newValue)
+                    .labels(labels)
+                    .timestamp(timestamp)
+                    .name(name)
+                    .build();
         }
 
         private static boolean stringComp(String a, String b) {
@@ -796,10 +837,15 @@ public class SampleFamily {
 
         private static ImmutableMap<String, String> getLabels(final List<String> labelKeys, final Sample sample) {
             return labelKeys.stream()
-                            .collect(toImmutableMap(
-                                Function.identity(),
-                                labelKey -> sample.labels.getOrDefault(labelKey, "")
-                            ));
+                    .collect(toImmutableMap(
+                            Function.identity(),
+                            labelKey -> sample.labels.getOrDefault(labelKey, "")
+                    ));
+        }
+
+        private static ImmutableMap<String, String> getRestLabels(final List<String> labelKeys, final Sample sample) {
+            ImmutableMap<String, String> labels = sample.labels;
+            return labels.entrySet().stream().filter(o -> !labelKeys.contains(o)).map(o->toImmutableMap(Function.identity(), o -> sample.getLabels().getOrDefault(o, "")));
         }
     }
 
