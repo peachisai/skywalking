@@ -231,14 +231,8 @@ public class SampleFamily {
                     this.context, InternalOps.newSample(samples[0].name, ImmutableMap.of(), samples[0].timestamp, result));
         }
 
-        for (Sample sample : samples) {
-            ImmutableMap<String, String> labels = sample.labels;
-            ImmutableCollection<String> values = labels.values();
-            Arrays.stream(samples).collect(groupingBy(it -> InternalOps.getLabels()))
-        }
-
         Stream<Map.Entry<ImmutableMap<String, String>, List<Sample>>> stream = Arrays.stream(samples)
-                .collect(groupingBy(it -> InternalOps.getLabels(by, it), mapping(identity(), toList())))
+                .collect(groupingBy(it -> InternalOps.getRestLabels(by, it), mapping(identity(), toList())))
                 .entrySet().stream();
 
         Sample[] array = stream
@@ -845,7 +839,8 @@ public class SampleFamily {
 
         private static ImmutableMap<String, String> getRestLabels(final List<String> labelKeys, final Sample sample) {
             ImmutableMap<String, String> labels = sample.labels;
-            return labels.entrySet().stream().filter(o -> !labelKeys.contains(o)).map(o->toImmutableMap(Function.identity(), o -> sample.getLabels().getOrDefault(o, "")));
+            Stream<Map.Entry<String, String>> stream = labels.entrySet().stream().filter(v -> !labelKeys.contains(v.getKey()));
+            return stream.collect(toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
         }
     }
 
