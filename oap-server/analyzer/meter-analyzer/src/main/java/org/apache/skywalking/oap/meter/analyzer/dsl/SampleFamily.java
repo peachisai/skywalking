@@ -219,38 +219,6 @@ public class SampleFamily {
     public SampleFamily min(List<String> by) {
         return aggregate(by, Double::min);
     }
-
-    public SampleFamily count(List<String> by) {
-        ExpressionParsingContext.get().ifPresent(ctx -> ctx.aggregationLabels.addAll(by));
-        if (this == EMPTY) {
-            return EMPTY;
-        }
-        if (by == null) {
-            double result = Arrays.stream(samples).mapToDouble(Sample::getValue).average().orElse(0.0D);
-            return SampleFamily.build(
-                    this.context, InternalOps.newSample(samples[0].name, ImmutableMap.of(), samples[0].timestamp, result));
-        }
-
-        Stream<Map.Entry<ImmutableMap<String, String>, List<Sample>>> stream = Arrays.stream(samples)
-                .collect(groupingBy(it -> InternalOps.getRestLabels(by, it), mapping(identity(), toList())))
-                .entrySet().stream();
-
-        Sample[] array = stream
-                .map(entry -> InternalOps.newSample(
-                        entry.getValue().get(0).getName(),
-                        entry.getKey(),
-                        entry.getValue().get(0).getTimestamp(),
-                        entry.getValue().size()
-                ))
-                .toArray(Sample[]::new);
-
-        SampleFamily sampleFamily = SampleFamily.build(
-                this.context,
-                array
-        );
-        return sampleFamily;
-    }
-
     public SampleFamily avg(List<String> by) {
         ExpressionParsingContext.get().ifPresent(ctx -> ctx.aggregationLabels.addAll(by));
         if (this == EMPTY) {

@@ -5,7 +5,7 @@
       "children": [
         {
           "x": 0,
-          "y": 36,
+          "y": 48,
           "w": 12,
           "h": 15,
           "i": "0",
@@ -33,7 +33,7 @@
         },
         {
           "x": 12,
-          "y": 36,
+          "y": 48,
           "w": 12,
           "h": 15,
           "i": "1",
@@ -163,7 +163,7 @@
         },
         {
           "x": 0,
-          "y": 23,
+          "y": 35,
           "w": 12,
           "h": 13,
           "i": "6",
@@ -195,7 +195,7 @@
         },
         {
           "x": 12,
-          "y": 23,
+          "y": 35,
           "w": 12,
           "h": 13,
           "i": "7",
@@ -227,7 +227,7 @@
         },
         {
           "x": 12,
-          "y": 10,
+          "y": 22,
           "w": 12,
           "h": 13,
           "i": "8",
@@ -259,7 +259,7 @@
         },
         {
           "x": 0,
-          "y": 10,
+          "y": 22,
           "w": 12,
           "h": 13,
           "i": "9",
@@ -280,6 +280,58 @@
             "name": "producer_tps",
             "tips": "The number of messages produced per second"
           },
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          }
+        },
+        {
+          "x": 0,
+          "y": 10,
+          "w": 6,
+          "h": 12,
+          "i": "10",
+          "type": "Widget",
+          "id": "10",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "graph": {
+            "type": "Card",
+            "fontSize": 28,
+            "textAlign": "center",
+            "showUnit": true
+          },
+          "expressions": [
+            "latest(meter_rocketmq_topic_consumer_group_count)"
+          ],
+          "typesOfMQE": [
+            "SINGLE_VALUE"
+          ]
+        },
+        {
+          "x": 6,
+          "y": 10,
+          "w": 18,
+          "h": 12,
+          "i": "11",
+          "type": "Widget",
+          "id": "11",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_rocketmq_topic_producer_offset*meter_rocketmq_topic_consumer_group_count-meter_rocketmq_topic_consumer_offset"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
           "graph": {
             "type": "Line",
             "step": false,
