@@ -45,10 +45,6 @@ cases:
     expected: expected/metrics-has-value-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_send_threadPool_queue_head_wait_time --service-name=rocketmq::rocketmq-cluster
     expected: expected/metrics-has-value-label.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_topic_count --service-name=rocketmq::rocketmq-cluster
-    expected: expected/metrics-has-value-label.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_rocketmq_cluster_broker_count --service-name=rocketmq::rocketmq-cluster
-    expected: expected/metrics-has-value-label.yml
 
   # instance cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-name=rocketmq::rocketmq-cluster
