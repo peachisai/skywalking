@@ -27,6 +27,9 @@ results:
         - id: { { notEmpty .id } }
           value: null
           traceid: null
+        - id: { { notEmpty .id } }
+          value: { { .value } }
+          traceid: null
         { { - end } }
   {{- end}}
 error: null
