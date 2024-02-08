@@ -22,5 +22,11 @@ results:
         - key: _
           value: ""
         {{- end}}
+      values:
+        { { - contains .values } }
+        - id: { { notEmpty .id } }
+          value: null
+          traceid: null
+        { { - end } }
   {{- end}}
 error: null
