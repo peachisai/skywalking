@@ -60,7 +60,7 @@ public class DatadogReceiverProvider extends ModuleProvider {
 
     @Override
     public void prepare() throws ServiceNotProvidedException, ModuleStartException {
-        server = new DatadogReceiverServer(config);
+        server = new DatadogReceiverServer(config, getManager());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class DatadogReceiverProvider extends ModuleProvider {
 
     @Override
     public String[] requiredModules() {
-        return new String[] {
+        return new String[]{
                 CoreModule.NAME
         };
     }
