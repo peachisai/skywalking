@@ -24,7 +24,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>skywalking-datadog-receiver-plugin</artifactId>
+    <artifactId>datadog-receiver-plugin</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
