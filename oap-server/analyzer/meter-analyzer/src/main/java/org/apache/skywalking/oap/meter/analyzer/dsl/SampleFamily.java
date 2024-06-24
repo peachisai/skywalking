@@ -24,7 +24,6 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 
-import com.google.common.collect.ImmutableCollection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.skywalking.oap.meter.analyzer.dsl.EntityDescription.EndpointEntityDescription;
 import org.apache.skywalking.oap.meter.analyzer.dsl.EntityDescription.EntityDescription;
@@ -219,6 +218,7 @@ public class SampleFamily {
     public SampleFamily min(List<String> by) {
         return aggregate(by, Double::min);
     }
+
     public SampleFamily avg(List<String> by) {
         ExpressionParsingContext.get().ifPresent(ctx -> ctx.aggregationLabels.addAll(by));
         if (this == EMPTY) {
