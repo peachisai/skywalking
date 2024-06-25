@@ -1,6 +1,5 @@
 package org.apache.skywalking.oap.server.receiver.datadog.provider.config;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.skywalking.oap.server.library.module.ModuleConfig;

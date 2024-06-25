@@ -67,7 +67,6 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                 ctx.writeAndFlush(response);
                 return;
             }
-            System.out.println(uri);
 
             ByteBuf content = request.content();
             int length = content.readableBytes();
@@ -116,7 +115,6 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
 
                 spanBuilder.timestamp(ddSpan.getStart());
                 spanBuilder.duration(ddSpan.getDuration());
-
 
                 spanBuilder.kind(getSpanKind(ddSpan));
             }

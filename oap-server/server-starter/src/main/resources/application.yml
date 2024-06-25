@@ -393,6 +393,14 @@ receiver-log:
   selector: ${SW_RECEIVER_LOG:default}
   default:
 
+receiver-datadog:
+  selector: ${SW_RECEIVER_DATADOG:default}
+  default:
+    # The sample rate precision is 1/10000. 10000 means 100% sample in default.
+    port: ${SW_RECEIVER_DATADOG_PORT:8126}
+    maxThread: ${SW_RECEIVER_DATADOG_MAX_THREAD:200}
+    contextPath: ${SW_RECEIVER_DATADOG_CONTEXT_PATH:/}
+
 query:
   selector: ${SW_QUERY:graphql}
   graphql:
