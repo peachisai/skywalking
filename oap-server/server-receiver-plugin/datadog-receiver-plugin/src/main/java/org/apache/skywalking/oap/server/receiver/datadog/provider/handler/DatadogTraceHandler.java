@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.SPAN_KIND;
 
@@ -113,10 +114,15 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                 spanBuilder.id(ddSpan.getSpanID());
                 spanBuilder.name(ddSpan.getName());
 
-                spanBuilder.timestamp(ddSpan.getStart());
+                spanBuilder.timestamp(TimeUnit.NANOSECONDS.toMicros(ddSpan.getStart()));
                 spanBuilder.duration(ddSpan.getDuration());
 
                 spanBuilder.kind(getSpanKind(ddSpan));
+                for (Map.Entry<String, String> metaEntry : ddSpan.getMeta().entrySet()) {
+                    spanBuilder.putTag(metaEntry.getKey(), metaEntry.getValue());
+                }
+
+                list.add(spanBuilder.build());
             }
         }
         return list;
