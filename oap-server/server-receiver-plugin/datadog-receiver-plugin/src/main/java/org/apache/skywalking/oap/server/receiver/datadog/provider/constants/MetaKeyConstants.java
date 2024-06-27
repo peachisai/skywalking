@@ -21,4 +21,8 @@ package org.apache.skywalking.oap.server.receiver.datadog.provider.constants;
 public class MetaKeyConstants {
 
     public static final String SPAN_KIND = "span.kind";
+
+    public static final String PEER_HOST_IPV4 = "peer.ipv4";
+
+    public static final String PEER_HOST_IPV6 = "peer.ipv6";
 }
