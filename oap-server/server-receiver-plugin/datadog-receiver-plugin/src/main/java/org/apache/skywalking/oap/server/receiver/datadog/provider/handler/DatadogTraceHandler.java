@@ -79,6 +79,16 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                 ctx.writeAndFlush(response);
                 return;
             }
+
+            if (uri.contains("/v0.4")) {
+
+            }
+
+            if (uri.contains("/v0.5")) {
+
+            }
+
+
             byte[] bytes = new byte[length];
             content.readBytes(bytes);
             List<List<DDSpan>> ddSpanList = deserializeMsgPack(bytes);
