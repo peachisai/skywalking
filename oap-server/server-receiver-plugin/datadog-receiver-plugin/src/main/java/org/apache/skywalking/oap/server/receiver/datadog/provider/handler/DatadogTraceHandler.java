@@ -31,6 +31,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
+import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.entity.DDSpan;
 import org.apache.skywalking.oap.server.receiver.zipkin.SpanForwardService;
 import org.apache.skywalking.oap.server.receiver.zipkin.ZipkinReceiverModule;
@@ -80,18 +81,21 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                 return;
             }
 
-            if (uri.contains("/v0.4")) {
-
-            }
-
-            if (uri.contains("/v0.5")) {
-
-            }
-
-
             byte[] bytes = new byte[length];
             content.readBytes(bytes);
-            List<List<DDSpan>> ddSpanList = deserializeMsgPack(bytes);
+
+            List<List<DDSpan>> ddSpanList = null;
+            if (uri.contains("0.4")) {
+                ddSpanList = deserializeMsgPack(bytes);
+            } else if (uri.contains("0.5")) {
+                ddSpanList = deserializeMsgPackDictionary(bytes);
+            }
+
+            if (CollectionUtils.isEmpty(ddSpanList)) {
+                ctx.writeAndFlush(response);
+                return;
+            }
+
             List<Span> spans = covertToZipKinSpan(ddSpanList);
             getSpanForward().send(spans);
             ctx.writeAndFlush(response);
@@ -118,7 +122,22 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
         }
     }
 
+    private List<List<DDSpan>> deserializeMsgPackDictionary(byte[] bytes) {
+        try (MessageUnpacker messageUnpacker = MessagePack.newDefaultUnpacker(bytes)) {
+            ImmutableValue immutableValue = messageUnpacker.unpackValue();
+            String json = immutableValue.toJson();
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategies.SnakeCaseStrategy());
+            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, DDSpan.class));
+            return objectMapper.readValue(json, collectionType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private List<Span> covertToZipKinSpan(List<List<DDSpan>> ddSpanList) {
+
         List<Span> list = new ArrayList<>();
         for (List<DDSpan> ddSpans : ddSpanList) {
             for (DDSpan ddSpan : ddSpans) {
