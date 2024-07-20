@@ -25,4 +25,6 @@ public class MetaKeyConstants {
     public static final String PEER_HOST_IPV4 = "peer.ipv4";
 
     public static final String PEER_HOST_IPV6 = "peer.ipv6";
+
+    public static final String PEER_HOSTNAME = "peer.hostname";
 }

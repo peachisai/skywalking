@@ -18,6 +18,7 @@
 
 package org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.DDSpanDecoder;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.entity.DDSpan;
 import org.msgpack.core.MessageIntegerOverflowException;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 public class DDSpanV5Decoder implements DDSpanDecoder {
 
     @Override
@@ -53,9 +55,9 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
                 dataArray[i] = unPacker.unpackString();
             }
             unPacker.unpackArrayHeader();
-            int size2 = unPacker.unpackArrayHeader();
+            int spanSize = unPacker.unpackArrayHeader();
             List<DDSpan> ddSpanList = new ArrayList<>();
-            for (int i = 0; i < size2; i++) {
+            for (int i = 0; i < spanSize; i++) {
                 DDSpan ddSpan = getDDSpan(unPacker, dataArray);
                 if (!Objects.isNull(ddSpan)) {
                     ddSpanList.add(ddSpan);
@@ -69,10 +71,10 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
 
     private DDSpan getDDSpan(MessageUnpacker unPacker, String[] dataArray) {
         try {
-            int size = unPacker.unpackArrayHeader();
-            if (size != 12) {
+            int elementSize = unPacker.unpackArrayHeader();
+            if (elementSize != 12) {
                 throw new IllegalArgumentException(
-                        "Wrong span element array size " + size + ". Expected 12.");
+                        "Wrong span element array size " + elementSize + ". Expected 12.");
             }
 
             DDSpan ddSpan = new DDSpan();
@@ -119,7 +121,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
                     throw new IllegalArgumentException(
                             "Failed to decode number. Unexpected value type " + valueType);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("Failed to decode number.", e);
         }
         return result;
@@ -129,7 +131,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         try {
             int metaSize = unPacker.unpackMapHeader();
             if (metaSize < 0) {
-
+                return null;
             }
             Map<String, String> meta = new HashMap<>(metaSize);
             for (int i = 0; i < metaSize; i++) {
@@ -145,7 +147,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         try {
             int metricsSize = unPacker.unpackMapHeader();
             if (metricsSize < 0) {
-
+                return null;
             }
             Map<String, Number> metrics = new HashMap<>(metricsSize);
             for (int i = 0; i < metricsSize; i++) {

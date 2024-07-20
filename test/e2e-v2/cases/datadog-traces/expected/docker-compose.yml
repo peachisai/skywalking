@@ -15,14 +15,8 @@
 
 version: "3"
 
-x-default-logging: &logging
-  driver: "json-file"
-  options:
-    max-size: "5m"
-    max-file: "2"
-
 services:
-  frontend:
+  datadog-demo:
     image: ghcr.io/open-telemetry/demo:1.4.0-frontend
     deploy:
       resources:
@@ -30,9 +24,9 @@ services:
           memory: 200M
     restart: unless-stopped
     ports:
-      - 8080
+      - 8070
     environment:
-      PORT: 8080
+      PORT: 8070
       FRONTEND_ADDR: frontend:8080
       PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
       OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
@@ -48,38 +42,15 @@ services:
     networks:
       - e2e
 
-  productcatalogservice:
-    image: ghcr.io/open-telemetry/demo:1.4.0-productcatalogservice
-    deploy:
-      resources:
-        limits:
-          memory: 20M
-    restart: unless-stopped
-    ports:
-      - "3550"
-    environment:
-      PRODUCT_CATALOG_SERVICE_PORT: 3550
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
-      OTEL_RESOURCE_ATTRIBUTES: service.namespace=opentelemetry-demo
-      OTEL_SERVICE_NAME: productcatalogservice
-      FEATURE_FLAG_GRPC_SERVICE_ADDR: no.exist:80
-    depends_on:
-      - oap
-    logging: *logging
-    networks:
-      - e2e
-
   oap:
     extends:
       file: ../../script/docker-compose/base-compose.yml
       service: oap
     ports:
       - 12800
-      - 9412
+      - 8126
     environment:
-      SW_OTEL_RECEIVER_ENABLED_HANDLERS: otlp-metrics,otlp-logs,otlp-traces
-      SW_RECEIVER_ZIPKIN: default
-      SW_QUERY_ZIPKIN: default
+      SW_RECEIVER_DATADOG: default
 
 networks:
   e2e:

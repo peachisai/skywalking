@@ -31,6 +31,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.impl.DDSpanV5Decoder;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.entity.DDSpan;
 import org.apache.skywalking.oap.server.receiver.zipkin.SpanForwardService;
@@ -41,12 +42,12 @@ import org.msgpack.value.ImmutableValue;
 import zipkin2.Endpoint;
 import zipkin2.Span;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOSTNAME;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOST_IPV4;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOST_IPV6;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.SPAN_KIND;
@@ -117,6 +118,7 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategies.SnakeCaseStrategy());
             CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class,
                     objectMapper.getTypeFactory().constructCollectionType(List.class, DDSpan.class));
+            objectMapper.readValue(json, collectionType);
             return objectMapper.readValue(json, collectionType);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -138,7 +140,7 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                 spanBuilder.duration(TimeUnit.NANOSECONDS.toMicros(ddSpan.getDuration()));
 
                 spanBuilder.localEndpoint(getLocalEndpoint(ddSpan));
-                spanBuilder.remoteEndpoint(getRemoteEndpoint(ddSpan));
+                spanBuilder.remoteEndpoint(getLocalEndpoint(ddSpan));
 
                 spanBuilder.kind(getSpanKind(ddSpan));
                 for (Map.Entry<String, String> metaEntry : ddSpan.getMeta().entrySet()) {
@@ -157,15 +159,16 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
 
         Map<String, String> meta = ddSpan.getMeta();
         String ipv4 = meta.get(PEER_HOST_IPV4);
+        String hostName = meta.get(PEER_HOSTNAME);
         if (!builder.parseIp(ipv4)) {
             builder.parseIp(meta.get(PEER_HOST_IPV6));
         }
 
-        return builder.build();
-    }
+        if (StringUtil.isNotBlank(hostName)) {
+            builder.parseIp(hostName);
+        }
 
-    private Endpoint getRemoteEndpoint(DDSpan ddSpan) {
-        return null;
+        return builder.build();
     }
 
     private Span.Kind getSpanKind(DDSpan ddSpan) {
@@ -173,6 +176,10 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
         Map<String, String> meta = ddSpan.getMeta();
         String spanKind = meta.get(SPAN_KIND);
         meta.remove(SPAN_KIND);
+        if (StringUtil.isBlank(spanKind)) {
+            return null;
+        }
+
         switch (spanKind) {
             case "client":
                 return Span.Kind.CLIENT;
