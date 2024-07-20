@@ -20,7 +20,6 @@ package org.apache.skywalking.oap.server.receiver.datadog.provider.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,6 +31,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
+import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.impl.DDSpanV5Decoder;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.entity.DDSpan;
 import org.apache.skywalking.oap.server.receiver.zipkin.SpanForwardService;
 import org.apache.skywalking.oap.server.receiver.zipkin.ZipkinReceiverModule;
@@ -88,7 +88,8 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             if (uri.contains("0.4")) {
                 ddSpanList = deserializeMsgPack(bytes);
             } else if (uri.contains("0.5")) {
-                ddSpanList = deserializeMsgPackDictionary(bytes);
+                DDSpanV5Decoder ddSpanV5Decoder = new DDSpanV5Decoder();
+                List<DDSpan> ddSpanList1 = ddSpanV5Decoder.deserializeMsgPack(bytes);
             }
 
             if (CollectionUtils.isEmpty(ddSpanList)) {
@@ -117,21 +118,7 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class,
                     objectMapper.getTypeFactory().constructCollectionType(List.class, DDSpan.class));
             return objectMapper.readValue(json, collectionType);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private List<List<DDSpan>> deserializeMsgPackDictionary(byte[] bytes) {
-        try (MessageUnpacker messageUnpacker = MessagePack.newDefaultUnpacker(bytes)) {
-            ImmutableValue immutableValue = messageUnpacker.unpackValue();
-            String json = immutableValue.toJson();
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategies.SnakeCaseStrategy());
-            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, DDSpan.class));
-            return objectMapper.readValue(json, collectionType);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

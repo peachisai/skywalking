@@ -46,7 +46,7 @@ public class DDSpan {
     // meta is a mapping from tag name to tag value for string-valued tags.
     private Map<String, String> meta;
     // metrics is a mapping from tag name to tag value for numeric-valued tags.
-    private Map<String, Double> metrics;
+    private Map<String, Number> metrics;
     // type is the type of the service with which this span is associated. Example values: web, db, lambda.
     private String type;
     // meta_struct is a registry of structured "other" data used by, e.g., AppSec.
