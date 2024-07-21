@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOSTNAME;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOST_IPV4;
@@ -85,20 +86,19 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             byte[] bytes = new byte[length];
             content.readBytes(bytes);
 
-            List<List<DDSpan>> ddSpanList = null;
+            List<DDSpan> ddSpanList = null;
             if (uri.contains("0.4")) {
                 ddSpanList = deserializeMsgPack(bytes);
             } else if (uri.contains("0.5")) {
                 DDSpanV5Decoder ddSpanV5Decoder = new DDSpanV5Decoder();
-                List<DDSpan> ddSpanList1 = ddSpanV5Decoder.deserializeMsgPack(bytes);
-            }
-
-            if (CollectionUtils.isEmpty(ddSpanList)) {
-                ctx.writeAndFlush(response);
-                return;
+                ddSpanList = ddSpanV5Decoder.deserializeMsgPack(bytes);
             }
 
             List<Span> spans = covertToZipKinSpan(ddSpanList);
+            if (CollectionUtils.isEmpty(spans)) {
+                ctx.writeAndFlush(response);
+                return;
+            }
             getSpanForward().send(spans);
             ctx.writeAndFlush(response);
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
         }
     }
 
-    private List<List<DDSpan>> deserializeMsgPack(byte[] bytes) {
+    private List<DDSpan> deserializeMsgPack(byte[] bytes) {
         try (MessageUnpacker messageUnpacker = MessagePack.newDefaultUnpacker(bytes)) {
             ImmutableValue immutableValue = messageUnpacker.unpackValue();
             String json = immutableValue.toJson();
@@ -118,37 +118,35 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategies.SnakeCaseStrategy());
             CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class,
                     objectMapper.getTypeFactory().constructCollectionType(List.class, DDSpan.class));
-            objectMapper.readValue(json, collectionType);
-            return objectMapper.readValue(json, collectionType);
+            List<List<DDSpan>> list = objectMapper.readValue(json, collectionType);
+            return list.stream().flatMap(List::stream).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<Span> covertToZipKinSpan(List<List<DDSpan>> ddSpanList) {
+    private List<Span> covertToZipKinSpan(List<DDSpan> ddSpanList) {
 
         List<Span> list = new ArrayList<>();
-        for (List<DDSpan> ddSpans : ddSpanList) {
-            for (DDSpan ddSpan : ddSpans) {
-                final Span.Builder spanBuilder = Span.newBuilder();
-                spanBuilder.traceId(String.valueOf(ddSpan.getTraceID()));
-                spanBuilder.parentId(ddSpan.getParentID());
-                spanBuilder.id(ddSpan.getSpanID());
-                spanBuilder.name(ddSpan.getResource());
+        for (DDSpan ddSpan : ddSpanList) {
+            final Span.Builder spanBuilder = Span.newBuilder();
+            spanBuilder.traceId(String.valueOf(ddSpan.getTraceID()));
+            spanBuilder.parentId(ddSpan.getParentID());
+            spanBuilder.id(ddSpan.getSpanID());
+            spanBuilder.name(ddSpan.getResource());
 
-                spanBuilder.timestamp(TimeUnit.NANOSECONDS.toMicros(ddSpan.getStart()));
-                spanBuilder.duration(TimeUnit.NANOSECONDS.toMicros(ddSpan.getDuration()));
+            spanBuilder.timestamp(TimeUnit.NANOSECONDS.toMicros(ddSpan.getStart()));
+            spanBuilder.duration(TimeUnit.NANOSECONDS.toMicros(ddSpan.getDuration()));
 
-                spanBuilder.localEndpoint(getLocalEndpoint(ddSpan));
-                spanBuilder.remoteEndpoint(getLocalEndpoint(ddSpan));
+            spanBuilder.localEndpoint(getLocalEndpoint(ddSpan));
+            spanBuilder.remoteEndpoint(getLocalEndpoint(ddSpan));
 
-                spanBuilder.kind(getSpanKind(ddSpan));
-                for (Map.Entry<String, String> metaEntry : ddSpan.getMeta().entrySet()) {
-                    spanBuilder.putTag(metaEntry.getKey(), metaEntry.getValue());
-                }
-
-                list.add(spanBuilder.build());
+            spanBuilder.kind(getSpanKind(ddSpan));
+            for (Map.Entry<String, String> metaEntry : ddSpan.getMeta().entrySet()) {
+                spanBuilder.putTag(metaEntry.getKey(), metaEntry.getValue());
             }
+
+            list.add(spanBuilder.build());
         }
         return list;
     }
