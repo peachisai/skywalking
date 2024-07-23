@@ -71,7 +71,7 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                     request.protocolVersion(),
                     HttpResponseStatus.OK);
             String uri = request.uri();
-            if (!uri.contains("/trace")) {
+            if (!uri.contains("/traces")) {
                 ctx.writeAndFlush(response);
                 return;
             }
@@ -87,18 +87,19 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             content.readBytes(bytes);
 
             List<DDSpan> ddSpanList = null;
-            if (uri.contains("0.4")) {
+            if (uri.contains("/0.4")) {
                 ddSpanList = deserializeMsgPack(bytes);
-            } else if (uri.contains("0.5")) {
+            } else if (uri.contains("/0.5")) {
                 DDSpanV5Decoder ddSpanV5Decoder = new DDSpanV5Decoder();
                 ddSpanList = ddSpanV5Decoder.deserializeMsgPack(bytes);
             }
 
-            List<Span> spans = covertToZipKinSpan(ddSpanList);
-            if (CollectionUtils.isEmpty(spans)) {
+            if (CollectionUtils.isEmpty(ddSpanList)) {
                 ctx.writeAndFlush(response);
                 return;
             }
+
+            List<Span> spans = covertToZipKinSpan(ddSpanList);
             getSpanForward().send(spans);
             ctx.writeAndFlush(response);
         } catch (Exception e) {
