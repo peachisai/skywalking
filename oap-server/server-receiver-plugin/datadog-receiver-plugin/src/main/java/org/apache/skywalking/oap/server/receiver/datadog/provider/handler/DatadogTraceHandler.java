@@ -32,7 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 import org.apache.skywalking.oap.server.library.util.StringUtil;
-import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.impl.DDSpanV5Decoder;
+import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.DDSpanDecoder;
+import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.DDSpanDecoderFactory;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.entity.DDSpan;
 import org.apache.skywalking.oap.server.receiver.zipkin.SpanForwardService;
 import org.apache.skywalking.oap.server.receiver.zipkin.ZipkinReceiverModule;
@@ -86,13 +87,13 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             byte[] bytes = new byte[length];
             content.readBytes(bytes);
 
-            List<DDSpan> ddSpanList = null;
-            if (uri.contains("/0.4")) {
-                ddSpanList = deserializeMsgPack(bytes);
-            } else if (uri.contains("/0.5")) {
-                DDSpanV5Decoder ddSpanV5Decoder = new DDSpanV5Decoder();
-                ddSpanList = ddSpanV5Decoder.deserializeMsgPack(bytes);
+            DDSpanDecoder ddSpanDecoder = DDSpanDecoderFactory.getDecoder(uri);
+            if (ddSpanDecoder == null) {
+                ctx.writeAndFlush(response);
+                return;
             }
+
+            List<DDSpan> ddSpanList = ddSpanDecoder.deserializeMsgPack(bytes);
 
             if (CollectionUtils.isEmpty(ddSpanList)) {
                 ctx.writeAndFlush(response);
@@ -140,7 +141,7 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
             spanBuilder.duration(TimeUnit.NANOSECONDS.toMicros(ddSpan.getDuration()));
 
             spanBuilder.localEndpoint(getLocalEndpoint(ddSpan));
-            spanBuilder.remoteEndpoint(getLocalEndpoint(ddSpan));
+            spanBuilder.remoteEndpoint(getRemoteEndpoint(ddSpan));
 
             spanBuilder.kind(getSpanKind(ddSpan));
             for (Map.Entry<String, String> metaEntry : ddSpan.getMeta().entrySet()) {
@@ -153,6 +154,24 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
     }
 
     private Endpoint getLocalEndpoint(DDSpan ddSpan) {
+        final Endpoint.Builder builder = Endpoint.newBuilder();
+        builder.serviceName(ddSpan.getService());
+
+        Map<String, String> meta = ddSpan.getMeta();
+        String ipv4 = meta.get(PEER_HOST_IPV4);
+        String hostName = meta.get(PEER_HOSTNAME);
+        if (!builder.parseIp(ipv4)) {
+            builder.parseIp(meta.get(PEER_HOST_IPV6));
+        }
+
+        if (StringUtil.isNotBlank(hostName)) {
+            builder.parseIp(hostName);
+        }
+
+        return builder.build();
+    }
+
+    private Endpoint getRemoteEndpoint(DDSpan ddSpan) {
         final Endpoint.Builder builder = Endpoint.newBuilder();
         builder.serviceName(ddSpan.getService());
 
