@@ -18,9 +18,6 @@
 
 package org.apache.skywalking.oap.server.receiver.datadog.provider.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -37,9 +34,6 @@ import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.DDSpan
 import org.apache.skywalking.oap.server.receiver.datadog.provider.entity.DDSpan;
 import org.apache.skywalking.oap.server.receiver.zipkin.SpanForwardService;
 import org.apache.skywalking.oap.server.receiver.zipkin.ZipkinReceiverModule;
-import org.msgpack.core.MessagePack;
-import org.msgpack.core.MessageUnpacker;
-import org.msgpack.value.ImmutableValue;
 import zipkin2.Endpoint;
 import zipkin2.Span;
 
@@ -47,11 +41,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
+import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.DD_BASE_SERVICE;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOSTNAME;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOST_IPV4;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_HOST_IPV6;
+import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.PEER_SERVICE;
 import static org.apache.skywalking.oap.server.receiver.datadog.provider.constants.MetaKeyConstants.SPAN_KIND;
 
 @Slf4j
@@ -72,10 +67,6 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                     request.protocolVersion(),
                     HttpResponseStatus.OK);
             String uri = request.uri();
-            if (!uri.contains("/traces")) {
-                ctx.writeAndFlush(response);
-                return;
-            }
 
             ByteBuf content = request.content();
             int length = content.readableBytes();
@@ -112,24 +103,9 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
         }
     }
 
-    private List<DDSpan> deserializeMsgPack(byte[] bytes) {
-        try (MessageUnpacker messageUnpacker = MessagePack.newDefaultUnpacker(bytes)) {
-            ImmutableValue immutableValue = messageUnpacker.unpackValue();
-            String json = immutableValue.toJson();
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategies.SnakeCaseStrategy());
-            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, DDSpan.class));
-            List<List<DDSpan>> list = objectMapper.readValue(json, collectionType);
-            return list.stream().flatMap(List::stream).collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private List<Span> covertToZipKinSpan(List<DDSpan> ddSpanList) {
 
-        List<Span> list = new ArrayList<>();
+        List<Span> list = new ArrayList<>(ddSpanList.size());
         for (DDSpan ddSpan : ddSpanList) {
             final Span.Builder spanBuilder = Span.newBuilder();
             spanBuilder.traceId(String.valueOf(ddSpan.getTraceID()));
@@ -148,6 +124,8 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                 spanBuilder.putTag(metaEntry.getKey(), metaEntry.getValue());
             }
 
+            spanBuilder.putTag("type", ddSpan.getType());
+
             list.add(spanBuilder.build());
         }
         return list;
@@ -155,17 +133,13 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
 
     private Endpoint getLocalEndpoint(DDSpan ddSpan) {
         final Endpoint.Builder builder = Endpoint.newBuilder();
-        builder.serviceName(ddSpan.getService());
 
         Map<String, String> meta = ddSpan.getMeta();
-        String ipv4 = meta.get(PEER_HOST_IPV4);
-        String hostName = meta.get(PEER_HOSTNAME);
-        if (!builder.parseIp(ipv4)) {
-            builder.parseIp(meta.get(PEER_HOST_IPV6));
-        }
-
-        if (StringUtil.isNotBlank(hostName)) {
-            builder.parseIp(hostName);
+        String baseService = meta.get(DD_BASE_SERVICE);
+        if (StringUtil.isBlank(baseService)) {
+            builder.serviceName(ddSpan.getService());
+        } else {
+            builder.serviceName(baseService);
         }
 
         return builder.build();
@@ -173,17 +147,28 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
 
     private Endpoint getRemoteEndpoint(DDSpan ddSpan) {
         final Endpoint.Builder builder = Endpoint.newBuilder();
-        builder.serviceName(ddSpan.getService());
 
         Map<String, String> meta = ddSpan.getMeta();
-        String ipv4 = meta.get(PEER_HOST_IPV4);
-        String hostName = meta.get(PEER_HOSTNAME);
-        if (!builder.parseIp(ipv4)) {
-            builder.parseIp(meta.get(PEER_HOST_IPV6));
+
+        boolean parseFlag;
+        parseFlag = builder.parseIp(meta.get(PEER_HOST_IPV4));
+
+        if (!parseFlag) {
+            parseFlag = builder.parseIp(meta.get(PEER_HOST_IPV6));
         }
 
-        if (StringUtil.isNotBlank(hostName)) {
-            builder.parseIp(hostName);
+        String hostName = meta.get(PEER_HOSTNAME);
+        if (!parseFlag) {
+            parseFlag = builder.parseIp(hostName);
+        }
+
+        if (!parseFlag) {
+            if (StringUtil.isNotBlank(hostName)) {
+                builder.serviceName(hostName);
+            } else {
+                String peerService = meta.get(PEER_SERVICE);
+                builder.serviceName(peerService);
+            }
         }
 
         return builder.build();
@@ -193,7 +178,6 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
 
         Map<String, String> meta = ddSpan.getMeta();
         String spanKind = meta.get(SPAN_KIND);
-        meta.remove(SPAN_KIND);
         if (StringUtil.isBlank(spanKind)) {
             return null;
         }

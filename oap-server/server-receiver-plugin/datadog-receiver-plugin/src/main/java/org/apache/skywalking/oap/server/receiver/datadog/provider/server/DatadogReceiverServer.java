@@ -19,7 +19,6 @@
 package org.apache.skywalking.oap.server.receiver.datadog.provider.server;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -48,12 +47,12 @@ public class DatadogReceiverServer {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(config.getMaxThread(), new CustomThreadFactory("Datadog-receiver-boss"));
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(config.getMaxThread(), new CustomThreadFactory("Datadog-receiver-work"));
 
-        ChannelFuture future = new ServerBootstrap()
+        new ServerBootstrap()
                 .group(workerGroup, bossGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
-                    protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
+                    protected void initChannel(NioSocketChannel nioSocketChannel) {
                         nioSocketChannel.pipeline().addLast(new HttpServerCodec());
                         nioSocketChannel.pipeline().addLast(new HttpObjectAggregator(512 * 1024));
                         nioSocketChannel.pipeline().addLast(new DatadogTraceHandler(manager));
