@@ -675,8 +675,8 @@ jobs:
 #            config: test/e2e-v2/cases/menu/opensearch/e2e.yaml
 #            env: OPENSEARCH_VERSION=2.4.0
 #
-#          - name: OTLP Trace
-#            config:  test/e2e-v2/cases/otlp-traces/e2e.yaml
+          - name: OTLP Trace
+            config:  test/e2e-v2/cases/otlp-traces/e2e.yaml
           - name: DATADOG Trace
             config:  test/e2e-v2/cases/datadog-traces/e2e.yaml
     steps:
