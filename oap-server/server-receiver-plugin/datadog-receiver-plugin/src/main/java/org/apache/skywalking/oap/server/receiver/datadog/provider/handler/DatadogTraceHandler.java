@@ -124,8 +124,6 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
                 spanBuilder.putTag(metaEntry.getKey(), metaEntry.getValue());
             }
 
-            spanBuilder.putTag("type", ddSpan.getType());
-
             list.add(spanBuilder.build());
         }
         return list;

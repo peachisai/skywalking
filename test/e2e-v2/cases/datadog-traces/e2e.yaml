@@ -32,7 +32,7 @@ trigger:
   action: http
   interval: 3s
   times: 10
-  url: http://${frontend_host}:${frontend_8080}/api/products
+  url: http://127.0.0.1:5557/metrics
   method: GET
 
 verify:
@@ -43,18 +43,5 @@ verify:
     # the interval between two retries, in millisecond.
     interval: 5s
   cases:
-    # service name
-    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
-      expected: expected/service-name.yml
-    # remote-service name
-    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/remoteServices?serviceName=frontend
-      expected: expected/remote-service-name.yml
-    # span name
-    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/spans?serviceName=productcatalogservice
-      expected: expected/span-name.yml
-    # traces
-    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/traces\?limit\=1\&serviceName\=productcatalogservice\&spanName\=oteldemo.productcatalogservice/listproducts | yq e 'del(..|.tags?, ..|.annotations?)' -
-      expected: expected/traces.yml
-    # autocomplete
-    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/autocompleteValues?key=http.method
-      expected: expected/autocomplete.yml
+    - includes:
+        - ./datadog-traces-cases.yaml

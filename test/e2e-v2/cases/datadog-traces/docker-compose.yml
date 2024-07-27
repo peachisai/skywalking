@@ -16,41 +16,47 @@
 version: "3"
 
 services:
-  datadog-demo:
-    image: ghcr.io/open-telemetry/demo:1.4.0-frontend
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    restart: unless-stopped
-    ports:
-      - 8070
-    environment:
-      PORT: 8070
-      FRONTEND_ADDR: frontend:8080
-      PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
-      OTEL_RESOURCE_ATTRIBUTES: service.namespace=opentelemetry-demo
-      ENV_PLATFORM: local
-      OTEL_SERVICE_NAME: frontend
-      WEB_OTEL_SERVICE_NAME: frontend-web
-      CURRENCY_SERVICE_ADDR: no.exist:80
-    depends_on:
-      - oap
-      - productcatalogservice
-    logging: *logging
-    networks:
-      - e2e
-
   oap:
     extends:
       file: ../../script/docker-compose/base-compose.yml
       service: oap
     ports:
-      - 12800
-      - 8126
+      - "12800:12800"
+      - "8126:8126"
+    networks:
+      - e2e
     environment:
       SW_RECEIVER_DATADOG: default
+      SW_RECEIVER_ZIPKIN: default
+      SW_QUERY_ZIPKIN: default
+
+  rocketmq-namesrv-1:
+    image: apache/rocketmq:4.9.4
+    hostname: rocketmq-namesrv-1
+    ports:
+      - "9876:9876"
+    environment:
+      TZ: Asia/Shanghai
+    command: sh mqnamesrv
+    healthcheck:
+      test: [ "CMD", "nc", "-nz", "127.0.0.1", "9876" ]
+      interval: 15s
+      timeout: 10s
+      retries: 120
+    networks:
+      - e2e
+
+  rocketmq-exporter:
+    image: apache/rocketmq-exporter:0.0.2-SNAPSHOT
+    hostname: rocketmq-exporter
+    ports:
+      - "5557:5557"
+    environment:
+      TZ: Asia/Shanghai
+      rocketmq.config.namesrvAddr: "rocketmq-namesrv-1:9876"
+      dd.agent.host: "oap:8126"
+    networks:
+      - e2e
 
 networks:
   e2e:
