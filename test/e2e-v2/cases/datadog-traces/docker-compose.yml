@@ -48,14 +48,15 @@ services:
       - e2e
 
   rocketmq-exporter:
-    image: apache/rocketmq-exporter:0.0.2-SNAPSHOT
+    image: ghcr.io/peachisai/rocketmq-exporter:latest
     hostname: rocketmq-exporter
     ports:
       - "5557:5557"
     environment:
       TZ: Asia/Shanghai
       rocketmq.config.namesrvAddr: "rocketmq-namesrv-1:9876"
-      dd.agent.host: "oap:8126"
+      dd_agent_host: "oap:8126"
+      dd_service: "rocketmq-exporter"
     networks:
       - e2e
 
