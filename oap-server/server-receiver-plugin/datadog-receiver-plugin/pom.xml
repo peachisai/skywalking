@@ -49,13 +49,13 @@
         <dependency>
             <groupId>org.msgpack</groupId>
             <artifactId>msgpack-core</artifactId>
-            <version>0.9.8</version>
+            <version>${msgpack.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.100.Final</version>
+            <version>${netty.version}</version>
         </dependency>
 
     </dependencies>
