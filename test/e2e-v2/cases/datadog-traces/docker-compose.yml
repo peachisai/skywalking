@@ -48,7 +48,8 @@ services:
       - e2e
 
   rocketmq-exporter:
-    image: ghcr.io/peachisai/rocketmq-exporter:latest
+    build:
+      context: .
     hostname: rocketmq-exporter
     ports:
       - "5557:5557"
