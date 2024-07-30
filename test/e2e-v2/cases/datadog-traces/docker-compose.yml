@@ -55,8 +55,9 @@ services:
     environment:
       TZ: Asia/Shanghai
       rocketmq.config.namesrvAddr: "rocketmq-namesrv-1:9876"
-      dd_agent_host: "oap:8126"
-      dd_service: "rocketmq-exporter"
+      DD_AGENT_HOST: "oap"
+      DD_TRACE_AGENT_PORT: "8126"
+      DD_SERVICE_NAME: "db-app"
     networks:
       - e2e
 
