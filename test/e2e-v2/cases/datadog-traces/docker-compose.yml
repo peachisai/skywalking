@@ -33,7 +33,8 @@ services:
 
   e2e-sender:
     build:
-      context: .
+      context: ../../
+      dockerfile: cases/datadog-traces/Dockerfile
     hostname: rocketmq-exporter
     ports:
       - "9091:9091"
