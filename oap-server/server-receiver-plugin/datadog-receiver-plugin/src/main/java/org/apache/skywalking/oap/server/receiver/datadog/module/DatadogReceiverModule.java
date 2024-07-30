@@ -22,10 +22,10 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
 public class DatadogReceiverModule extends ModuleDefine {
 
-    public static final String NAME = "receiver-datadog";
+    public static final String DATADOG_NAME = "receiver-datadog";
 
     public DatadogReceiverModule() {
-        super(NAME);
+        super(DATADOG_NAME);
     }
 
     @Override

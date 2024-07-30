@@ -22,11 +22,12 @@ import org.apache.skywalking.oap.server.receiver.datadog.provider.constants.DDSp
 import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.impl.DDSpanV4Decoder;
 import org.apache.skywalking.oap.server.receiver.datadog.provider.decoder.impl.DDSpanV5Decoder;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class DDSpanDecoderFactory {
-    private static final Map<DDSpanVersion, DDSpanDecoder> DECODER_MAP = new HashMap<>();
+
+    private static final Map<DDSpanVersion, DDSpanDecoder> DECODER_MAP = new EnumMap<>(DDSpanVersion.class);
 
     static {
         DECODER_MAP.put(DDSpanVersion.V4, new DDSpanV4Decoder());
@@ -39,5 +40,8 @@ public class DDSpanDecoderFactory {
             return null;
         }
         return DECODER_MAP.get(ddSpanVersion);
+    }
+
+    private DDSpanDecoderFactory() {
     }
 }

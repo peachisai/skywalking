@@ -28,6 +28,7 @@ import org.msgpack.value.ValueType;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +44,14 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
             //
             int headerFlag = unPacker.unpackArrayHeader();
             if (headerFlag != 2) {
-                return null;
+                log.error("datadog-receiver:Not an array flag");
+                return Collections.emptyList();
             }
 
             int size = unPacker.unpackArrayHeader();
             if (size < 0) {
-
+                log.error("datadog-receiver:Negative array size");
+                return Collections.emptyList();
             }
             String[] spanArray = new String[size];
             for (int i = 0; i < size; i++) {
@@ -92,7 +95,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
             ddSpan.setType(unpackString(unPacker, spanArray));
 
             return ddSpan;
-        } catch (Throwable t) {
+        } catch (Exception t) {
             return null;
         }
     }

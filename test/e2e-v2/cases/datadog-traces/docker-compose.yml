@@ -31,34 +31,19 @@ services:
       SW_RECEIVER_ZIPKIN: default
       SW_QUERY_ZIPKIN: default
 
-  rocketmq-namesrv-1:
-    image: apache/rocketmq:4.9.4
-    hostname: rocketmq-namesrv-1
-    ports:
-      - "9876:9876"
-    environment:
-      TZ: Asia/Shanghai
-    command: sh mqnamesrv
-    healthcheck:
-      test: [ "CMD", "nc", "-nz", "127.0.0.1", "9876" ]
-      interval: 15s
-      timeout: 10s
-      retries: 120
-    networks:
-      - e2e
-
-  rocketmq-exporter:
+  e2e-sender:
     build:
       context: .
     hostname: rocketmq-exporter
     ports:
-      - "5557:5557"
+      - "9091:9091"
     environment:
       TZ: Asia/Shanghai
-      rocketmq.config.namesrvAddr: "rocketmq-namesrv-1:9876"
       DD_AGENT_HOST: "oap"
       DD_TRACE_AGENT_PORT: "8126"
       DD_SERVICE_NAME: "db-app"
+    depends_on:
+      - oap
     networks:
       - e2e
 

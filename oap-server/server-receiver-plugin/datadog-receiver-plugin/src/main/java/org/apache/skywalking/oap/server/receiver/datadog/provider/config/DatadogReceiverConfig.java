@@ -8,11 +8,9 @@ import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 @Setter
 public class DatadogReceiverConfig extends ModuleConfig {
 
-    public int port = 8126;
+    private int port = 8126;
 
-    public int maxThread = 200;
+    private int maxThread = 200;
 
-    public int sampleRate = 10000;
-
-    public String contextPath = "";
+    private String contextPath = "";
 }

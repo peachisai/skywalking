@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM apache/rocketmq-exporter:0.0.2-SNAPSHOT
+FROM eclipse-temurin:8-jre
+ADD java-test-service/e2e-mock-sender/target/e2e-mock-sender.jar e2e-mock-sender.jar
 ADD https://dtdg.co/latest-java-tracer dd-java-agent.jar
-ENTRYPOINT ["java","-javaagent:dd-java-agent.jar","-jar","rocketmq-exporter.jar"]
+ENTRYPOINT ["java","-javaagent:dd-java-agent.jar","-jar","e2e-mock-sender.jar"]

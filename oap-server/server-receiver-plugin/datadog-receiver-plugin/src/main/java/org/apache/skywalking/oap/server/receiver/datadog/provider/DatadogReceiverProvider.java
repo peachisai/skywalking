@@ -76,6 +76,7 @@ public class DatadogReceiverProvider extends ModuleProvider {
             server.start();
         } catch (InterruptedException e) {
             log.error("Datadog receiver server start fail at port:{}", config.getPort(), e);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -96,11 +97,6 @@ public class DatadogReceiverProvider extends ModuleProvider {
         if (config.getMaxThread() < 0) {
             throw new IllegalArgumentException(
                     "maxThread: " + config.getMaxThread() + ", should be greater than 0");
-        }
-
-        if (config.getSampleRate() < 0 || config.getSampleRate() > 10000) {
-            throw new IllegalArgumentException(
-                    "sampleRate: " + config.getSampleRate() + ", should be between 0 and 10000");
         }
     }
 }

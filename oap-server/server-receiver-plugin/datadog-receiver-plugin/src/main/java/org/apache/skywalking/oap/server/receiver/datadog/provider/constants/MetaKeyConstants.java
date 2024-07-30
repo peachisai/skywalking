@@ -31,4 +31,7 @@ public class MetaKeyConstants {
     public static final String PEER_SERVICE = "peer.service";
 
     public static final String DD_BASE_SERVICE = "_dd.base_service";
+
+    private MetaKeyConstants() {
+    }
 }

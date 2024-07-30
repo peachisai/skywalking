@@ -31,9 +31,12 @@ setup:
 trigger:
   action: http
   interval: 3s
-  times: 10
-  url: http://127.0.0.1:5557/metrics
-  method: GET
+  times: 30
+  url: http://127.0.0.1:9091/users
+  method: POST
+  body: '{"id":"123","name":"skywalking"}'
+  headers:
+    "Content-Type": "application/json"
 
 verify:
   # verify with retry strategy
