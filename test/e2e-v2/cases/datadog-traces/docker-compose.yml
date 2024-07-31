@@ -34,8 +34,7 @@ services:
   sender:
     image: "eclipse-temurin:8-jre"
     volumes:
-      - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
-      - ./mock-data:/data/otel-metrics
+      - ./../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
     expose:
       - 9093
     healthcheck:
