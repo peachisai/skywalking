@@ -32,9 +32,9 @@ services:
       SW_QUERY_ZIPKIN: default
 
   sender:
-    build:
-      context: .
-    hostname: e2e-sender
+    volumes:
+      - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
+      - ./mock-data:/data/otel-metrics
     expose:
       - 9093
     healthcheck:
