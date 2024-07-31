@@ -32,7 +32,7 @@ trigger:
   action: http
   interval: 3s
   times: 30
-  url: http://${provider_host}:${provider_9092}/users
+  url: http://localhost:9093/users
   method: POST
   body: '{"id":"123","name":"skywalking"}'
   headers:
