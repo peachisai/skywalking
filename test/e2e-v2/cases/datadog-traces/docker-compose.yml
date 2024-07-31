@@ -33,11 +33,10 @@ services:
 
   sender:
     build:
-      context: ../../
-      dockerfile: cases/datadog-traces/Dockerfile
+      context: .
     hostname: e2e-sender
-    ports:
-      - 9093:9093
+    expose:
+      - 9093
     healthcheck:
       test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 9093" ]
     environment:

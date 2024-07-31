@@ -14,6 +14,6 @@
 # limitations under the License.
 
 FROM eclipse-temurin:11-jre
-ADD java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar e2e-mock-sender
+ADD ../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar e2e-mock-sender
 ADD https://dtdg.co/latest-java-tracer dd-java-agent.jar
 CMD ["sh", "-c","java","-javaagent:dd-java-agent.jar","-jar","e2e-mock-sender.jar"]
