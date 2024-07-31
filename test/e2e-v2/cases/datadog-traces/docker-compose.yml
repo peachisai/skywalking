@@ -31,13 +31,13 @@ services:
       SW_RECEIVER_ZIPKIN: default
       SW_QUERY_ZIPKIN: default
 
-  e2e-sender:
+  provider:
     build:
       context: ../../
       dockerfile: cases/datadog-traces/Dockerfile
     hostname: rocketmq-exporter
-    ports:
-      - "9090:9090"
+    expose:
+      - 9090
     environment:
       TZ: Asia/Shanghai
       DD_AGENT_HOST: "oap"
