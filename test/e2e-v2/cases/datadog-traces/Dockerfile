@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM eclipse-temurin:8-jre
+FROM eclipse-temurin:11-jre
 ADD java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar e2e-service-provider
 ADD https://dtdg.co/latest-java-tracer dd-java-agent.jar
 ENTRYPOINT ["java","-javaagent:dd-java-agent.jar","-jar","e2e-service-provider.jar"]

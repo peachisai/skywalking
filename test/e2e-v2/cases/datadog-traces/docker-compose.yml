@@ -37,14 +37,15 @@ services:
       dockerfile: cases/datadog-traces/Dockerfile
     hostname: rocketmq-exporter
     ports:
-      - "9091:9091"
+      - "9090:9090"
     environment:
       TZ: Asia/Shanghai
       DD_AGENT_HOST: "oap"
       DD_TRACE_AGENT_PORT: "8126"
       DD_SERVICE_NAME: "db-app"
     depends_on:
-      - oap
+      oap:
+        condition: service_healthy
     networks:
       - e2e
 
