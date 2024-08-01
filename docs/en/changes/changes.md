@@ -39,6 +39,13 @@
 * Fix Elasticsearch, MySQL, RabbitMQ dashboards typos and missing expressions.
 * BanyanDB: Zipkin Module set service as Entity for improving the query performance.
 * MQE: check the metrics value before do binary operation to improve robustness.
+* Replace workaround with Armeria native supported context path.
+* Add an http endpoint wrapper for health check.
+* Bump up Armeria and transitive dependencies.
+* BanyanDB: if the model column is already a `@BanyanDB.TimestampColumn`, set `@BanyanDB.NoIndexing` on it to reduce indexes.
+* BanyanDB: stream sort-by `time` query, use internal time-series rather than `index` to improve the query performance.
+* Bump up graphql-java to 21.5.
+* Add Unknown Node when receive Kubernetes peer address is not aware in current cluster.
 
 #### UI
 
@@ -47,7 +54,8 @@
 * Add a SolonMVC icon.
 * Adding cilium icon and i18n for menu.
 * Fix the mismatch between the unit and calculation of the "Network Bandwidth Usage" widget in Windows-Service Dashboard.
-
+* Make a maximum 20 entities per query in service/instance/endpoint list widgets.
+* Polish error nodes in trace widget.
 
 #### Documentation
 
