@@ -27,3 +27,5 @@
           --expression=aws_gateway_endpoint_latency --endpoint-name='ANY:/graphql' \
           --service-name='aws-api-gateway::$default:6m85d5acx7'
       expected: expected/metrics-has-value.yml
+    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
+      expected: expected/service-name.yml

@@ -21,7 +21,13 @@ services:
       file: ../../../script/docker-compose/base-compose.yml
       service: oap
     ports:
-      - 12800
+      - "12800:12800"
+      - "8126:8126"
+      - "9412:9412"
+    environment:
+      SW_RECEIVER_DATADOG: default
+      SW_RECEIVER_ZIPKIN: default
+      SW_QUERY_ZIPKIN: default
     networks:
       e2e:
 
@@ -30,12 +36,15 @@ services:
     volumes:
       - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
       - ./mock-data:/data/otel-metrics
-    command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -jar /e2e-mock-sender-2.0.0.jar"]
+    command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-mock-sender-2.0.0.jar"]
     environment:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
       OTEL_METRICS_DATA_PATH: /data/otel-metrics
       DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
+      DD_AGENT_HOST: "oap"
+      DD_TRACE_AGENT_PORT: "8126"
+      DD_SERVICE_NAME: "db-app"
     networks:
       - e2e
     ports:

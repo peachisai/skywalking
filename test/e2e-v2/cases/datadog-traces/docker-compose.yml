@@ -40,10 +40,13 @@ services:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
       OTEL_METRICS_DATA_PATH: /data/otel-metrics
+      DD_AGENT_HOST: "oap"
+      DD_TRACE_AGENT_PORT: "8126"
+      DD_SERVICE_NAME: "db-app"
     networks:
       - e2e
-    expose:
-      - 9090
+    ports:
+      - "9090:39090"
     healthcheck:
       test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9093"]
       interval: 5s
