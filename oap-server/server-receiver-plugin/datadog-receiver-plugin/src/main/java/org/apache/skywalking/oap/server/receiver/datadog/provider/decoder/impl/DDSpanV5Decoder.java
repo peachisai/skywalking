@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 public class DDSpanV5Decoder implements DDSpanDecoder {
@@ -60,10 +59,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
             int spanSize = unPacker.unpackArrayHeader();
             List<DDSpan> ddSpanList = new ArrayList<>();
             for (int i = 0; i < spanSize; i++) {
-                DDSpan ddSpan = getDDSpan(unPacker, spanArray);
-                if (!Objects.isNull(ddSpan)) {
-                    ddSpanList.add(ddSpan);
-                }
+                ddSpanList.add(getDDSpan(unPacker, spanArray));
             }
             return ddSpanList;
         } catch (Exception e) {
@@ -72,7 +68,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         }
     }
 
-    private DDSpan getDDSpan(MessageUnpacker unPacker, String[] spanArray) throws Exception {
+    private DDSpan getDDSpan(MessageUnpacker unPacker, String[] spanArray) throws IOException {
         int elementSize = unPacker.unpackArrayHeader();
         if (elementSize != 12) {
             throw new IllegalArgumentException(
@@ -96,8 +92,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         return ddSpan;
     }
 
-    private String unpackString(MessageUnpacker unPacker, String[] dataArray)
-            throws IOException {
+    private String unpackString(MessageUnpacker unPacker, String[] dataArray) throws IOException {
         return dataArray[unPacker.unpackInt()];
     }
 
