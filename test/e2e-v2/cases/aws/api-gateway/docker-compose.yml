@@ -31,7 +31,7 @@ services:
       - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
       - ./mock-data:/data/otel-metrics
       - https://dtdg.co/latest-java-tracer:dd-java-agent.jar
-    command: [ "java", "-jar", "/e2e-mock-sender-2.0.0.jar" ]
+    command: [ "java", "-javaagent:dd-java-agent.jar","-jar", "/e2e-mock-sender-2.0.0.jar" ]
     environment:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
