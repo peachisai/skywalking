@@ -537,8 +537,8 @@ jobs:
 #
 #          - name: Kafka Basic
 #            config: test/e2e-v2/cases/kafka/simple-so11y/e2e.yaml
-          - name: Kafka Profiling
-            config: test/e2e-v2/cases/kafka/profile/e2e.yaml
+#          - name: Kafka Profiling
+#            config: test/e2e-v2/cases/kafka/profile/e2e.yaml
 #          - name: Kafka Meter
 #            config: test/e2e-v2/cases/kafka/meter/e2e.yaml
 #          - name: Kafka Log
@@ -634,8 +634,8 @@ jobs:
 #            config: test/e2e-v2/cases/promql/e2e.yaml
 #          - name: LogQL Service
 #            config: test/e2e-v2/cases/logql/e2e.yaml
-#          - name: AWS API Gateway
-#            config: test/e2e-v2/cases/aws/api-gateway/e2e.yaml
+          - name: AWS API Gateway
+            config: test/e2e-v2/cases/aws/api-gateway/e2e.yaml
 #          - name: Redis Prometheus and Log Collecting
 #            config: test/e2e-v2/cases/redis/redis-exporter/e2e.yaml
 #          - name: Elasticsearch

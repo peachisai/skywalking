@@ -34,8 +34,8 @@ services:
   sender:
     image: "eclipse-temurin:11-jre"
     volumes:
-      - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider-2.0.0.jar
-    command: [ "java","-jar", "/e2e-service-provider-2.0.0.jar" ]
+      - ./../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
+    command: [ "java","-jar", "/e2e-mock-sender-2.0.0.jar" ]
     environment:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
@@ -46,7 +46,7 @@ services:
     networks:
       - e2e
     ports:
-      - "9090:39090"
+      - "9093:9093"
     healthcheck:
       test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9093"]
       interval: 5s

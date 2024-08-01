@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This file is used to show how to write configuration files and can be used to test.
-
-cases:
-  # service cases
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
-    expected: expected/service.yml
-  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
-    expected: expected/service-name.yml
+  {{- contains . }}
+- id: {{ b64enc "aws-s3::skywalking" }}.1
+  name: aws-s3::skywalking
+  group: aws-s3
+  shortname: skywalking
+  normal: true
+  layers:
+    - AWS_S3
+  {{- end }}
