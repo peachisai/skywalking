@@ -31,12 +31,9 @@ setup:
 trigger:
   action: http
   interval: 3s
-  times: 30
-  url: http://localhost:9093/users
-  method: POST
-  body: '{"id":"123","name":"skywalking"}'
-  headers:
-    "Content-Type": "application/json"
+  times: 10
+  url: http://localhost:9093/otel-metrics/send
+  method: GET
 
 verify:
   # verify with retry strategy

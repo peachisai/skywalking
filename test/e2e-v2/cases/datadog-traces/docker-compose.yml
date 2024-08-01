@@ -13,45 +13,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: "3"
+version: '2.1'
 
 services:
   oap:
     extends:
-      file: ../../script/docker-compose/base-compose.yml
+      file: ../../../script/docker-compose/base-compose.yml
       service: oap
     ports:
-      - "12800:12800"
-      - "8126:8126"
-      - "9412:9412"
+      - 12800
     networks:
-      - e2e
-    environment:
-      SW_RECEIVER_DATADOG: default
-      SW_RECEIVER_ZIPKIN: default
-      SW_QUERY_ZIPKIN: default
+      e2e:
 
   sender:
     image: "eclipse-temurin:8-jre"
     volumes:
-      - ./../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
-    expose:
-      - 9093
+      - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
     command: [ "java", "-jar", "/e2e-mock-sender-2.0.0.jar" ]
-    healthcheck:
-      test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 9093" ]
     environment:
-      TZ: Asia/Shanghai
-      DD_AGENT_HOST: "oap"
-      DD_TRACE_AGENT_PORT: "8126"
-      DD_SERVICE_NAME: "db-app"
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
+      OTEL_METRICS_DATA_PATH: /data/otel-metrics
+    networks:
+      - e2e
+    ports:
+      - 9093:9093
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9093"]
+      interval: 5s
+      timeout: 60s
+      retries: 120
     depends_on:
       oap:
         condition: service_healthy
-    networks:
-      - e2e
-
 networks:
   e2e:

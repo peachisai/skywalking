@@ -41,16 +41,15 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
     public List<DDSpan> deserializeMsgPack(byte[] bytes) {
 
         try (MessageUnpacker unPacker = MessagePack.newDefaultUnpacker(bytes)) {
-            //
             int headerFlag = unPacker.unpackArrayHeader();
             if (headerFlag != 2) {
-                log.error("datadog-receiver:Not an array flag");
+                log.error("Datadog-receiver:Not an array flag");
                 return Collections.emptyList();
             }
 
             int size = unPacker.unpackArrayHeader();
             if (size < 0) {
-                log.error("datadog-receiver:Negative array size");
+                log.error("Datadog-receiver:Negative array size");
                 return Collections.emptyList();
             }
             String[] spanArray = new String[size];
@@ -68,36 +67,33 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
             }
             return ddSpanList;
         } catch (Exception e) {
-            return null;
+            log.error("Datadog-receiver:decode spanV5 error:", e);
+            return Collections.emptyList();
         }
     }
 
-    private DDSpan getDDSpan(MessageUnpacker unPacker, String[] spanArray) {
-        try {
-            int elementSize = unPacker.unpackArrayHeader();
-            if (elementSize != 12) {
-                throw new IllegalArgumentException(
-                        "Wrong span element array size " + elementSize + ". Expected 12.");
-            }
-
-            DDSpan ddSpan = new DDSpan();
-            ddSpan.setService(unpackString(unPacker, spanArray));
-            ddSpan.setName(unpackString(unPacker, spanArray));
-            ddSpan.setResource(unpackString(unPacker, spanArray));
-            ddSpan.setTraceID(unPacker.unpackLong());
-            ddSpan.setSpanID(unPacker.unpackLong());
-            ddSpan.setParentID(unPacker.unpackLong());
-            ddSpan.setStart(unPacker.unpackLong());
-            ddSpan.setDuration(unPacker.unpackLong());
-            ddSpan.setError(unPacker.unpackInt());
-            ddSpan.setMeta(unpackStringMap(unPacker, spanArray));
-            ddSpan.setMetrics(unpackNumberMap(unPacker, spanArray));
-            ddSpan.setType(unpackString(unPacker, spanArray));
-
-            return ddSpan;
-        } catch (Exception t) {
-            return null;
+    private DDSpan getDDSpan(MessageUnpacker unPacker, String[] spanArray) throws Exception {
+        int elementSize = unPacker.unpackArrayHeader();
+        if (elementSize != 12) {
+            throw new IllegalArgumentException(
+                    "Datadog-receiver:Wrong span element array size " + elementSize);
         }
+
+        DDSpan ddSpan = new DDSpan();
+        ddSpan.setService(unpackString(unPacker, spanArray));
+        ddSpan.setName(unpackString(unPacker, spanArray));
+        ddSpan.setResource(unpackString(unPacker, spanArray));
+        ddSpan.setTraceID(unPacker.unpackLong());
+        ddSpan.setSpanID(unPacker.unpackLong());
+        ddSpan.setParentID(unPacker.unpackLong());
+        ddSpan.setStart(unPacker.unpackLong());
+        ddSpan.setDuration(unPacker.unpackLong());
+        ddSpan.setError(unPacker.unpackInt());
+        ddSpan.setMeta(unpackStringMap(unPacker, spanArray));
+        ddSpan.setMetrics(unpackNumberMap(unPacker, spanArray));
+        ddSpan.setType(unpackString(unPacker, spanArray));
+
+        return ddSpan;
     }
 
     private String unpackString(MessageUnpacker unPacker, String[] dataArray)
@@ -125,7 +121,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
                             "Failed to decode number. Unexpected value type " + valueType);
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to decode number.", e);
+            log.error("Datadog-receiver:Failed to decode number. Unexpected value type");
         }
         return result;
     }
@@ -134,7 +130,8 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         try {
             int metaSize = unPacker.unpackMapHeader();
             if (metaSize < 0) {
-                return null;
+                log.error("Datadog-receiver:Negative meta size:{}", metaSize);
+                return Collections.emptyMap();
             }
             Map<String, String> meta = new HashMap<>(metaSize);
             for (int i = 0; i < metaSize; i++) {
@@ -142,7 +139,8 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
             }
             return meta;
         } catch (Exception e) {
-            return null;
+            log.error("Datadog-receiver:Failed to decode string map:", e);
+            return Collections.emptyMap();
         }
     }
 
@@ -150,7 +148,8 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         try {
             int metricsSize = unPacker.unpackMapHeader();
             if (metricsSize < 0) {
-                return null;
+                log.error("Datadog-receiver:Negative metrics size:{}", metricsSize);
+                return Collections.emptyMap();
             }
             Map<String, Number> metrics = new HashMap<>(metricsSize);
             for (int i = 0; i < metricsSize; i++) {
@@ -158,7 +157,8 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
             }
             return metrics;
         } catch (Exception e) {
-            return null;
+            log.error("Datadog-receiver:Failed to decode numberMap:", e);
+            return Collections.emptyMap();
         }
     }
 }

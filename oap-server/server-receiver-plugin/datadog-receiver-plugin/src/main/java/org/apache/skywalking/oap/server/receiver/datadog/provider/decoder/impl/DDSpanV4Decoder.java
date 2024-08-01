@@ -28,6 +28,7 @@ import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessageUnpacker;
 import org.msgpack.value.ImmutableValue;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,8 @@ public class DDSpanV4Decoder implements DDSpanDecoder {
             List<List<DDSpan>> list = objectMapper.readValue(json, collectionType);
             return list.stream().flatMap(List::stream).collect(Collectors.toList());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("datadog-receiver:Negative array size");
+            return Collections.emptyList();
         }
     }
 }
