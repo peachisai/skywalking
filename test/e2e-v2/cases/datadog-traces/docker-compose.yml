@@ -37,6 +37,7 @@ services:
       - ./../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
     expose:
       - 9093
+    command: [ "java", "-jar", "/e2e-mock-sender-2.0.0.jar" ]
     healthcheck:
       test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 9093" ]
     environment:
