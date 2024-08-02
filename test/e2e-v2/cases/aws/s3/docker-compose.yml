@@ -32,7 +32,7 @@ services:
       e2e:
 
   sender:
-    image: "eclipse-temurin:8-jre"
+    image: "eclipse-temurin:11-jre"
     volumes:
       - ./../../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider-2.0.0.jar
       - ./mock-data:/data/otel-metrics
@@ -48,7 +48,7 @@ services:
     networks:
       - e2e
     ports:
-      - 9094:39090
+      - 9094:9094
     healthcheck:
       test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9094"]
       interval: 5s
