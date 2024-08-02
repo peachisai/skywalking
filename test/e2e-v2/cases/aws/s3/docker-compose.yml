@@ -21,7 +21,13 @@ services:
       file: ../../../script/docker-compose/base-compose.yml
       service: oap
     ports:
-      - 12800
+      - "12800:12800"
+      - "8126:8126"
+      - "9412:9412"
+    environment:
+      SW_RECEIVER_DATADOG: default
+      SW_RECEIVER_ZIPKIN: default
+      SW_QUERY_ZIPKIN: default
     networks:
       e2e:
 
@@ -36,6 +42,9 @@ services:
       OAP_GRPC_PORT: 11800
       OTEL_METRICS_DATA_PATH: /data/otel-metrics
       DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
+      DD_AGENT_HOST: "oap"
+      DD_TRACE_AGENT_PORT: "8126"
+      DD_SERVICE_NAME: "db-app"
     networks:
       - e2e
     ports:

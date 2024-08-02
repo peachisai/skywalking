@@ -26,3 +26,6 @@
         swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec \
           --expression=aws_s3_5xx --service-name aws-s3::skywalking
       expected: expected/metrics-has-value.yml
+
+    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
+      expected: expected/service-name.yml
