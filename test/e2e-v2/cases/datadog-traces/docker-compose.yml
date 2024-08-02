@@ -32,7 +32,7 @@ services:
       SW_QUERY_ZIPKIN: default
 
   sender:
-    image: "eclipse-temurin:11-jre"
+    image: "eclipse-temurin:8-jre"
     volumes:
       - ./../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
     command: [ "java","-jar", "/e2e-mock-sender-2.0.0.jar" ]
