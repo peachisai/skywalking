@@ -32,7 +32,7 @@ services:
       SW_QUERY_ZIPKIN: default
 
   sender:
-    image: "eclipse-temurin:11-jre"
+    image: "eclipse-temurin:8-jre"
     volumes:
       - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider-2.0.0.jar
     command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-service-provider-2.0.0.jar"]
@@ -42,12 +42,12 @@ services:
       OTEL_METRICS_DATA_PATH: /data/otel-metrics
       DD_AGENT_HOST: "oap"
       DD_TRACE_AGENT_PORT: "8126"
-      DD_SERVICE_NAME: "e2e-service-provider"
+      DD_SERVICE_NAME: "db-app"
       DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
     networks:
       - e2e
     ports:
-      - "9094:9094"
+      - "9094:39094"
     healthcheck:
       test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9094"]
       interval: 5s
