@@ -32,7 +32,7 @@ services:
       SW_QUERY_ZIPKIN: default
 
   sender:
-    image: "eclipse-temurin:8-jre"
+    image: "eclipse-temurin:11-jre"
     volumes:
       - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider-2.0.0.jar
     command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-service-provider-2.0.0.jar"]
