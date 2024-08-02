@@ -34,6 +34,9 @@ services:
   sender:
     build:
       context: .
+    volumes:
+      - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
+      - ./mock-data:/data/otel-metrics
     environment:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800

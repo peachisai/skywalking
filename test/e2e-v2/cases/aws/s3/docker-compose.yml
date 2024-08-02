@@ -35,6 +35,7 @@ services:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
       OTEL_METRICS_DATA_PATH: /data/otel-metrics
+      DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
     networks:
       - e2e
     ports:

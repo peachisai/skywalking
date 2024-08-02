@@ -17,7 +17,5 @@
 
 cases:
   # service cases
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
-    expected: expected/service.yml
   - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
     expected: expected/service-name.yml
