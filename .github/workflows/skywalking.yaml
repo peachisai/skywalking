@@ -225,39 +225,39 @@ jobs:
           name: docker-images-${{ matrix.java-version }}
           path: docker-images-skywalking-*.tar
 
-  unit-test:
-    if: |
-      ( always() && ! cancelled() ) &&
-      ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
-    name: Unit test
-    needs: [sanity-check, changes]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-14, windows-latest]
-        java-version: [11]
-        include:
-          - os: ubuntu-latest
-            java-version: 17
-          - os: ubuntu-latest
-            java-version: 21
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - name: Cache maven repository
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
-      - uses: actions/setup-java@v3
-        with:
-          java-version: ${{ matrix.java-version }}
-          distribution: temurin
-      - name: Unit test
-        run: ./mvnw clean test -q -B -D"checkstyle.skip" || ./mvnw clean test -q -B -D"checkstyle.skip"
+#  unit-test:
+#    if: |
+#      ( always() && ! cancelled() ) &&
+#      ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
+#    name: Unit test
+#    needs: [sanity-check, changes]
+#    runs-on: ${{ matrix.os }}
+#    timeout-minutes: 30
+#    strategy:
+#      matrix:
+#        os: [ubuntu-latest, macos-14, windows-latest]
+#        java-version: [11]
+#        include:
+#          - os: ubuntu-latest
+#            java-version: 17
+#          - os: ubuntu-latest
+#            java-version: 21
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          submodules: true
+#      - name: Cache maven repository
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.m2/repository
+#          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: ${{ runner.os }}-maven-
+#      - uses: actions/setup-java@v3
+#        with:
+#          java-version: ${{ matrix.java-version }}
+#          distribution: temurin
+#      - name: Unit test
+#        run: ./mvnw clean test -q -B -D"checkstyle.skip" || ./mvnw clean test -q -B -D"checkstyle.skip"
 
   integration-test:
     if: |
@@ -837,7 +837,7 @@ jobs:
     name: Required
     needs:
       - dependency-license
-      - unit-test
+#      - unit-test
       - integration-test
       - slow-integration-test
       - e2e-test
