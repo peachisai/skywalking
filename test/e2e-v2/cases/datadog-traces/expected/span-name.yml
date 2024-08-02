@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{- contains . }}
- "usercontroller.createauthor","userrepo.save","call next value for hibernate_sequence","insert into users (name, id) values (?, ?)"
-{{- end }}
+[
+ "post /users","usercontroller.createauthor","userrepo.save","call next value for hibernate_sequence","insert into users (name, id) values (?, ?)"
+]
