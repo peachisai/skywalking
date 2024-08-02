@@ -72,7 +72,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         int elementSize = unPacker.unpackArrayHeader();
         if (elementSize != 12) {
             throw new IllegalArgumentException(
-                    "Datadog-receiver:Wrong span element array size " + elementSize);
+                    "Wrong span element array size " + elementSize);
         }
 
         DDSpan ddSpan = new DDSpan();
@@ -96,27 +96,23 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
         return dataArray[unPacker.unpackInt()];
     }
 
-    private Number unpackNumber(MessageUnpacker unPacker) {
+    private Number unpackNumber(MessageUnpacker unPacker) throws IOException {
         Number result = null;
-        try {
-            ValueType valueType = unPacker.getNextFormat().getValueType();
-            switch (valueType) {
-                case INTEGER:
-                    try {
-                        result = unPacker.unpackInt();
-                    } catch (MessageIntegerOverflowException e) {
-                        result = unPacker.unpackLong();
-                    }
-                    break;
-                case FLOAT:
-                    result = unPacker.unpackDouble();
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Failed to decode number. Unexpected value type " + valueType);
-            }
-        } catch (Exception e) {
-            log.error("Datadog-receiver:Failed to decode number. Unexpected value type");
+        ValueType valueType = unPacker.getNextFormat().getValueType();
+        switch (valueType) {
+            case INTEGER:
+                try {
+                    result = unPacker.unpackInt();
+                } catch (MessageIntegerOverflowException e) {
+                    result = unPacker.unpackLong();
+                }
+                break;
+            case FLOAT:
+                result = unPacker.unpackDouble();
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Failed to decode number. Unexpected value type " + valueType);
         }
         return result;
     }
@@ -152,7 +148,7 @@ public class DDSpanV5Decoder implements DDSpanDecoder {
             }
             return metrics;
         } catch (Exception e) {
-            log.error("Datadog-receiver:Failed to decode numberMap:", e);
+            log.error("Datadog-receiver:Failed to decode number map:", e);
             return Collections.emptyMap();
         }
     }

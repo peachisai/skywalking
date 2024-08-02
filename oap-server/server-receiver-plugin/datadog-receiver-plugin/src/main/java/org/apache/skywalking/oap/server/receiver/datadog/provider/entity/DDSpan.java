@@ -20,7 +20,6 @@ package org.apache.skywalking.oap.server.receiver.datadog.provider.entity;
 
 import lombok.Data;
 
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -51,6 +50,4 @@ public class DDSpan {
     private String type;
     // meta_struct is a registry of structured "other" data used by, e.g., AppSec.
     private Map<String, byte[]> metaStruct;
-    // span_links represents a collection of links, where each link defines a causal relationship between two spans.
-    private List<DDSpanLink> spanLinks;
 }

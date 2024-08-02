@@ -34,8 +34,8 @@ services:
   sender:
     image: "eclipse-temurin:8-jre"
     volumes:
-      - ./../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
-    command: [ "java","-jar", "/e2e-mock-sender-2.0.0.jar" ]
+      - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider-2.0.0.jar
+    command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-service-provider-2.0.0.jar"]
     environment:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
@@ -43,12 +43,13 @@ services:
       DD_AGENT_HOST: "oap"
       DD_TRACE_AGENT_PORT: "8126"
       DD_SERVICE_NAME: "db-app"
+      DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
     networks:
       - e2e
     ports:
-      - "9093:9093"
+      - "9094:9094"
     healthcheck:
-      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9093"]
+      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9094"]
       interval: 5s
       timeout: 60s
       retries: 120

@@ -19,3 +19,12 @@ cases:
   # service cases
   - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
     expected: expected/service-name.yml
+  # span name
+  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/spans?serviceName=productcatalogservice
+    expected: expected/span-name.yml
+  # traces
+  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/traces\?limit\=1\&serviceName\=productcatalogservice\&spanName\=oteldemo.productcatalogservice/listproducts | yq e 'del(..|.tags?, ..|.annotations?)' -
+    expected: expected/traces.yml
+  # autocomplete
+  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/autocompleteValues?key=http.method
+    expected: expected/autocomplete.yml
