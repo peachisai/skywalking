@@ -43,6 +43,7 @@ services:
       DD_AGENT_HOST: "oap"
       DD_TRACE_AGENT_PORT: "8126"
       DD_SERVICE_NAME: "db-app"
+      DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
     networks:
       - e2e
     ports:
