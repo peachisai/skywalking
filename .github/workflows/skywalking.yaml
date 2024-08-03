@@ -409,6 +409,7 @@ jobs:
 #          - name: TTL ES 8.8.1
 #            config: test/e2e-v2/cases/ttl/es/e2e.yaml
 #            env: ES_VERSION=8.8.1
+#            env: ES_VERSION=8.8.1
 #
 #          - name: Event BanyanDB
 #            config: test/e2e-v2/cases/event/banyandb/e2e.yaml
@@ -626,8 +627,8 @@ jobs:
 #            config: test/e2e-v2/cases/aws/eks/e2e.yaml
 #          - name: Windows
 #            config: test/e2e-v2/cases/win/e2e.yaml
-#          - name: AWS Cloud S3
-#            config: test/e2e-v2/cases/aws/s3/e2e.yaml
+          - name: AWS Cloud S3
+            config: test/e2e-v2/cases/aws/s3/e2e.yaml
 #          - name: AWS Cloud DynamoDB
 #            config: test/e2e-v2/cases/aws/dynamodb/e2e.yaml
 #          - name: PromQL Service
