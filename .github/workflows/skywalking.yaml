@@ -329,7 +329,7 @@ jobs:
       ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
     name: E2E test
     needs: [docker]
-    runs-on: ${{ matrix.test.runs-on || 'ubuntu-latest' }}
+    runs-on: macos-latest
     timeout-minutes: 60
     env:
       OTEL_COLLECTOR_VERSION: 0.92.0
