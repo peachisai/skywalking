@@ -629,14 +629,14 @@ jobs:
 #            config: test/e2e-v2/cases/win/e2e.yaml
           - name: AWS Cloud S3
             config: test/e2e-v2/cases/aws/s3/e2e.yaml
-#          - name: AWS Cloud DynamoDB
-#            config: test/e2e-v2/cases/aws/dynamodb/e2e.yaml
+          - name: AWS Cloud DynamoDB
+            config: test/e2e-v2/cases/aws/dynamodb/e2e.yaml
 #          - name: PromQL Service
 #            config: test/e2e-v2/cases/promql/e2e.yaml
 #          - name: LogQL Service
 #            config: test/e2e-v2/cases/logql/e2e.yaml
-#          - name: AWS API Gateway
-#            config: test/e2e-v2/cases/aws/api-gateway/e2e.yaml
+          - name: AWS API Gateway
+            config: test/e2e-v2/cases/aws/api-gateway/e2e.yaml
 #          - name: Redis Prometheus and Log Collecting
 #            config: test/e2e-v2/cases/redis/redis-exporter/e2e.yaml
 #          - name: Elasticsearch
