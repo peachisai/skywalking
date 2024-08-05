@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: "3"
+version: '2.1'
 
 services:
   oap:
@@ -21,9 +21,7 @@ services:
       file: ../../script/docker-compose/base-compose.yml
       service: oap
     ports:
-      - "12800:12800"
-      - "8126:8126"
-      - "9412:9412"
+      - 12800
     networks:
       - e2e
     environment:
