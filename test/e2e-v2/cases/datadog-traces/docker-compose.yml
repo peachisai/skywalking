@@ -13,23 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: "3"
+version: '2.1'
 
 services:
   oap:
     extends:
-      file: ../../script/docker-compose/base-compose.yml
+      file: ../../../script/docker-compose/base-compose.yml
       service: oap
     ports:
-      - "12800:12800"
-      - "8126:8126"
-      - "9412:9412"
+      - 12800
     networks:
-      - e2e
-    environment:
-      SW_RECEIVER_DATADOG: default
-      SW_RECEIVER_ZIPKIN: default
-      SW_QUERY_ZIPKIN: default
+      e2e:
 
   sender:
     image: "eclipse-temurin:8-jre"
