@@ -31,7 +31,7 @@ services:
       e2e:
 
   sender:
-    image: "eclipse-temurin:8-jre"
+    image: "eclipse-temurin:11-jre"
     volumes:
       - ./../../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider-2.0.0.jar
       - ./mock-data:/data/otel-metrics
