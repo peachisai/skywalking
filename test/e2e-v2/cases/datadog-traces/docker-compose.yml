@@ -22,6 +22,7 @@ services:
       service: oap
     ports:
       - 12800
+      - 9412
     networks:
       - e2e
     environment:
