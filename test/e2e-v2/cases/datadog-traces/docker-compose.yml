@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '2.1'
+version: '3'
 
 services:
   oap:
@@ -22,8 +22,6 @@ services:
       service: oap
     ports:
       - 12800
-      - 8126
-      - 9412
     networks:
       - e2e
     environment:
