@@ -22,7 +22,6 @@ services:
       service: oap
     ports:
       - "12800:12800"
-      - "8126:8126"
     environment:
       SW_RECEIVER_DATADOG: default
       SW_RECEIVER_ZIPKIN: default
