@@ -31,73 +31,73 @@ env:
   SEGMENT_DOWNLOAD_TIMEOUT_MINS: 5 # Cache restore timeout
 
 jobs:
-#  license-header:
-#    if: (github.event_name == 'schedule' && github.repository == 'apache/skywalking') || (github.event_name != 'schedule')
-#    name: License header
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 10
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          submodules: true
-#      - name: Check license header
-#        uses: apache/skywalking-eyes@5b7ee1731d036b5aac68f8bd3fc9e6f98ada082e
-#
-#  code-style:
-#    if: (github.event_name == 'schedule' && github.repository == 'apache/skywalking') || (github.event_name != 'schedule')
-#    name: Code style
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 10
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          submodules: true
-#      - name: Check code style
-#        run: ./mvnw -B -q clean checkstyle:check
-#
-#  dependency-license:
-#    if: |
-#      ( always() && ! cancelled() ) &&
-#      ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.pom == 'true' || needs.changes.outputs.ui == 'true')
-#    name: Dependency licenses
-#    needs: [changes]
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 30
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          submodules: true
-#      - uses: actions/setup-java@v3
-#        with:
-#          distribution: "temurin"
-#          java-version: "11"
-#          cache: "maven"
-#      - name: Setup Go
-#        uses: actions/setup-go@v3
-#        with:
-#          go-version: "1.17"
-#      - name: Check Dependencies Licenses
-#        run: |
-#          go install github.com/apache/skywalking-eyes/cmd/license-eye@5b7ee1731d036b5aac68f8bd3fc9e6f98ada082e
-#          license-eye dependency resolve --summary ./dist-material/release-docs/LICENSE.tpl || exit 1
-#          if [ ! -z "$(git diff -U0 ./dist-material/release-docs/LICENSE)" ]; then
-#            echo "LICENSE file is not updated correctly"
-#            git diff -U0 ./dist-material/release-docs/LICENSE
-#            exit 1
-#          fi
-#
-#  sanity-check:
-#    if: ( always() && ! cancelled() ) && (github.event_name == 'schedule' && github.repository == 'apache/skywalking') || (github.event_name != 'schedule')
-#    name: Sanity check results
-#    needs: [license-header, code-style, dependency-license]
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 10
-#    steps:
-#      - name: Check results
-#        run: |
-#          [[ ${{ needs.license-header.result }} == 'success' ]] || exit 1;
-#          [[ ${{ needs.code-style.result }} == 'success' ]] || exit 1;
-#          [[ ${{ needs.dependency-license.result }} == 'success' ]] || [[ ${{ needs.dependency-license.result }} == 'skipped' ]] || exit 1;
+  license-header:
+    if: (github.event_name == 'schedule' && github.repository == 'apache/skywalking') || (github.event_name != 'schedule')
+    name: License header
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Check license header
+        uses: apache/skywalking-eyes@5b7ee1731d036b5aac68f8bd3fc9e6f98ada082e
+
+  code-style:
+    if: (github.event_name == 'schedule' && github.repository == 'apache/skywalking') || (github.event_name != 'schedule')
+    name: Code style
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Check code style
+        run: ./mvnw -B -q clean checkstyle:check
+
+  dependency-license:
+    if: |
+      ( always() && ! cancelled() ) &&
+      ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.pom == 'true' || needs.changes.outputs.ui == 'true')
+    name: Dependency licenses
+    needs: [changes]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "11"
+          cache: "maven"
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.17"
+      - name: Check Dependencies Licenses
+        run: |
+          go install github.com/apache/skywalking-eyes/cmd/license-eye@5b7ee1731d036b5aac68f8bd3fc9e6f98ada082e
+          license-eye dependency resolve --summary ./dist-material/release-docs/LICENSE.tpl || exit 1
+          if [ ! -z "$(git diff -U0 ./dist-material/release-docs/LICENSE)" ]; then
+            echo "LICENSE file is not updated correctly"
+            git diff -U0 ./dist-material/release-docs/LICENSE
+            exit 1
+          fi
+
+  sanity-check:
+    if: ( always() && ! cancelled() ) && (github.event_name == 'schedule' && github.repository == 'apache/skywalking') || (github.event_name != 'schedule')
+    name: Sanity check results
+    needs: [license-header, code-style, dependency-license]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check results
+        run: |
+          [[ ${{ needs.license-header.result }} == 'success' ]] || exit 1;
+          [[ ${{ needs.code-style.result }} == 'success' ]] || exit 1;
+          [[ ${{ needs.dependency-license.result }} == 'success' ]] || [[ ${{ needs.dependency-license.result }} == 'skipped' ]] || exit 1;
 
   changes:
     # Check if anything related to Actual code / CI(functional testing) is changed
