@@ -45,6 +45,7 @@
   - NGINX -> K8S_SERVICE
   - APISIX -> K8S_SERVICE
   - GENERAL -> APISIX
+* Support Apache RocketMQ server monitoring.
 
 #### UI
 
