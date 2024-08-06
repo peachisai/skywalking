@@ -15,16 +15,14 @@
 
 # This file is used to show how to write configuration files and can be used to test.
 
-cases:
-  # service cases
-  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/autocompleteValues?key=http.method
-    expected: expected/autocomplete.yml
-  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
-    expected: expected/service-name.yml
-  # span name
-  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/spans?serviceName=e2e-service-provider
-    expected: expected/span-name.yml
-  # traces
-#  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/traces\?limit\=1\&serviceName\=productcatalogservice\&spanName\=oteldemo.productcatalogservice/listproducts | yq e 'del(..|.tags?, ..|.annotations?)' -
-#    expected: expected/traces.yml
-  # autocomplete
+  cases:
+    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
+      expected: expected/service.yml
+    - query: |
+        swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec \
+          --expression=aws_s3_4xx --service-name aws-s3::skywalking
+      expected: expected/metrics-has-value.yml
+    - query: |
+        swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec \
+          --expression=aws_s3_5xx --service-name aws-s3::skywalking
+      expected: expected/metrics-has-value.yml

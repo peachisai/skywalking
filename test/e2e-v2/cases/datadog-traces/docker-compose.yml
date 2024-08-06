@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '3'
+version: '2.1'
 
 services:
   oap:
@@ -23,20 +23,20 @@ services:
     ports:
       - "12800:12800"
       - "9412:9412"
+      - "8126:8126"
     environment:
       SW_RECEIVER_DATADOG: default
       SW_RECEIVER_ZIPKIN: default
       SW_QUERY_ZIPKIN: default
     networks:
-      - e2e
-
+      e2e:
 
   sender:
     image: "eclipse-temurin:11-jre"
     volumes:
-      - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider.0.0.jar:/e2e-service-provider-2.0.0.jar
+      - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider.jar
       - ./mock-data:/data/otel-metrics
-    command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-service-provider-2.0.0.jar"]
+    command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-service-provider.jar"]
     environment:
       OAP_HOST: oap
       OAP_GRPC_PORT: 11800
@@ -47,9 +47,9 @@ services:
     networks:
       - e2e
     ports:
-      - 9095:9090
+      - 9094:9090
     healthcheck:
-      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9095"]
+      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9094"]
       interval: 5s
       timeout: 60s
       retries: 120
