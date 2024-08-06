@@ -44,4 +44,4 @@ verify:
     interval: 3s
   cases:
     - includes:
-        - ./s3-cases.yaml
+        - ./datadog-traces-cases.yaml

@@ -144,5 +144,8 @@ dependency:
     - name: io.vertx:vertx-grpc
       version: 4.5.1
       license: EPL-2.0
+    - name: org.msgpack:msgpack-core
+      version: 0.9.8
+      license: Apache-2.0
 
 
