@@ -14,5 +14,15 @@
 # limitations under the License.
 
 [
- "post /users","usercontroller.createauthor","userrepo.save","call next value for hibernate_sequence","insert into users (name, id) values (?, ?)"
+ "\r\n    create table users (\r\n       id bigint not null,\r\n        name varchar(?),\r\n        primary key (id)\r\n    )",
+ "\r\n    drop sequence if exists hibernate_sequence",
+ "\r\n    drop table if exists users cascade ",
+ "call next value for hibernate_sequence",
+ "create sequence hibernate_sequence start with ? increment by ?",
+ "insert into users (name, id) values (?, ?)",
+ "post /users",
+ "select * from information_schema.sequences",
+ "select user0_.id as id1_0_0_, user0_.name as name2_0_0_ from users user0_ where user0_.id=?",
+ "usercontroller.createauthor",
+ "userrepo.save"
 ]
