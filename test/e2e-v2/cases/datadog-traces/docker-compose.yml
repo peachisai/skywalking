@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '3'
+version: '2.1'
 
 services:
   oap:
@@ -21,16 +21,18 @@ services:
       file: ../../script/docker-compose/base-compose.yml
       service: oap
     ports:
-      - 12800
-    networks:
-      - e2e
+      - "12800:12800"
+      - "9412:9412"
     environment:
       SW_RECEIVER_DATADOG: default
       SW_RECEIVER_ZIPKIN: default
       SW_QUERY_ZIPKIN: default
+    networks:
+      - e2e
+
 
   sender:
-    image: "eclipse-temurin:8-jre"
+    image: "eclipse-temurin:11-jre"
     volumes:
       - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider.0.0.jar:/e2e-service-provider-2.0.0.jar
       - ./mock-data:/data/otel-metrics
