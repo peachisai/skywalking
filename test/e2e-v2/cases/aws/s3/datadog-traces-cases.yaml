@@ -15,33 +15,16 @@
 
 # This file is used to show how to write configuration files and can be used to test.
 
-setup:
-  env: compose
-  file: docker-compose.yml
-  timeout: 20m
-  init-system-environment: ../../script/env
-  steps:
-    - name: set PATH
-      command: export PATH=/tmp/skywalking-infra-e2e/bin:$PATH
-    - name: install yq
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh yq
-    - name: install swctl
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh swctl
-
-trigger:
-  action: http
-  interval: 3s
-  times: 30
-  url: http://localhost:9095/users
-  method: POST
-  body: '{"id":"123","name":"skywalking"}'
-  headers:
-    "Content-Type": "application/json"
-
-verify:
-  retry:
-    count: 10
-    interval: 3s
-  cases:
-    - includes:
-        - ./datadog-traces-cases.yaml
+cases:
+  # service cases
+  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
+    expected: expected/service-name.yml
+  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/autocompleteValues?key=http.method
+    expected: expected/autocomplete.yml
+  # span name
+  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/spans?serviceName=e2e-service-provider
+    expected: expected/span-name.yml
+  # traces
+#  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/traces\?limit\=1\&serviceName\=productcatalogservice\&spanName\=oteldemo.productcatalogservice/listproducts | yq e 'del(..|.tags?, ..|.annotations?)' -
+#    expected: expected/traces.yml
+  # autocomplete
