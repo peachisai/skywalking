@@ -13,46 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{- contains . }}
+  {{- contains . }}
 -
-{{- contains . }}
-  - traceId: {{ notEmpty .traceId }}
-    parentId: {{ notEmpty .parentId}}
-    id: {{ notEmpty .id }}
-    kind: SERVER
-    name: oteldemo.productcatalogservice/listproducts
-    timestamp: {{ ge .timestamp 0}}
-    duration: {{ ge .duration 0}}
-    localEndpoint:
-      serviceName: productcatalogservice
-    remoteEndpoint:
-      ipv4: {{ notEmpty .remoteEndpoint.ipv4 }}
-      port: {{ ge .remoteEndpoint.port 0}}
-  - traceId: {{ notEmpty .traceId }}
-    parentId: {{ .parentId }}
-    id: {{ notEmpty .id }}
-    kind: CLIENT
-    name: grpc.oteldemo.productcatalogservice/listproducts
-    timestamp: {{ ge .timestamp 0}}
-    duration: {{ ge .duration 0}}
-    localEndpoint:
-      serviceName: frontend
-    remoteEndpoint:
-      serviceName: productcatalogservice
-      port: {{ ge .remoteEndpoint.port 0}}
-  - traceId: {{ notEmpty .traceId }}
-    id: {{ notEmpty .id }}
-    kind: SERVER
-    name: http get
-    timestamp: {{ ge .timestamp 0}}
-    duration: {{ ge .duration 0}}
-    localEndpoint:
-      serviceName: frontend
-      ipv4: {{ notEmpty .localEndpoint.ipv4 }}
-      port: 8080
-    remoteEndpoint:
-      ipv4: {{ notEmpty .remoteEndpoint.ipv4 }}
-      port: {{ ge .remoteEndpoint.port 0}}
-{{- end }}
-{{- end }}
+  {{- contains . }}
+  {{- contains . }}
+- traceId: {{ notEmpty .traceId }}
+  parentId: {{ notEmpty .parentId}}
+  id: {{ notEmpty .id }}
+  kind: CLIENT
+  name: insert into users (name, id) values (?, ?)
+  timestamp: {{ ge .timestamp 0}}
+  duration: {{ ge .duration 0}}
+  localEndpoint:
+    serviceName: e2e-service-provider
+  {{- end }}
+  {{- end }}
+  {{- end }}
 
