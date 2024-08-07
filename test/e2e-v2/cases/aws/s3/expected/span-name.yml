@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[
- "\n    create table users (\n       id bigint not null,\n        name varchar(?),\n        primary key (id)\n    )"
+  {{- contains . }}
  "\n    drop sequence if exists hibernate_sequence",
  "\n    drop table if exists users cascade ",
  "call next value for hibernate_sequence",
@@ -25,4 +24,4 @@
  "select user0_.id as id1_0_0_, user0_.name as name2_0_0_ from users user0_ where user0_.id=?",
  "usercontroller.createauthor",
  "userrepo.save"
-]
+{{- end }}
