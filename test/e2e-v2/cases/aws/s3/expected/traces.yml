@@ -16,43 +16,25 @@
 {{- contains . }}
 -
 {{- contains . }}
-  - traceId: {{ notEmpty .traceId }}
-    parentId: {{ notEmpty .parentId}}
-    id: {{ notEmpty .id }}
-    kind: SERVER
-    name: oteldemo.productcatalogservice/listproducts
-    timestamp: {{ ge .timestamp 0}}
-    duration: {{ ge .duration 0}}
-    localEndpoint:
-      serviceName: productcatalogservice
-    remoteEndpoint:
-      ipv4: {{ notEmpty .remoteEndpoint.ipv4 }}
-      port: {{ ge .remoteEndpoint.port 0}}
-  - traceId: {{ notEmpty .traceId }}
-    parentId: {{ .parentId }}
-    id: {{ notEmpty .id }}
-    kind: CLIENT
-    name: grpc.oteldemo.productcatalogservice/listproducts
-    timestamp: {{ ge .timestamp 0}}
-    duration: {{ ge .duration 0}}
-    localEndpoint:
-      serviceName: frontend
-    remoteEndpoint:
-      serviceName: productcatalogservice
-      port: {{ ge .remoteEndpoint.port 0}}
-  - traceId: {{ notEmpty .traceId }}
-    id: {{ notEmpty .id }}
-    kind: SERVER
-    name: http get
-    timestamp: {{ ge .timestamp 0}}
-    duration: {{ ge .duration 0}}
-    localEndpoint:
-      serviceName: frontend
-      ipv4: {{ notEmpty .localEndpoint.ipv4 }}
-      port: 8080
-    remoteEndpoint:
-      ipv4: {{ notEmpty .remoteEndpoint.ipv4 }}
-      port: {{ ge .remoteEndpoint.port 0}}
+- traceId: {{ notEmpty .traceId }}
+  parentId: {{ notEmpty .parentId}}
+  id: {{ notEmpty .id }}
+  kind: CLIENT
+  name: insert into users (name, id) values (?, ?)
+  timestamp: {{ ge .timestamp 0}}
+  duration: {{ ge .duration 0}}
+  localEndpoint:
+    serviceName: e2e-service-provider
+  tags:
+    _dd.base_service: e2e-service-provider
+    _dd.p.tid:  {{ notEmpty .tags._dd.p.tid }}
+    component: java-jdbc-prepared_statement
+    db.instance: testdb
+    db.operation: insert
+    db.type : h2
+    db.user: sa
+    span.kind: client
+    thread.name: {{ notEmpty .tags.thread.name }}
 {{- end }}
-{{- end }}
+{- end }}
 

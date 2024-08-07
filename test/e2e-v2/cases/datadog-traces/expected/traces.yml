@@ -13,28 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-  {{- contains . }}
+{{- contains . }}
 -
-  {{- contains . }}
-- traceId: {{ notEmpty .traceId }}
-  parentId: {{ notEmpty .parentId}}
-  id: {{ notEmpty .id }}
-  kind: CLIENT
-  name: insert into users (name, id) values (?, ?)
-  timestamp: {{ ge .timestamp 0}}
-  duration: {{ ge .duration 0}}
-  localEndpoint:
-    serviceName: e2e-service-provider
-  tags:
-    _dd.base_service: e2e-service-provider
-    _dd.p.tid:  {{ notEmpty .tags._dd.p.tid }}
-    component: java-jdbc-prepared_statement
-    db.instance: {{ notEmpty .tags.db.instance }}
-    db.operation: insert
-    db.type : h2
-    db.user: sa
-    span.kind: client
-    thread.name: {{ notEmpty .tags.thread.name }}
-  {{- end }}
-  {{- end }}
+{{- contains . }}
+  - traceId: {{ notEmpty .traceId }}
+    parentId: {{ .parentId }}
+    id: {{ notEmpty .id }}
+    kind: CLIENT
+    name: insert into users (name, id) values (?, ?)
+    timestamp: {{ ge .timestamp 0}}
+    duration: {{ ge .duration 0}}
+    localEndpoint:
+      serviceName: e2e-service-provider
+    tags:
+      _dd.base_service: e2e-service-provider
+      _dd.p.tid:  {{ tags._dd.p.tid }}
+      component: java-jdbc-prepared_statement
+      db.instance: testdb
+      db.operation: insert
+      db.type : h2
+      db.user: sa
+      span.kind: client
+      thread.name: {{ notEmpty .tags.thread.name }}
+{{- end }}
+{{- end }}
+
 

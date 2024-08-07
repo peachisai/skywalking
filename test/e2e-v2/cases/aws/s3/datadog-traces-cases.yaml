@@ -25,5 +25,5 @@ cases:
   - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/spans?serviceName=e2e-service-provider
     expected: expected/span-name.yml
   # traces
-  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/traces?serviceName=e2e-service-provider&spanName=post /users | yq e 'del(..|.tags?, ..|.annotations?)' -
+  - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/traces?serviceName=e2e-service-provider&spanName=post /users  | yq e 'del(..|.tags?, ..|.annotations?)' -
     expected: expected/traces.yml
