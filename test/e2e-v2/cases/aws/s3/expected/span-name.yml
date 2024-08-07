@@ -14,6 +14,7 @@
 # limitations under the License.
 
 [
+ "\n    create table users (\n       id bigint not null,\n        name varchar(?),\n        primary key (id)\n    )"
  "\n    drop sequence if exists hibernate_sequence",
  "\n    drop table if exists users cascade ",
  "call next value for hibernate_sequence",
