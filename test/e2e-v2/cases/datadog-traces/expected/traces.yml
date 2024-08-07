@@ -16,7 +16,6 @@
   {{- contains . }}
 -
   {{- contains . }}
-  {{- contains . }}
 - traceId: {{ notEmpty .traceId }}
   parentId: {{ notEmpty .parentId}}
   id: {{ notEmpty .id }}
@@ -26,7 +25,6 @@
   duration: {{ ge .duration 0}}
   localEndpoint:
     serviceName: e2e-service-provider
-  {{- end }}
   {{- end }}
   {{- end }}
 
