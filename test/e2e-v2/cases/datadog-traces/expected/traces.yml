@@ -27,14 +27,14 @@
       serviceName: e2e-service-provider
     tags:
       _dd.base_service: e2e-service-provider
-      _dd.p.tid:  {{ .tags._dd.p.tid }}
+      _dd.p.tid:  {{ notEmpty }}
       component: java-jdbc-prepared_statement
       db.instance: testdb
       db.operation: insert
       db.type : h2
       db.user: sa
       span.kind: client
-      thread.name: {{ notEmpty .tags.thread.name }}
+      thread.name: {{ notEmpty }}
 {{- end }}
 {{- end }}
 
