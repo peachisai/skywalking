@@ -25,6 +25,16 @@
   duration: {{ ge .duration 0}}
   localEndpoint:
     serviceName: e2e-service-provider
+  tags:
+    _dd.base_service: e2e-service-provider
+    _dd.p.tid:
+    component: java-jdbc-prepared_statement
+    db.instance:
+    db.operation: insert
+    db.type : h2
+    db.user: sa
+    span.kind: client
+    thread.name: {{ notEmpty}}
   {{- end }}
   {{- end }}
 
