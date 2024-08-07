@@ -35,6 +35,5 @@
     db.user: sa
     span.kind: client
     thread.name: {{ notEmpty .tags.thread.name }}
-{{- end }}
-{- end }}
-
+  {{- end }}
+  {{- end }}
