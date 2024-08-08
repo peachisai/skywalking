@@ -26,6 +26,7 @@
     localEndpoint:
       serviceName: productcatalogservice
     remoteEndpoint:
+      ipv4: {{ notEmpty .remoteEndpoint.ipv4 }}
       port: {{ ge .remoteEndpoint.port 0}}
   - traceId: {{ notEmpty .traceId }}
     parentId: {{ .parentId }}
