@@ -16,7 +16,7 @@
 {{- contains . }}
 -
 {{- contains . }}
-  - traceId: {{ notEmpty .traceId }}
+  - traceId: {{ .traceId }}
     parentId: {{ .parentId }}
     id: {{ notEmpty .id }}
     kind: CLIENT
@@ -32,7 +32,6 @@
       db.type : h2
       db.user: sa
       span.kind: client
-      thread.name: {{ notEmpty .tags.thread.name }}
 {{- end }}
 {{- end }}
 
