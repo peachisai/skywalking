@@ -63,7 +63,7 @@ public class DatadogReceiverProvider extends ModuleProvider {
     }
 
     @Override
-    public void prepare() throws ServiceNotProvidedException, ModuleStartException {
+    public void prepare() throws ServiceNotProvidedException {
         server = new DatadogReceiverServer(config, getManager());
     }
 
@@ -81,7 +81,7 @@ public class DatadogReceiverProvider extends ModuleProvider {
     }
 
     @Override
-    public void notifyAfterCompleted() throws ServiceNotProvidedException, ModuleStartException {
+    public void notifyAfterCompleted() throws ServiceNotProvidedException {
 
     }
 
