@@ -121,7 +121,7 @@ public class DatadogTraceHandler extends SimpleChannelInboundHandler<FullHttpReq
 
             spanBuilder.kind(getSpanKind(ddSpan));
             for (Map.Entry<String, String> metaEntry : ddSpan.getMeta().entrySet()) {
-                if (metaEntry.getKey().startsWith("_dd")||metaEntry.getKey().startsWith("thread")) {
+                if (metaEntry.getKey().startsWith("_dd") || metaEntry.getKey().startsWith("thread")) {
                     continue;
                 }
                 spanBuilder.putTag(metaEntry.getKey(), metaEntry.getValue());
