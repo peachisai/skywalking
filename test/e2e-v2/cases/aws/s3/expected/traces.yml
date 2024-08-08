@@ -17,7 +17,7 @@
 -
 {{- contains . }}
 - traceId: {{ notEmpty .traceId }}
-  parentId: {{ notEmpty .parentId}}
+  parentId: {{ .parentId}}
   id: {{ notEmpty .id }}
   kind: CLIENT
   name: insert into users (name, id) values (?, ?)
@@ -27,7 +27,7 @@
     serviceName: e2e-service-provider
   tags:
     _dd.base_service: e2e-service-provider
-    _dd.p.tid:  {{ notEmpty .tags._dd.p.tid }}
+    _dd.p.tid:  {{ .tags.component }}
     component: java-jdbc-prepared_statement
     db.instance: testdb
     db.operation: insert
