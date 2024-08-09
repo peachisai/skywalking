@@ -27,7 +27,7 @@
       serviceName: e2e-service-provider
   - traceId: {{ notEmpty .traceId }}
     parentId: {{ notEmpty .parentId }}
-    id: {{ notEmpty .id } }
+    id: {{ notEmpty .id }}
     kind: server
     name: healthcontroller.hello
     timestamp: {{ ge .timestamp 0}}
