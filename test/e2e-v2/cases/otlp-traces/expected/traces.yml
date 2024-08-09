@@ -19,19 +19,21 @@
   - traceId: {{ notEmpty .traceId }}
     parentId: {{ .parentId }}
     id: {{ notEmpty .id }}
-    kind: CLIENT
-    name: insert into users (name, id) values (?, ?)
+    kind: server
+    name: get /health
     timestamp: {{ ge .timestamp 0}}
     duration: {{ ge .duration 0}}
     localEndpoint:
       serviceName: e2e-service-provider
-    tags:
-      component: java-jdbc-prepared_statement
-      db.instance: testdb
-      db.operation: insert
-      db.type : h2
-      db.user: sa
-      span.kind: client
+  - traceId: {{ notEmpty .traceId }}
+    parentId: {{ notEmpty .parentId }}
+    id: {{ notEmpty .id } }
+    kind: server
+    name: healthcontroller.hello
+    timestamp: {{ ge .timestamp 0}}
+    duration: {{ ge .duration 0}}
+    localEndpoint:
+      serviceName: e2e-service-provider
 {{- end }}
 {{- end }}
 
