@@ -34,7 +34,7 @@
     duration: {{ ge .duration 0}}
     localEndpoint:
       serviceName: e2e-service-provider
--   parentId: {{ .parentId }}
+-   parentId: {{ notEmpty .parentId}}
     id: {{ notEmpty .id }}
     kind: CLIENT
     name: call next value for hibernate_sequence
