@@ -16,7 +16,7 @@
 {{- contains . }}
 -
 {{- contains . }}
-  - traceId: {{ ge .traceId 0 }}
+  - traceId: {{ notEmpty .traceId }}
     parentId: {{ .parentId }}
     id: {{ notEmpty .id }}
     kind: CLIENT
