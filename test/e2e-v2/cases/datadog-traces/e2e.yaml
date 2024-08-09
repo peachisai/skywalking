@@ -31,30 +31,17 @@ setup:
 trigger:
   action: http
   interval: 3s
-  times: 10
-  url: http://localhost:19090/health
-  method: GET
+  times: 30
+  url: http://localhost:19090/users
+  method: POST
+  body: '{"id":"123","name":"skywalking"}'
+  headers:
+    "Content-Type": "application/json"
 
 verify:
-  # verify with retry strategy
   retry:
-    # max retry count
-    count: 20
-    # the interval between two retries, in millisecond.
-    interval: 5s
+    count: 10
+    interval: 3s
   cases:
-#    # service name
-    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
-      expected: expected/service-name.yml
-#    # remote-service name
-#    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/remoteServices?serviceName=frontend
-#      expected: expected/remote-service-name.yml
-#    # span name
-#    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/spans?serviceName=productcatalogservice
-#      expected: expected/span-name.yml
-    # traces
-    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/traces\?limit\=1\&serviceName\=e2e-service-provider\&spanName\=userrepo.save
-      expected: expected/traces.yml
-    # autocomplete
-#    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/autocompleteValues?key=http.method
-#      expected: expected/autocomplete.yml
+    - includes:
+        - ./datadog-traces-cases.yaml

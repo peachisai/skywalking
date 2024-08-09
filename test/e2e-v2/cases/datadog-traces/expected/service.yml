@@ -13,6 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[
-  "e2e-service-provider",
-]
+  {{- contains . }}
+- id: {{ b64enc "aws-s3::skywalking" }}.1
+  name: aws-s3::skywalking
+  group: aws-s3
+  shortname: skywalking
+  normal: true
+  layers:
+    - AWS_S3
+  {{- end }}
