@@ -16,8 +16,7 @@
 {{- contains . }}
 -
 {{- contains . }}
-  - traceId: {{ .value }}
-    parentId: {{ .parentId }}
+-   parentId: {{ .parentId }}
     id: {{ notEmpty .id }}
     kind: CLIENT
     name: insert into users (name, id) values (?, ?)
