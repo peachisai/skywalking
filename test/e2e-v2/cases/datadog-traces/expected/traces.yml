@@ -37,11 +37,11 @@
 -   parentId: {{ .parentId }}
     id: {{ notEmpty .id }}
     kind: CLIENT
-    name: insert into users (name, id) values (?, ?)
+    name: call next value for hibernate_sequence
     timestamp: {{ ge .timestamp 0}}
     duration: {{ ge .duration 0}}
     localEndpoint:
-      serviceName: e2e-service-provider
+        serviceName: e2e-service-provider
 {{- end }}
 {{- end }}
 
