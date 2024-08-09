@@ -47,8 +47,8 @@ verify:
     interval: 5s
   cases:
 #    # service name
-#    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
-#      expected: expected/service-name.yml
+    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/services
+      expected: expected/service-name.yml
 #    # remote-service name
 #    - query: curl http://${oap_host}:${oap_9412}/zipkin/api/v2/remoteServices?serviceName=frontend
 #      expected: expected/remote-service-name.yml

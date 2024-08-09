@@ -13,49 +13,72 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '2.1'
+version: '3.9'
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
 
 services:
-  oap:
-    extends:
-      file: ../../../script/docker-compose/base-compose.yml
-      service: oap
+  frontend:
+    image: ghcr.io/open-telemetry/demo:1.4.0-frontend
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
     ports:
-      - "12800:12800"
-      - "9412:9412"
-      - "8126:8126"
+      - 8080
     environment:
-      SW_RECEIVER_DATADOG: default
-      SW_RECEIVER_ZIPKIN: default
-      SW_QUERY_ZIPKIN: default
-    networks:
-      e2e:
-
-  sender:
-    image: "eclipse-temurin:11-jre"
-    volumes:
-      - ./../../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider.jar
-      - ./mock-data:/data/otel-metrics
-    command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-service-provider.jar"]
-    environment:
-      OAP_HOST: oap
-      OAP_GRPC_PORT: 11800
-      OTEL_METRICS_DATA_PATH: /data/otel-metrics
-      DD_AGENT_HOST: "oap"
-      DD_TRACE_AGENT_PORT: "8126"
-      DD_SERVICE_NAME: "e2e-service-provider"
-      DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
+      PORT: 8080
+      FRONTEND_ADDR: frontend:8080
+      PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
+      OTEL_RESOURCE_ATTRIBUTES: service.namespace=opentelemetry-demo
+      ENV_PLATFORM: local
+      OTEL_SERVICE_NAME: frontend
+      WEB_OTEL_SERVICE_NAME: frontend-web
+      CURRENCY_SERVICE_ADDR: no.exist:80
+    depends_on:
+      - oap
+      - productcatalogservice
+    logging: *logging
     networks:
       - e2e
+
+  productcatalogservice:
+    image: ghcr.io/open-telemetry/demo:1.4.0-productcatalogservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
     ports:
-      - 9094:9090
-    healthcheck:
-      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9094"]
-      interval: 5s
-      timeout: 60s
-      retries: 120
+      - "3550"
+    environment:
+      PRODUCT_CATALOG_SERVICE_PORT: 3550
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
+      OTEL_RESOURCE_ATTRIBUTES: service.namespace=opentelemetry-demo
+      OTEL_SERVICE_NAME: productcatalogservice
+      FEATURE_FLAG_GRPC_SERVICE_ADDR: no.exist:80
     depends_on:
-      oap:
-        condition: service_healthy
+      - oap
+    logging: *logging
+    networks:
+      - e2e
+
+  oap:
+    extends:
+      file: ../../script/docker-compose/base-compose.yml
+      service: oap
+    ports:
+      - 12800
+      - 9412
+    environment:
+      SW_OTEL_RECEIVER_ENABLED_HANDLERS: otlp-metrics,otlp-logs,otlp-traces
+      SW_RECEIVER_ZIPKIN: default
+      SW_QUERY_ZIPKIN: default
+
 networks:
   e2e:
