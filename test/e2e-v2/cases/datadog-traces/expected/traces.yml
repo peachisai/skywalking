@@ -18,6 +18,24 @@
 {{- contains . }}
 -   parentId: {{ .parentId }}
     id: {{ notEmpty .id }}
+    kind: SERVER
+    name: post /users
+    timestamp: {{ ge .timestamp 0}}
+    duration: {{ ge .duration 0}}
+    localEndpoint:
+      serviceName: e2e-service-provider
+    remoteEndpoint:
+      ipv4: {{ notEmpty .remoteEndpoint.ipv4 }}
+-   parentId: {{ .parentId }}
+    id: {{ notEmpty .id }}
+    kind: CLIENT
+    name: insert into users (name, id) values (?, ?)
+    timestamp: {{ ge .timestamp 0}}
+    duration: {{ ge .duration 0}}
+    localEndpoint:
+      serviceName: e2e-service-provider
+-   parentId: {{ .parentId }}
+    id: {{ notEmpty .id }}
     kind: CLIENT
     name: insert into users (name, id) values (?, ?)
     timestamp: {{ ge .timestamp 0}}
