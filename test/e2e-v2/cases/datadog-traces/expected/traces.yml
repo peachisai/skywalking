@@ -17,7 +17,6 @@
 -
 {{- contains . }}
   - id: {{ notEmpty .id }}
-    parentId: {{ notEmpty .parentId }}
     kind: SERVER
     name: post /users
     timestamp: {{ ge .timestamp 0}}
@@ -27,7 +26,6 @@
     remoteEndpoint:
       ipv4: {{ notEmpty .remoteEndpoint.ipv4 }}
   - id: {{ notEmpty .id }}
-    parentId: {{ notEmpty .parentId }}
     kind: CLIENT
     name: insert into users (name, id) values (?, ?)
     timestamp: {{ ge .timestamp 0}}
@@ -35,7 +33,6 @@
     localEndpoint:
       serviceName: e2e-service-provider
   - id: {{ notEmpty .id }}
-    parentId: {{ notEmpty .parentId }}
     kind: CLIENT
     name: call next value for hibernate_sequence
     timestamp: {{ ge .timestamp 0}}
@@ -43,7 +40,6 @@
     localEndpoint:
         serviceName: e2e-service-provider
   - id: {{ notEmpty .id }}
-    parentId: {{ notEmpty .parentId }}
     kind: CLIENT
     name: userrepo.save
     timestamp: {{ ge .timestamp 0}}
@@ -51,7 +47,6 @@
     localEndpoint:
         serviceName: e2e-service-provider
   - id: {{ notEmpty .id }}
-    parentId: {{ notEmpty .parentId }}
     kind: CLIENT
     name: select user0_.id as id1_0_0_, user0_.name as name2_0_0_ from users user0_ where user0_.id=?
     timestamp: {{ ge .timestamp 0}}
@@ -59,7 +54,6 @@
     localEndpoint:
         serviceName: e2e-service-provider
   - id: {{ notEmpty .id }}
-    parentId: {{ notEmpty .parentId }}
     kind: SERVER
     name: usercontroller.createauthor
     timestamp: {{ ge .timestamp 0}}
