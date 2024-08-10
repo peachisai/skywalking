@@ -54,7 +54,7 @@
     localEndpoint:
         serviceName: e2e-service-provider
   - id: {{ notEmpty .id }}
-    kind: CLIENT
+    kind: SERVER
     name: usercontroller.createauthor
     timestamp: {{ ge .timestamp 0}}
     duration: {{ ge .duration 0}}
