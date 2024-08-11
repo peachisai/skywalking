@@ -436,6 +436,13 @@ receiver-log:
   selector: ${SW_RECEIVER_LOG:default}
   default:
 
+receiver-datadog:
+  selector: ${SW_RECEIVER_DATADOG:-}
+  default:
+    port: ${SW_RECEIVER_DATADOG_PORT:8126}
+    boosThreadGroupSize: ${SW_RECEIVER_DATADOG_BOSS_THREAD_GROUP_SIZE:4}
+    workerThreadGroupSize: ${SW_RECEIVER_DATADOG_WORKER_THREAD_GROUP_SIZE:8}
+
 query:
   selector: ${SW_QUERY:graphql}
   graphql:

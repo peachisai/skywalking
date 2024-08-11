@@ -49,6 +49,7 @@
 * Add Unknown Node when receive Kubernetes peer address is not aware in current cluster.
 * Fix CounterWindow concurrent increase cause NPE by PriorityQueue
 * Fix format the endpoint name with empty string.
+* Add Datadog java agent tracing support as a Zipkin trace input
 
 #### UI
 

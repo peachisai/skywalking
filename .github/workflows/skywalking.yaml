@@ -690,6 +690,10 @@ jobs:
 
           - name: Cilium Service
             config: test/e2e-v2/cases/cilium/e2e.yaml
+
+          - name: DATADOG Trace
+            config: test/e2e-v2/cases/datadog-traces/e2e.yaml
+
     steps:
       - uses: actions/checkout@v3
         with:

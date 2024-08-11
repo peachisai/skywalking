@@ -1,0 +1,57 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: '3'
+
+services:
+  oap:
+    extends:
+      file: ../../script/docker-compose/base-compose.yml
+      service: oap
+    ports:
+      - "12800:12800"
+      - "9412:9412"
+      - "8126:8126"
+    environment:
+      SW_RECEIVER_DATADOG: default
+      SW_RECEIVER_ZIPKIN: default
+      SW_QUERY_ZIPKIN: default
+    networks:
+      e2e:
+
+  sender:
+    image: "eclipse-temurin:11-jre"
+    volumes:
+      - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/e2e-service-provider.jar
+    command: ["/bin/sh", "-c", "wget $$DD_AGENT_JAR_URL -O /dd-java-agent.jar && exec java -javaagent:dd-java-agent.jar -jar /e2e-service-provider.jar"]
+    environment:
+      DD_AGENT_HOST: oap
+      DD_TRACE_AGENT_PORT: 8126
+      DD_SERVICE_NAME: e2e-service-provider
+      DD_AGENT_JAR_URL: https://dtdg.co/latest-java-tracer
+    networks:
+      - e2e
+    ports:
+      - "19090:9090"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 19090"]
+      interval: 5s
+      timeout: 60s
+      retries: 120
+    depends_on:
+      oap:
+        condition: service_healthy
+networks:
+  e2e:
