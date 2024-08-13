@@ -399,7 +399,7 @@ receiver-otel:
     enabledOtelMetricsRules: ${SW_OTEL_RECEIVER_ENABLED_OTEL_METRICS_RULES:"apisix,nginx/*,k8s/*,istio-controlplane,vm,mysql/*,postgresql/*,oap,aws-eks/*,windows,aws-s3/*,aws-dynamodb/*,aws-gateway/*,redis/*,elasticsearch/*,rabbitmq/*,mongodb/*,kafka/*,pulsar/*,bookkeeper/*,rocketmq/*,clickhouse/*,activemq/*"}
 
 receiver-zipkin:
-  selector: ${SW_RECEIVER_ZIPKIN:-}
+  selector: ${SW_RECEIVER_ZIPKIN:default}
   default:
     # Defines a set of span tag keys which are searchable.
     # The max length of key=value should be less than 256 or will be dropped.
@@ -437,7 +437,7 @@ receiver-log:
   default:
 
 receiver-datadog:
-  selector: ${SW_RECEIVER_DATADOG:-}
+  selector: ${SW_RECEIVER_DATADOG:default}
   default:
     port: ${SW_RECEIVER_DATADOG_PORT:8126}
     boosThreadGroupSize: ${SW_RECEIVER_DATADOG_BOSS_THREAD_GROUP_SIZE:4}
@@ -463,7 +463,7 @@ query:
 
 # This module is for Zipkin query API and support zipkin-lens UI
 query-zipkin:
-  selector: ${SW_QUERY_ZIPKIN:-}
+  selector: ${SW_QUERY_ZIPKIN:default}
   default:
     # For HTTP server
     restHost: ${SW_QUERY_ZIPKIN_REST_HOST:0.0.0.0}
