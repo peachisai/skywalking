@@ -1,0 +1,375 @@
+[
+  {
+    "id": "Nacos-Cluster",
+    "configuration": {
+      "children": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 24,
+          "h": 48,
+          "i": "0",
+          "type": "Tab",
+          "children": [
+            {
+              "name": "Overview",
+              "children": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "w": 4,
+                  "h": 9,
+                  "i": "0",
+                  "type": "Widget",
+                  "id": "0-0-0",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_service_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Card",
+                    "fontSize": 14,
+                    "textAlign": "center",
+                    "showUnit": true
+                  },
+                  "widget": {
+                    "title": "service_count"
+                  }
+                },
+                {
+                  "x": 4,
+                  "y": 9,
+                  "w": 4,
+                  "h": 9,
+                  "i": "1",
+                  "type": "Widget",
+                  "id": "0-0-1",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_subscriber_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Card",
+                    "fontSize": 26,
+                    "textAlign": "center",
+                    "showUnit": true
+                  },
+                  "widget": {
+                    "title": "subscriber_count"
+                  }
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "w": 4,
+                  "h": 9,
+                  "i": "2",
+                  "type": "Widget",
+                  "id": "0-0-2",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_instance_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Card",
+                    "fontSize": 26,
+                    "textAlign": "center",
+                    "showUnit": true
+                  },
+                  "widget": {
+                    "title": "instance_count"
+                  }
+                },
+                {
+                  "x": 0,
+                  "y": 18,
+                  "w": 8,
+                  "h": 18,
+                  "i": "3",
+                  "type": "Widget",
+                  "id": "0-0-3",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_success_push_count"
+                  ],
+                  "typesOfMQE": [
+                    "UNKNOWN"
+                  ],
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "widget": {
+                    "title": "success_push_count"
+                  }
+                },
+                {
+                  "x": 8,
+                  "y": 18,
+                  "w": 8,
+                  "h": 18,
+                  "i": "4",
+                  "type": "Widget",
+                  "id": "0-0-4",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_failed_push_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "widget": {
+                    "title": "failed_push_count"
+                  }
+                },
+                {
+                  "x": 16,
+                  "y": 0,
+                  "w": 8,
+                  "h": 18,
+                  "i": "5",
+                  "type": "Widget",
+                  "id": "0-0-5",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_max_push_cost"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "widget": {
+                    "title": "max_push_cost"
+                  }
+                },
+                {
+                  "x": 16,
+                  "y": 18,
+                  "w": 8,
+                  "h": 18,
+                  "i": "6",
+                  "type": "Widget",
+                  "id": "0-0-6",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_avg_push_cost"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "widget": {
+                    "title": "avg_push_cost"
+                  }
+                },
+                {
+                  "x": 0,
+                  "y": 9,
+                  "w": 4,
+                  "h": 9,
+                  "i": "7",
+                  "type": "Widget",
+                  "id": "0-0-7",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_config_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Card",
+                    "fontSize": 26,
+                    "textAlign": "center",
+                    "showUnit": true
+                  },
+                  "widget": {
+                    "title": "config_count"
+                  }
+                },
+                {
+                  "x": 8,
+                  "y": 36,
+                  "w": 8,
+                  "h": 18,
+                  "i": "8",
+                  "type": "Widget",
+                  "id": "0-0-8",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "expressions": [
+                    "meter_nacos_cluster_config_write_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "widget": {
+                    "title": "config_write_count"
+                  }
+                },
+                {
+                  "x": 0,
+                  "y": 36,
+                  "w": 8,
+                  "h": 18,
+                  "i": "9",
+                  "type": "Widget",
+                  "id": "0-0-9",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_config_read_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "widget": {
+                    "title": "config_read_count"
+                  }
+                },
+                {
+                  "x": 8,
+                  "y": 0,
+                  "w": 8,
+                  "h": 18,
+                  "i": "10",
+                  "type": "Widget",
+                  "id": "0-0-10",
+                  "metricTypes": [],
+                  "metrics": [],
+                  "metricMode": "Expression",
+                  "moved": false,
+                  "expressions": [
+                    "meter_nacos_cluster_total_connection_count"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ],
+                  "widget": {
+                    "title": "total_connection_count"
+                  },
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Node",
+              "children": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "w": 24,
+                  "h": 30,
+                  "i": "0",
+                  "type": "Widget",
+                  "graph": {
+                    "type": "InstanceList",
+                    "dashboardName": "Nacos-Node",
+                    "fontSize": 12
+                  },
+                  "metrics": [],
+                  "metricTypes": [],
+                  "metricConfig": []
+                }
+              ]
+            }
+          ],
+          "id": "0",
+          "activedTabIndex": 0,
+          "moved": false
+        }
+      ],
+      "layer": "NACOS",
+      "entity": "Service",
+      "name": "Nacos-Cluster",
+      "id": "Nacos-Cluster",
+      "isRoot": false
+    }
+  }
+]

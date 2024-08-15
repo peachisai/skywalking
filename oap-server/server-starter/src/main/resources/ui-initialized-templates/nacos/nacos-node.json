@@ -1,0 +1,253 @@
+[
+  {
+    "id": "Nacos-Node",
+    "configuration": {
+      "children": [
+        {
+          "x": 0,
+          "y": 36,
+          "w": 8,
+          "h": 17,
+          "i": "0",
+          "type": "Widget",
+          "id": "0",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_nacos_node_cpu_usage"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "cpu_usage"
+          }
+        },
+        {
+          "x": 8,
+          "y": 18,
+          "w": 8,
+          "h": 18,
+          "i": "1",
+          "type": "Widget",
+          "id": "1",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_nacos_node_memory_usage"
+          ],
+          "typesOfMQE": [
+            "UNKNOWN"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "memory_usage"
+          }
+        },
+        {
+          "x": 16,
+          "y": 18,
+          "w": 8,
+          "h": 18,
+          "i": "2",
+          "type": "Widget",
+          "id": "2",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_nacos_node_gc_count"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "gc_count"
+          }
+        },
+        {
+          "x": 8,
+          "y": 36,
+          "w": 8,
+          "h": 17,
+          "i": "3",
+          "type": "Widget",
+          "id": "3",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_nacos_node_read_from_leader_count"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "read_from_leader_count"
+          }
+        },
+        {
+          "x": 16,
+          "y": 0,
+          "w": 8,
+          "h": 18,
+          "i": "4",
+          "type": "Widget",
+          "id": "4",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_nacos_node_gc_time"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "gc_time"
+          }
+        },
+        {
+          "x": 0,
+          "y": 18,
+          "w": 8,
+          "h": 18,
+          "i": "5",
+          "type": "Widget",
+          "id": "5",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_nacos_node_thread_count"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "title": "thread_count"
+          }
+        },
+        {
+          "x": 8,
+          "y": 0,
+          "w": 8,
+          "h": 18,
+          "i": "6",
+          "type": "Widget",
+          "id": "6",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_nacos_node_thread_state_count"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "thread_state_count"
+          }
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "w": 8,
+          "h": 18,
+          "i": "7",
+          "type": "Widget",
+          "id": "7",
+          "metricTypes": [],
+          "metrics": [],
+          "metricMode": "Expression",
+          "moved": false,
+          "expressions": [
+            "meter_nacos_node_read_index_failed_count"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "title": "read_index_failed_count"
+          }
+        }
+      ],
+      "layer": "NACOS",
+      "entity": "ServiceInstance",
+      "name": "Nacos-Node",
+      "id": "Nacos-Node"
+    }
+  }
+]

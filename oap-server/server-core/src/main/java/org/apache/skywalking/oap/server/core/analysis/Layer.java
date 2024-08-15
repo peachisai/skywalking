@@ -234,7 +234,12 @@ public enum Layer {
      * Cilium is open source software for providing and transparently securing network connectivity and load balancing
      * between application workloads such as application containers or processes.
      */
-    CILIUM_SERVICE(38, true);
+    CILIUM_SERVICE(38, true),
+
+    /**
+     * an easy-to-use dynamic service discovery, configuration and service management platform for building cloud native applications.
+     */
+    NACOS(39, true);
 
     private final int value;
     /**

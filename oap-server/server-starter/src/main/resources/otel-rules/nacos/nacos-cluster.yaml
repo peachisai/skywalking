@@ -1,0 +1,62 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This will parse a textual representation of a duration. The formats
+# accepted are based on the ISO-8601 duration format {@code PnDTnHnMn.nS}
+# with days considered to be exactly 24 hours.
+# <p>
+# Examples:
+# <pre>
+#    "PT20.345S" -- parses as "20.345 seconds"
+#    "PT15M"     -- parses as "15 minutes" (where a minute is 60 seconds)
+#    "PT10H"     -- parses as "10 hours" (where an hour is 3600 seconds)
+#    "P2D"       -- parses as "2 days" (where a day is 24 hours or 86400 seconds)
+#    "P2DT3H4M"  -- parses as "2 days, 3 hours and 4 minutes"
+#    "P-6H3M"    -- parses as "-6 hours and +3 minutes"
+#    "-P6H3M"    -- parses as "-6 hours and -3 minutes"
+#    "-P-6H+3M"  -- parses as "+6 hours and -3 minutes"
+# </pre>
+filter: "{ tags -> tags.job_name == 'nacos-monitoring' }" # The OpenTelemetry job name
+expSuffix: tag({tags -> tags.cluster = 'nacos::' + tags.cluster}).service(['cluster'], Layer.NACOS)
+metricPrefix: meter_nacos_cluster
+metricsRules:
+
+  # naming
+  - name: instance_count
+    exp: nacos_monitor.tagEqual('name', 'ipCount').sum(['cluster'])
+  - name: service_count
+    exp: nacos_monitor.tagEqual('name', 'serviceCount').sum(['cluster'])
+  - name: failed_push_count
+    exp: nacos_monitor.tagEqual('name', 'failedPush').sum(['cluster'])
+  - name: success_push_count
+    exp: nacos_monitor.tagEqual('name', 'totalPush').sum(['cluster'])
+  - name: max_push_cost
+    exp: nacos_monitor.tagEqual('name', 'maxPushCost').sum(['cluster'])
+  - name: avg_push_cost
+    exp: nacos_monitor.tagEqual('name', 'avgPushCost').sum(['cluster'])
+  - name: subscriber_count
+    exp: nacos_monitor.tagEqual('name', 'subscriberCount').sum(['cluster'])
+
+  # config
+  - name: config_count
+    exp: nacos_monitor.tagEqual('name', 'configCount').sum(['cluster'])
+  - name: config_read_count
+    exp: nacos_monitor.tagEqual("name", "getConfig").sum(['cluster'])
+  - name: config_write_count
+    exp: nacos_monitor.tagEqual("name", "publish").sum(['cluster'])
+
+  # core
+  - name: total_connection_count
+    exp: nacos_monitor.tagEqual("name", "longConnection").sum(['cluster'])
