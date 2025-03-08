@@ -77,6 +77,7 @@ public class UITemplateInitializer {
         Layer.ACTIVEMQ.name(),
         Layer.CILIUM_SERVICE.name(),
         Layer.NACOS.name(),
+        Layer.FLINK.name(),
         "custom"
     };
     private final UITemplateManagementService uiTemplateManagementService;

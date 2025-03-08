@@ -239,7 +239,9 @@ public enum Layer {
     /**
      * an easy-to-use dynamic service discovery, configuration and service management platform for building cloud native applications.
      */
-    NACOS(39, true);
+    NACOS(39, true),
+
+    FLINK(40, true);
 
     private final int value;
     /**
