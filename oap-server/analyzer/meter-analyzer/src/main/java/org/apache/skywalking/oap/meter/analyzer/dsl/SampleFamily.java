@@ -87,19 +87,6 @@ public class SampleFamily {
         if (samples.length == 0) {
             return EMPTY;
         }
-        for (Sample sample : samples) {
-            ImmutableMap<String, String> labels = sample.getLabels();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                String key = entry.getKey();
-                if (key.equals("name")){
-                    String value = entry.getValue();
-                    System.out.println(value);
-                    if (value.equals("serviceCount")){
-                        System.out.println(value);
-                    }
-                }
-            }
-        }
 
         return new SampleFamily(samples, Optional.ofNullable(ctx).orElseGet(RunningContext::instance));
     }
