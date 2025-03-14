@@ -36,10 +36,10 @@ metricsRules:
   # job
   - name: running_job_number
     exp: flink_jobmanager_numRunningJobs.sum(['cluster'])
-  - name: total_restart_job_number
-    exp: flink_jobmanager_job_numRestarts.sum(['cluster','job_name'])
-  - name: runningTime
-    exp: flink_jobmanager_job_runningTime.sum(['cluster','flink_job_name'])
+#  - name: total_restart_job_number
+#    exp: flink_jobmanager_job_numRestarts.sum(['cluster','flink_job_name'])
+#  - name: runningTime
+#    exp: flink_jobmanager_job_runningTime.sum(['cluster','flink_job_name'])
 
   #jvm
   - name: jvm_cpu_load
