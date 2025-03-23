@@ -207,11 +207,9 @@ public class MetricConvertTest {
 
         @Override
         Analyzer buildAnalyzer(final String metricsName,
-                               final String filter,
                                final String exp,
                                final MeterSystem service) {
             this.metricsName = metricsName;
-            this.filter = filter;
             this.exp = exp;
             return null;
         }

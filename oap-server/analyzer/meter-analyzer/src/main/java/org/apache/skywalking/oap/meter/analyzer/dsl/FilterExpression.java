@@ -18,9 +18,12 @@
 
 package org.apache.skywalking.oap.meter.analyzer.dsl;
 
+import com.google.common.collect.ImmutableMap;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+
 import java.util.Map;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,7 +55,14 @@ public class FilterExpression {
         return sampleFamilies;
     }
 
-    public SampleFamily filter(SampleFamily sampleFamily) {
-        return sampleFamily.filter(filterClosure);
+    public ImmutableMap<String, SampleFamily> filter(final ImmutableMap<String, SampleFamily> sampleFamilies) {
+        try {
+            return sampleFamilies.entrySet().stream()
+                    .filter(o -> !o.getValue().filter(filterClosure).equals(SampleFamily.EMPTY))
+                    .collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
+        } catch (Throwable t) {
+            log.error("failed to run \"{}\"", literal, t);
+        }
+        return sampleFamilies;
     }
 }

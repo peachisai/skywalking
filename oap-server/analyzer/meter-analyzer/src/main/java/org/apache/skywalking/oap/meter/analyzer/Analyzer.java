@@ -81,16 +81,11 @@ public class Analyzer {
     public static final Tuple2<String, SampleFamily> NIL = Tuple.of("", null);
 
     public static Analyzer build(final String metricName,
-                                 final String filterExpression,
                                  final String expression,
                                  final MeterSystem meterSystem) {
         Expression e = DSL.parse(metricName, expression);
-        FilterExpression filter = null;
-        if (!Strings.isNullOrEmpty(filterExpression)) {
-            filter = new FilterExpression(filterExpression);
-        }
         ExpressionParsingContext ctx = e.parse();
-        Analyzer analyzer = new Analyzer(metricName, filter, e, meterSystem, ctx);
+        Analyzer analyzer = new Analyzer(metricName, e, meterSystem, ctx);
         analyzer.init();
         return analyzer;
     }
@@ -98,8 +93,6 @@ public class Analyzer {
     private List<String> samples;
 
     private final String metricName;
-
-    private final FilterExpression filterExpression;
 
     private final Expression expression;
 
@@ -126,9 +119,6 @@ public class Analyzer {
                 log.debug("{} is ignored due to the lack of {}", expression, samples);
             }
             return;
-        }
-        if (filterExpression != null) {
-            input = filterExpression.filter(input);
         }
         Result r = expression.run(input);
         if (!r.isSuccess()) {
@@ -373,18 +363,4 @@ public class Analyzer {
         metrics.setComponentId(entity.getComponentId());
         MetricsStreamProcessor.getInstance().in(metrics);
     }
-
-    public boolean filter(ImmutableMap<String, SampleFamily> sampleFamilies) {
-        if (filterExpression == null) {
-            return true;
-        }
-
-        for (Map.Entry<String, SampleFamily> entry : sampleFamilies.entrySet()) {
-            if (!filterExpression.filter(entry.getValue()).equals(SampleFamily.EMPTY)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

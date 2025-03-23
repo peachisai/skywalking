@@ -88,7 +88,6 @@ public class AnalyzerTest {
     public void testSingle() {
         analyzer = Analyzer.build(
             "sum_service_instance",
-            null,
             "http_success_request.sum(['region', 'idc']).instance(['idc'] , ['region'], Layer.GENERAL)",
             meterSystem
         );
@@ -132,7 +131,6 @@ public class AnalyzerTest {
     public void testLabeled() {
         analyzer = Analyzer.build(
             "sum_service_instance_labels",
-            null,
             "http_success_request.sum(['region', 'idc' , 'instance']).instance(['idc'] , ['region'], Layer.GENERAL)",
             meterSystem
         );
@@ -181,7 +179,6 @@ public class AnalyzerTest {
     public void testHistogramPercentile() {
         analyzer = Analyzer.build(
             "instance_cpu_percentage",
-            null,
             "instance_cpu_percentage.sum(['le' , 'service' , 'instance']).histogram().histogram_percentile([75,99]).service(['service'], Layer.GENERAL)",
             meterSystem
         );

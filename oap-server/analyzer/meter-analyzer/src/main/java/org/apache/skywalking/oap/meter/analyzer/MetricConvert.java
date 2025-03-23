@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.skywalking.oap.meter.analyzer.dsl.DSL;
 import org.apache.skywalking.oap.meter.analyzer.dsl.Expression;
 import org.apache.skywalking.oap.meter.analyzer.dsl.ExpressionParsingException;
+import org.apache.skywalking.oap.meter.analyzer.dsl.FilterExpression;
 import org.apache.skywalking.oap.meter.analyzer.dsl.Result;
 import org.apache.skywalking.oap.meter.analyzer.dsl.SampleFamily;
 import org.apache.skywalking.oap.server.core.analysis.meter.MeterSystem;
@@ -51,6 +52,8 @@ public class MetricConvert {
 
     private final List<Analyzer> analyzers;
 
+    private final FilterExpression filterExpression;
+
     public MetricConvert(MetricRuleConfig rule, MeterSystem service) {
         Preconditions.checkState(!Strings.isNullOrEmpty(rule.getMetricPrefix()));
         // init expression script
@@ -60,20 +63,19 @@ public class MetricConvert {
         this.analyzers = rule.getMetricsRules().stream().map(
             r -> buildAnalyzer(
                 formatMetricName(rule, r.getName()),
-                rule.getFilter(),
                 formatExp(rule.getExpPrefix(), rule.getExpSuffix(), r.getExp()),
                 service
             )
         ).collect(toList());
+
+        this.filterExpression = Strings.isNullOrEmpty(rule.getFilter()) ? null : new FilterExpression(rule.getFilter());
     }
 
     Analyzer buildAnalyzer(final String metricsName,
-                           final String filter,
                            final String exp,
                            final MeterSystem service) {
         return Analyzer.build(
             metricsName,
-            filter,
             exp,
             service
         );
@@ -100,13 +102,13 @@ public class MetricConvert {
      * @param sampleFamilies {@link SampleFamily} collection.
      */
     public void toMeter(final ImmutableMap<String, SampleFamily> sampleFamilies) {
-        Preconditions.checkNotNull(sampleFamilies);
-        if (sampleFamilies.size() < 1) {
+        Preconditions.checkNotNull(sampleFamilies);ImmutableMap<String, SampleFamily> filteredSampleFamilies = filterSampleFamilies(sampleFamilies);
+        if (filteredSampleFamilies.isEmpty()) {
             return;
         }
         for (Analyzer each : analyzers) {
             try {
-                each.analyse(sampleFamilies);
+                each.analyse(filteredSampleFamilies);
             } catch (Throwable t) {
                 log.error("Analyze {} error", each, t);
             }
@@ -130,15 +132,16 @@ public class MetricConvert {
 
     /**
      * Because all analyzers share the same filter expression, we do pre-check to filter all SampleFamily(s).
-     * If one SampleFamily could pass the check, the process should continue. 
-     * Otherwise, no further processing will be performed.
      * By this, we could improve the extra payload to do this filter check repeatedly.
      */
-    public boolean shouldConvert(ImmutableMap<String, SampleFamily> sampleFamilies) {
-        if (analyzers.isEmpty() || sampleFamilies.isEmpty()) {
-            return false;
+    public ImmutableMap<String, SampleFamily> filterSampleFamilies(ImmutableMap<String, SampleFamily> sampleFamilies) {
+        if (sampleFamilies.isEmpty()) {
+            return ImmutableMap.of();
         }
 
-        return analyzers.get(0).filter(sampleFamilies);
+        if (filterExpression == null) {
+            return sampleFamilies;
+        }
+        return filterExpression.filter(sampleFamilies);
     }
 }

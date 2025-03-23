@@ -122,20 +122,8 @@ public class OpenTelemetryMetricRequestProcessor implements Service {
                            )
                 );
 
-                convertSampleFamiliesToMeter(sampleFamilies);
+                converters.forEach(convert -> convert.toMeter(sampleFamilies));
             });
-        }
-    }
-
-    private void convertSampleFamiliesToMeter(ImmutableMap<String, SampleFamily> sampleFamilies) {
-        if (sampleFamilies.isEmpty()) {
-            return;
-        }
-
-        for (MetricConvert converter : converters) {
-            if (converter.shouldConvert(sampleFamilies)) {
-                converter.toMeter(sampleFamilies);
-            }
         }
     }
 
