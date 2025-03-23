@@ -66,7 +66,7 @@ public class FilterExpression {
         return sampleFamilies;
     }
 
-    public String getLiteral(){
+    public String getLiteral() {
         return literal;
     }
 }
