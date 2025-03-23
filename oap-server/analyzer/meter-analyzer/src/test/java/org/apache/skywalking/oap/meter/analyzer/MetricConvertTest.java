@@ -18,8 +18,10 @@
 
 package org.apache.skywalking.oap.meter.analyzer;
 
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.skywalking.oap.meter.analyzer.dsl.FilterExpression;
 import org.apache.skywalking.oap.server.core.analysis.meter.MeterSystem;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,7 @@ public class MetricConvertTest {
         );
         MockMetricConvert metricConvert = new MockMetricConvert(mockMetricRuleConfig, null);
         Assertions.assertEquals("meter_apisix_sv_http_connections", metricConvert.metricsName);
-        Assertions.assertEquals("{ tags -> tags.job_name == 'apisix-monitoring' }", metricConvert.filter);
+        Assertions.assertEquals("{ tags -> tags.job_name == 'apisix-monitoring' }", metricConvert.filterExpression.getLiteral());
         Assertions.assertEquals(
             "((apisix_nginx_http_current_connections.tag({tags -> tags.service_name = 1}))).tag({tags -> tags.service_name = 2})",
             metricConvert.exp
@@ -127,7 +129,7 @@ public class MetricConvertTest {
         );
         MockMetricConvert metricConvert = new MockMetricConvert(mockMetricRuleConfig, null);
         Assertions.assertEquals("meter_apisix_sv_http_connections", metricConvert.metricsName);
-        Assertions.assertEquals("{ tags -> tags.job_name == 'apisix-monitoring' }", metricConvert.filter);
+        Assertions.assertEquals("{ tags -> tags.job_name == 'apisix-monitoring' }", metricConvert.filterExpression.getLiteral());
         Assertions.assertEquals(
             "(((apisix_nginx_http_current_connections.tag({tags -> tags.service_name = 1})).sum(['a']))).tag({tags -> tags.service_name = 2})",
             metricConvert.exp,
@@ -198,11 +200,13 @@ public class MetricConvertTest {
 
     static class MockMetricConvert extends MetricConvert {
         private String metricsName;
-        private String filter;
         private String exp;
+
+        private FilterExpression filterExpression;
 
         public MockMetricConvert(final MetricRuleConfig rule, final MeterSystem service) {
             super(rule, service);
+            this.filterExpression = Strings.isNullOrEmpty(rule.getFilter()) ? null : new FilterExpression(rule.getFilter());
         }
 
         @Override
