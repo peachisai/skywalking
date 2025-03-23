@@ -102,7 +102,8 @@ public class MetricConvert {
      * @param sampleFamilies {@link SampleFamily} collection.
      */
     public void toMeter(final ImmutableMap<String, SampleFamily> sampleFamilies) {
-        Preconditions.checkNotNull(sampleFamilies);ImmutableMap<String, SampleFamily> filteredSampleFamilies = filterSampleFamilies(sampleFamilies);
+        Preconditions.checkNotNull(sampleFamilies);
+        ImmutableMap<String, SampleFamily> filteredSampleFamilies = filterSampleFamilies(sampleFamilies);
         if (filteredSampleFamilies.isEmpty()) {
             return;
         }
