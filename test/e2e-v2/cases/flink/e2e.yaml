@@ -34,4 +34,4 @@ verify:
     interval: 3s
   cases:
     - includes:
-        - ./flink-case.yaml
+        - ./flink-cases.yaml
