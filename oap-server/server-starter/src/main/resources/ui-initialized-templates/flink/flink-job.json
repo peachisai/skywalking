@@ -1,0 +1,252 @@
+[
+  {
+    "id": "Flink-Job",
+    "configuration": {
+      "children": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 4,
+          "h": 14,
+          "i": "2",
+          "type": "Widget",
+          "expressions": [
+            "latest(meter_flink_job_runningTime)/1000/60"
+          ],
+          "widget": {
+            "name": "job_runningTime",
+            "title": "job_runningTime",
+            "tips": "job_runningTime"
+          },
+          "metricConfig": [
+            {
+              "unit": "min"
+            }
+          ],
+          "graph": {
+            "type": "Card",
+            "fontSize": 20,
+            "textAlign": "center",
+            "showUnit": true
+          },
+          "id": "2",
+          "moved": false,
+          "typesOfMQE": [
+            "SINGLE_VALUE"
+          ]
+        },
+        {
+          "x": 4,
+          "y": 14,
+          "w": 4,
+          "h": 14,
+          "i": "3",
+          "type": "Widget",
+          "expressions": [
+            "latest(meter_flink_job_restart_number)"
+          ],
+          "widget": {
+            "name": "job_restart_number",
+            "title": "job_restart_number",
+            "tips": "job_restart_number"
+          },
+          "graph": {
+            "type": "Card",
+            "fontSize": 14,
+            "textAlign": "center",
+            "showUnit": true
+          },
+          "id": "3",
+          "moved": false,
+          "typesOfMQE": [
+            "SINGLE_VALUE"
+          ]
+        },
+        {
+          "x": 4,
+          "y": 0,
+          "w": 4,
+          "h": 14,
+          "i": "4",
+          "type": "Widget",
+          "id": "4",
+          "moved": false,
+          "graph": {
+            "type": "Card",
+            "fontSize": 20,
+            "textAlign": "center",
+            "showUnit": true
+          },
+          "expressions": [
+            "latest(meter_flink_job_restartingTime)/1000/60"
+          ],
+          "typesOfMQE": [
+            "SINGLE_VALUE"
+          ],
+          "metricConfig": [
+            {
+              "unit": "min"
+            }
+          ],
+          "widget": {
+            "name": "job_restartingTime",
+            "title": "job_restartingTime",
+            "tips": "job_restartingTime"
+          }
+        },
+        {
+          "x": 0,
+          "y": 14,
+          "w": 4,
+          "h": 14,
+          "i": "5",
+          "type": "Widget",
+          "id": "5",
+          "moved": false,
+          "expressions": [
+            "latest(meter_flink_job_cancellingTime)/1000/60"
+          ],
+          "typesOfMQE": [
+            "SINGLE_VALUE"
+          ],
+          "metricConfig": [
+            {
+              "unit": "min"
+            }
+          ],
+          "graph": {
+            "type": "Card",
+            "fontSize": 14,
+            "textAlign": "center",
+            "showUnit": true
+          },
+          "widget": {
+            "name": "job_cancellingTime",
+            "title": "job_cancellingTime",
+            "tips": "job_cancellingTime"
+          }
+        },
+        {
+          "x": 8,
+          "y": 14,
+          "w": 8,
+          "h": 14,
+          "i": "6",
+          "type": "Widget",
+          "id": "6",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_checkpoints_total"
+          ],
+          "typesOfMQE": [
+            "UNKNOWN"
+          ],
+          "widget": {
+            "name": "job_checkpoints_total",
+            "title": "job_checkpoints_total",
+            "tips": "job_checkpoints_total"
+          }
+        },
+        {
+          "x": 16,
+          "y": 0,
+          "w": 8,
+          "h": 14,
+          "i": "7",
+          "type": "Widget",
+          "id": "7",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_checkpoints_failed"
+          ],
+          "typesOfMQE": [
+            "UNKNOWN"
+          ],
+          "widget": {
+            "name": "checkpoints_failed",
+            "title": "checkpoints_failed",
+            "tips": "checkpoints_failed"
+          }
+        },
+        {
+          "x": 16,
+          "y": 14,
+          "w": 8,
+          "h": 14,
+          "i": "8",
+          "type": "Widget",
+          "id": "8",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_checkpoints_completed"
+          ],
+          "typesOfMQE": [
+            "UNKNOWN"
+          ],
+          "widget": {
+            "name": "checkpoints_completed",
+            "title": "checkpoints_completed",
+            "tips": "checkpoints_completed"
+          }
+        },
+        {
+          "x": 8,
+          "y": 0,
+          "w": 8,
+          "h": 14,
+          "i": "9",
+          "type": "Widget",
+          "id": "9",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_checkpoints_inProgress"
+          ],
+          "typesOfMQE": [
+            "UNKNOWN"
+          ],
+          "widget": {
+            "name": "checkpoints_inProgress",
+            "title": "checkpoints_inProgress",
+            "tips": "checkpoints_inProgress"
+          }
+        }
+      ],
+      "layer": "FLINK",
+      "entity": "Endpoint",
+      "name": "Flink-Job",
+      "id": "Flink-Job"
+    }
+  }
+]

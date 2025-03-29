@@ -251,7 +251,9 @@ public enum Layer {
      * The self observability of SkyWalking Go Agent,
      * which provides the abilities to measure the tracing performance and error statistics of plugins.
      */
-    SO11Y_GO_AGENT(41, true);
+    SO11Y_GO_AGENT(41, true),
+
+    FLINK(42, true);
 
     private final int value;
     /**
