@@ -20,7 +20,7 @@ receivers:
         - job_name: "flink-jobManager-monitoring"
           scrape_interval: 30s
           static_configs:
-            - targets: ['flink-jobManager:9260']
+            - targets: ['localhost:9260']
               labels:
                 cluster: flink-cluster
           metric_relabel_configs:
@@ -35,7 +35,7 @@ receivers:
         - job_name: "flink-taskManager-monitoring"
           scrape_interval: 15s
           static_configs:
-            - targets: [ "flink-taskManager:9261" ]
+            - targets: [ "localhost:9261" ]
               labels:
                 cluster: flink-cluster
           relabel_configs:
