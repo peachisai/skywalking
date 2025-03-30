@@ -17,31 +17,14 @@ receivers:
   prometheus:
     config:
       scrape_configs:
-        - job_name: "flink-jobManager-monitoring"
+        - job_name: "rocketmq-monitoring"
           scrape_interval: 30s
           static_configs:
-            - targets: ['jobmanager:9260']
-              labels:
-                cluster: flink-cluster
-          metric_relabel_configs:
-            - source_labels: [ job_name ]
-              action: replace
-              target_label: flink_job_name
-              replacement: $1
-            - source_labels: [ ]
-              target_label: job_name
-              replacement: flink-jobManager-monitoring
-
-        - job_name: "flink-taskManager-monitoring"
-          scrape_interval: 15s
-          static_configs:
-            - targets: [ "taskmanager:9261" ]
-              labels:
-                cluster: flink-cluster
+            - targets: ['rocketmq-exporter:5557']
           relabel_configs:
-            - source_labels: [ __address__ ]
-              target_label: node
-              replacement: $$1
+            - source_labels: [ ]
+              target_label: cluster
+              replacement: rocketmq-cluster
 
 exporters:
   otlp:
