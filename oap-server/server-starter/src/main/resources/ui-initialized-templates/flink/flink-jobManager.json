@@ -579,8 +579,8 @@
                 {
                   "x": 0,
                   "y": 0,
-                  "w": 24,
-                  "h": 48,
+                  "w": 15,
+                  "h": 32,
                   "i": "0",
                   "type": "Widget",
                   "graph": {
@@ -588,8 +588,11 @@
                     "dashboardName": "Flink-Job",
                     "fontSize": 12
                   },
-                  "id": "0-2-0",
-                  "moved": false
+                  "widget": {
+                    "name": "Job List",
+                    "title": "Job List"
+                  },
+                  "expressions": []
                 },
                 {
                   "x": 15,

@@ -52,7 +52,7 @@
           },
           "graph": {
             "type": "Card",
-            "fontSize": 14,
+            "fontSize": 20,
             "textAlign": "center",
             "showUnit": true
           },
@@ -116,7 +116,7 @@
           ],
           "graph": {
             "type": "Card",
-            "fontSize": 14,
+            "fontSize": 20,
             "textAlign": "center",
             "showUnit": true
           },

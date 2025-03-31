@@ -1,13 +1,14 @@
 # Support Flink Monitoring
 ## Motivation
-RocketMQ is a cloud native messaging and streaming platform, making it simple to build event-driven applications. Now that Skywalking can monitor OpenTelemetry metrics, I want to add RocketMQ monitoring via the OpenTelemetry Collector, which fetches metrics from the RocketMQ Exporter
+Apache Flink is a framework and distributed processing engine for stateful computations over unbounded and bounded data streams. Now that Skywalking can monitor OpenTelemetry metrics, I want to add Flink monitoring via the OpenTelemetry Collector, which fetches metrics from its own Http Endpoint
+to expose metrics data for Prometheus.
 
 ## Architecture Graph
 There is no significant architecture-level change.
 
 ## Proposed Changes
-```rocketmq-exporter``` collects metrics from RocketMQ and transport the data to OpenTelemetry collector, using SkyWalking openTelemetry receiver to receive these metrics。
-Provide cluster, broker, and topic dimensions monitoring.
+Flink expose its own [metrics](https://docs.konghq.com/hub/kong-inc/prometheus/) via HTTP endpoint to OpenTelemetry collector, using SkyWalking openTelemetry receiver to receive these metrics。
+Provide cluster, taskManage, and job dimensions monitoring.
 
 ### RocketMQ Cluster Supported Metrics
 

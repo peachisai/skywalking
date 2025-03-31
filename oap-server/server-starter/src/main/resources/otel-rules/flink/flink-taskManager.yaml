@@ -29,42 +29,42 @@
 #    "-P-6H+3M"  -- parses as "+6 hours and -3 minutes"
 # </pre>
 filter: "{ tags -> tags.job_name == 'flink-taskManager-monitoring' }" # The OpenTelemetry job name
-expSuffix: tag({tags -> tags.cluster = 'flink::' + tags.cluster}).instance(['cluster'], ['node'], Layer.FLINK)
+expSuffix: tag({tags -> tags.cluster = 'flink::' + tags.cluster}).instance(['cluster'], ['taskManager_node'], Layer.FLINK)
 metricPrefix: meter_flink_taskManager
 metricsRules:
 
   # job
   - name: currentEmitEventTimeLag
-    exp: flink_taskmanager_job_task_operator_currentEmitEventTimeLag.sum(['cluster','node'])
+    exp: flink_taskmanager_job_task_operator_currentEmitEventTimeLag.sum(['cluster','taskManager_node'])
 
   #jvm
   - name: jvm_cpu_load
-    exp: flink_taskmanager_Status_JVM_CPU_Load.sum(['cluster','node'])*1000
+    exp: flink_taskmanager_Status_JVM_CPU_Load.sum(['cluster','taskManager_node'])*1000
   - name: jvm_cpu_time
-    exp: flink_taskmanager_Status_JVM_CPU_Time.sum(['cluster','node']).increase('PT1M')
+    exp: flink_taskmanager_Status_JVM_CPU_Time.sum(['cluster','taskManager_node']).increase('PT1M')
   - name: jvm_memory_heap_used
-    exp: flink_taskmanager_Status_JVM_Memory_Heap_Used.sum(['cluster','node'])
+    exp: flink_taskmanager_Status_JVM_Memory_Heap_Used.sum(['cluster','taskManager_node'])
   - name: jvm_memory_heap_max
-    exp: flink_taskmanager_Status_JVM_Memory_Heap_Max.sum(['cluster','node'])
+    exp: flink_taskmanager_Status_JVM_Memory_Heap_Max.sum(['cluster','taskManager_node'])
   - name: jvm_thread_count
-    exp: flink_taskmanager_Status_JVM_Threads_Count.sum(['cluster','node'])
+    exp: flink_taskmanager_Status_JVM_Threads_Count.sum(['cluster','taskManager_node'])
   - name: jvm_memory_metaspace_max
-    exp: flink_taskmanager_Status_JVM_Memory_Metaspace_Max.sum(['cluster','node'])
+    exp: flink_taskmanager_Status_JVM_Memory_Metaspace_Max.sum(['cluster','taskManager_node'])
   - name: jvm_memory_metaspace_used
-    exp: flink_taskmanager_Status_JVM_Memory_Metaspace_Used.sum(['cluster','node'])
+    exp: flink_taskmanager_Status_JVM_Memory_Metaspace_Used.sum(['cluster','taskManager_node'])
 
   - name: jvm_memory_nonHeap_used
-    exp: flink_taskmanager_Status_JVM_Memory_NonHeap_Used.sum(['cluster','node'])
+    exp: flink_taskmanager_Status_JVM_Memory_NonHeap_Used.sum(['cluster','taskManager_node'])
   - name: jvm_memory_nonHeap_max
-    exp: flink_taskmanager_Status_JVM_Memory_NonHeap_Max.sum(['cluster','node'])
+    exp: flink_taskmanager_Status_JVM_Memory_NonHeap_Max.sum(['cluster','taskManager_node'])
 
   # number
   - name: numRecordsIn
-    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','node'])
+    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','taskManager_node'])
   - name: numRecordsOut
-    exp: flink_taskmanager_job_task_numRecordsOut.sum(['cluster','node'])
+    exp: flink_taskmanager_job_task_numRecordsOut.sum(['cluster','taskManager_node'])
   - name: numBytesIn
-    exp: flink_taskmanager_job_task_operator_numBytesIn.sum(['cluster','node'])
+    exp: flink_taskmanager_job_task_operator_numBytesIn.sum(['cluster','taskManager_node'])
   - name: numBytesOut
-    exp: flink_taskmanager_job_task_operator_numBytesOut.sum(['cluster','node'])
+    exp: flink_taskmanager_job_task_operator_numBytesOut.sum(['cluster','taskManager_node'])
 
