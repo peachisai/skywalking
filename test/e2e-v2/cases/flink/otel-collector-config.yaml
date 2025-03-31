@@ -21,8 +21,10 @@ receivers:
           scrape_interval: 30s
           static_configs:
             - targets: ['jobmanager:9260']
-              labels:
-                cluster: flink-cluster
+          relabel_configs:
+            - source_labels: [ ]
+              target_label: cluster
+              replacement: flink-cluster
           metric_relabel_configs:
             - source_labels: [ job_name ]
               action: replace
