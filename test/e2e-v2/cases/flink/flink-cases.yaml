@@ -19,4 +19,12 @@ cases:
   # service cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
     expected: expected/service.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_running_job_number --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_cpu_load --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_cpu_time --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_heap_used --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value.yml
 
