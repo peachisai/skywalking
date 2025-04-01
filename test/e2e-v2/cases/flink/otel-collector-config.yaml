@@ -26,7 +26,7 @@ receivers:
               target_label: cluster
               replacement: flink-cluster
           metric_relabel_configs:
-            - source_labels: [ host ]
+            - source_labels: [ job_name ]
               action: replace
               target_label: flink_job_name
               replacement: flink-jobManager-monitoring
