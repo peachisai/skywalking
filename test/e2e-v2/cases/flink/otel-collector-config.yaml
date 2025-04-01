@@ -29,7 +29,7 @@ receivers:
             - source_labels: [ job_name ]
               action: replace
               target_label: flink_job_name
-              replacement: flink-jobManager-monitoring
+              replacement: $$1
             - source_labels: [ ]
               target_label: job_name
               replacement: flink-jobManager-monitoring
