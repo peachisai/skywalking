@@ -30,6 +30,9 @@ receivers:
               action: replace
               target_label: flink_job_name
               replacement: $1
+            - source_labels: [ ]
+              target_label: job_name
+              replacement: flink-jobManager-monitoring
 
 exporters:
   otlp:
