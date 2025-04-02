@@ -34,6 +34,25 @@ receivers:
               target_label: job_name
               replacement: flink-jobManager-monitoring
 
+        - job_name: "flink-taskManager-monitoring"
+          scrape_interval: 15s
+          static_configs:
+            - targets: [ "43.156.93.113:9261" ]
+              labels:
+                cluster: flink-cluster
+          relabel_configs:
+            - source_labels: [ __address__ ]
+              target_label: taskManager_node
+              replacement: $$1
+          metric_relabel_configs:
+            - source_labels: [ job_name ]
+              action: replace
+              target_label: flink_job_name
+              replacement: $$1
+            - source_labels: [ ]
+              target_label: job_name
+              replacement: flink-taskManager-monitoring
+
 exporters:
   otlp:
     endpoint: oap:11800
