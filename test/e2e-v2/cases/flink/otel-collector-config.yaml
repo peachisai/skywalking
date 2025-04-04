@@ -21,10 +21,12 @@ receivers:
           scrape_interval: 30s
           static_configs:
             - targets: ['jobmanager:9260']
+              labels:
+                cluster: flink-cluster
           relabel_configs:
-            - source_labels: [ ]
-              target_label: cluster
-              replacement: flink-cluster
+            - source_labels: [ __address__ ]
+              target_label: jobManager_node
+              replacement: $$1
           metric_relabel_configs:
             - source_labels: [ job_name ]
               action: replace
@@ -37,7 +39,7 @@ receivers:
         - job_name: "flink-taskManager-monitoring"
           scrape_interval: 15s
           static_configs:
-            - targets: [ "43.156.93.113:9261" ]
+            - targets: [ "taskmanager:9261" ]
               labels:
                 cluster: flink-cluster
           relabel_configs:
