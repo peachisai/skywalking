@@ -28,10 +28,18 @@ setup:
     - name: install swctl
       command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh swctl
 
+
+trigger:
+  action: http
+  interval: 3s
+  times: 10
+  url: http://${jobmanager_host}:${jobmanager_9260}/metrics
+  method: GET
+
 verify:
   retry:
     count: 60
     interval: 3s
   cases:
     - includes:
-        - ./flink-case.yaml
+        - ./flink-cases.yaml
