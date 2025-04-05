@@ -37,6 +37,14 @@ metricsRules:
   - name: running_job_number
     exp: flink_jobmanager_numRunningJobs.sum(['cluster'])
 
+  # task
+  - name: taskManagers_registered_number
+    exp: flink_jobmanager_numRegisteredTaskManagers.sum(['cluster'])
+  - name: taskManagers_slots_total
+    exp: flink_jobmanager_taskSlotsTotal.sum(['cluster'])
+  - name: taskManagers_slots_available
+    exp: flink_jobmanager_taskSlotsAvailable.sum(['cluster'])
+
   #jvm
   - name: jvm_cpu_load
     exp: flink_jobmanager_Status_JVM_CPU_Load.sum(['cluster','jobManager_node'])*1000
@@ -70,12 +78,3 @@ metricsRules:
     exp: flink_jobmanager_Status_JVM_GarbageCollector_All_Count.sum(['cluster','jobManager_node'])
   - name: jvm_all_garbageCollector_time
     exp: flink_jobmanager_Status_JVM_GarbageCollector_All_Time.sum(['cluster','jobManager_node'])
-
-
-  # task
-  - name: taskManagers_registered_number
-    exp: flink_jobmanager_numRegisteredTaskManagers.sum(['cluster'])
-  - name: taskManagers_slots_total
-    exp: flink_jobmanager_taskSlotsTotal.sum(['cluster'])
-  - name: taskManagers_slots_available
-    exp: flink_jobmanager_taskSlotsAvailable.sum(['cluster'])
