@@ -62,10 +62,10 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-name=flink::flink-cluster
     expected: expected/instance.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_cpu_load --service-name=flink::flink-cluster --instance-name=taskmanager
-    expected: expected/metrics-has-value-taskManager-node-label.yml
+    expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_cpu_time --service-name=flink::flink-cluster --instance-name=taskmanager
-    expected: expected/metrics-has-value-taskManager-node-label.yml
+    expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_heap_used --service-name=flink::flink-cluster --instance-name=taskmanager
-    expected: expected/metrics-has-value-taskManager-node-label.yml
+    expected: expected/metrics-has-value.yml
 
 
