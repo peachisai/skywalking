@@ -67,5 +67,21 @@ cases:
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_heap_used --service-name=flink::flink-cluster --instance-name=taskmanager
     expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_heap_max --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_thread_count --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_metaspace_max --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_metaspace_used --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_nonHeap_used --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_nonHeap_max --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
+
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_numRecordsIn --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value-job-task-label.yml
+
 
 

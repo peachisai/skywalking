@@ -81,7 +81,7 @@ services:
         condition: service_healthy
     command: >
       bash -c "
-      ./bin/flink run -m jobmanager:8081 examples/streaming/WordCount.jar"
+      ./bin/flink run -m jobmanager:8081 examples/streaming/WindowJoin.jar"
     networks:
       - e2e
 
