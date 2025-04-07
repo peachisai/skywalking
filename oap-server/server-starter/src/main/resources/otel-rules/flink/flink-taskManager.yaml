@@ -56,26 +56,34 @@ metricsRules:
 
   # records
   - name: numRecordsIn
-    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','taskManager_node','flink_job_name','task_name'])
+    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','taskManager_node','flink_job_name'])
   - name: numRecordsOut
     exp: flink_taskmanager_job_task_numRecordsOut.sum(['cluster','taskManager_node','flink_job_name','task_name'])
-  - name: numBytesIn
-    exp: flink_taskmanager_job_task_numBytesIn.sum(['cluster','taskManager_node','flink_job_name','task_name'])
-  - name: numBytesOut
-    exp: flink_taskmanager_job_task_numBytesOut.sum(['cluster','taskManager_node','flink_job_name','task_name'])
+  - name: numBytesInPerSecond
+    exp: flink_taskmanager_job_task_numBytesInPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
+  - name: numBytesOutPerSecond
+    exp: flink_taskmanager_job_task_numBytesOutPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
 
   # network
   - name: netty_usedMemory
     exp: flink_taskmanager_Status_Shuffle_Netty_UsedMemory.sum(['cluster','taskManager_node'])
   - name: netty_availableMemory
     exp: flink_taskmanager_Status_Shuffle_Netty_AvailableMemory.sum(['cluster','taskManager_node'])
+  - name: inPoolUsage
+    exp: flink_taskmanager_job_task_Shuffle_Netty_Input_Buffers_inPoolUsage.sum(['cluster','taskManager_node','flink_job_name','task_name'])*100
+  - name: outPoolUsage
+    exp: flink_taskmanager_job_task_Shuffle_Netty_Output_Buffers_outPoolUsage.sum(['cluster','taskManager_node','flink_job_name','task_name'])*100
 
   # backPressured
   - name: isBackPressured
-    exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','taskManager_node','task_name'])
-  - name: inPoolUsage
-    exp: flink_taskmanager_job_task_buffers_inPoolUsage.sum(['cluster','taskManager_node','task_name'])
-  - name: outPoolUsage
-    exp: flink_taskmanager_job_task_Shuffle_Netty_Output_Buffers_outPoolUsage.sum(['cluster','taskManager_node','task_name'])
+    exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','taskManager_node','flink_job_name','task_name'])
+  - name: idleTimeMsPerSecond
+    exp: flink_taskmanager_job_task_idleTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name']).downsampling(AVG)
+  - name: busyTimeMsPerSecond
+    exp: flink_taskmanager_job_task_busyTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
+  - name: softBackPressuredTimeMsPerSecond
+    exp: flink_taskmanager_job_task_softBackPressuredTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
+  - name: hardBackPressuredTimeMsPerSecond
+    exp: flink_taskmanager_job_task_hardBackPressuredTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
 
 
