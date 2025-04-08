@@ -23,6 +23,10 @@ Provide cluster, taskManage, and job dimensions monitoring.
 | Task Managers Slots Total     | Count | meter_flink_jobManager_taskManagers_slots_total       | The number of total slots.             | Flink JobManager |
 | Task Managers Slots Available | Count | meter_flink_jobManager_taskManagers_slots_available   | The number of available slots.         | Flink JobManager |
 | Jvm Cpu Time                  | Count | meter_flink_jobManager_jvm_cpu_time                   | The cpu time used by the JVM.          | Flink JobManager |
+| Jvm Memory Available     | Count | meter_flink_jobManager_taskManagers_slots_total       | The number of total slots.             | Flink JobManager |
+| Task Managers Slots Available | Count | meter_flink_jobManager_taskManagers_slots_available   | The number of available slots.         | Flink JobManager |
+| Jvm Cpu Time                  | Count | meter_flink_jobManager_jvm_cpu_time                   | The cpu time used by the JVM.          | Flink JobManager |
+
 
 ### Flink taskManager Supported Metrics
 
