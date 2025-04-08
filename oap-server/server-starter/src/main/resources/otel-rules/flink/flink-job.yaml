@@ -28,7 +28,7 @@
 #    "-P6H3M"    -- parses as "-6 hours and -3 minutes"
 #    "-P-6H+3M"  -- parses as "+6 hours and -3 minutes"
 # </pre>
-filter: "{ tags -> tags.job_name == 'flink-jobManager-monitoring' }" # The OpenTelemetry job name
+filter: "{ tags -> tags.job_name == 'flink-jobManager-monitoring' || tags.job_name == 'flink-taskManager-monitoring' }" # The OpenTelemetry job name
 expSuffix: tag({tags -> tags.cluster = 'flink::' + tags.cluster}).endpoint(['cluster'], ['flink_job_name'], Layer.FLINK)
 metricPrefix: meter_flink_job
 
@@ -43,6 +43,7 @@ metricsRules:
   - name: cancellingTime
     exp: flink_jobmanager_job_cancellingTime.sum(['cluster','flink_job_name'])
 
+# checkpoints
   - name: checkpoints_total
     exp: flink_jobmanager_job_totalNumberOfCheckpoints.sum(['cluster','flink_job_name'])
   - name: checkpoints_failed
@@ -51,5 +52,23 @@ metricsRules:
     exp: flink_jobmanager_job_numberOfCompletedCheckpoints.sum(['cluster','flink_job_name'])
   - name: checkpoints_inProgress
     exp: flink_jobmanager_job_numberOfInProgressCheckpoints.sum(['cluster','flink_job_name'])
+  - name: checkpoints_inProgress
+    exp: flink_jobmanager_job_numberOfInProgressCheckpoints.sum(['cluster','flink_job_name'])
+  - name: lastCheckpointSize
+    exp: flink_jobmanager_job_lastCheckpointSize.sum(['cluster','flink_job_name'])
+  - name: lastCheckpointDuration
+    exp: flink_jobmanager_job_lastCheckpointDuration.sum(['cluster','flink_job_name'])
+
+  - name: currentEmitEventTimeLag
+    exp: flink_taskmanager_job_task_operator_currentEmitEventTimeLag.sum(['cluster','flink_job_name','operator_name'])
+
+  - name: numRecordsIn
+    exp: flink_taskmanager_job_task_operator_numRecordsIn.sum(['cluster','flink_job_name','operator_name'])
+  - name: numRecordsOut
+    exp: flink_taskmanager_job_task_operator_numRecordsOut.sum(['cluster','flink_job_name','operator_name'])
+  - name: numBytesInPerSecond
+    exp: flink_taskmanager_job_task_operator_numBytesInPerSecond.sum(['cluster','flink_job_name','operator_name'])
+  - name: numBytesOutPerSecond
+    exp: flink_taskmanager_job_task_operator_numBytesOutPerSecond.sum(['cluster','flink_job_name','operator_name'])
 
 

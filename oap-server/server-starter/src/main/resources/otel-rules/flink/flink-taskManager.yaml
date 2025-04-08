@@ -56,7 +56,7 @@ metricsRules:
 
   # records
   - name: numRecordsIn
-    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','taskManager_node'])
+    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','taskManager_node','flink_job_name'])
   - name: numRecordsOut
     exp: flink_taskmanager_job_task_numRecordsOut.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: numBytesInPerSecond
@@ -78,7 +78,7 @@ metricsRules:
   - name: isBackPressured
     exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: idleTimeMsPerSecond
-    exp: flink_taskmanager_job_task_idleTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name']).downsampling(AVG)
+    exp: flink_taskmanager_job_task_idleTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: busyTimeMsPerSecond
     exp: flink_taskmanager_job_task_busyTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: softBackPressuredTimeMsPerSecond

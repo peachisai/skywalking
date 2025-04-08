@@ -1,7 +1,7 @@
 [
   {
     "id": "Flink-JobManager",
-    "configuration": {
+    "configuration":{
       "children": [
         {
           "x": 0,
@@ -92,14 +92,14 @@
                     "showYAxis": true
                   },
                   "widget": {
-                    "name": "Jvm cpu load",
+                    "name": "Jvm Cpu Load",
                     "title": "Jvm cpu load(%)",
                     "tips": "The number of the Jvm cpu load"
                   }
                 },
                 {
                   "x": 16,
-                  "y": 73,
+                  "y": 71,
                   "w": 8,
                   "h": 18,
                   "i": "4",
@@ -121,14 +121,14 @@
                     "showYAxis": true
                   },
                   "widget": {
-                    "name": "Jvm thread count",
+                    "name": "Jvm Thread Count",
                     "title": "Jvm Thread Count",
-                    "tips": "The count of jvm threads"
+                    "tips": "The number of jvm threads"
                   }
                 },
                 {
                   "x": 0,
-                  "y": 73,
+                  "y": 71,
                   "w": 8,
                   "h": 18,
                   "i": "5",
@@ -150,12 +150,12 @@
                   "widget": {
                     "name": "Jvm Memory Heap Used",
                     "title": "Jvm Memory Heap Used(MB)",
-                    "tips": "Jvm Memory Heap Used"
+                    "tips": "The amount of jvm memory used"
                   }
                 },
                 {
                   "x": 0,
-                  "y": 91,
+                  "y": 89,
                   "w": 12,
                   "h": 21,
                   "i": "7",
@@ -177,7 +177,7 @@
                   "widget": {
                     "name": "Jvm Memory NonHeap Used",
                     "title": "Jvm Memory NonHeap Used(MB)",
-                    "tips": "Jvm Memory NonHeap Used"
+                    "tips": "The amount of jvm nonHeap memory used"
                   }
                 },
                 {
@@ -204,7 +204,7 @@
                   "widget": {
                     "name": "Task Managers Slots Total",
                     "title": "Total Slots",
-                    "tips": "Total Task Managers Slots"
+                    "tips": "The number of total slots"
                   }
                 },
                 {
@@ -231,7 +231,7 @@
                   "widget": {
                     "name": "Task Managers Slots Available",
                     "tips": "Task Managers Slots Available",
-                    "title": "Available Slots"
+                    "title": "The number of available slots"
                   }
                 },
                 {
@@ -259,13 +259,13 @@
                   },
                   "widget": {
                     "title": "Jvm Cpu Time(ms)",
-                    "tips": "Jvm Cpu Time",
-                    "name": "Jvm Cpu Time"
+                    "name": "Jvm Cpu Time",
+                    "tips": "The cpu time used by the JVM"
                   }
                 },
                 {
                   "x": 8,
-                  "y": 73,
+                  "y": 71,
                   "w": 8,
                   "h": 18,
                   "i": "14",
@@ -298,7 +298,7 @@
                 },
                 {
                   "x": 12,
-                  "y": 91,
+                  "y": 89,
                   "w": 12,
                   "h": 21,
                   "i": "15",
@@ -325,7 +325,7 @@
                 },
                 {
                   "x": 0,
-                  "y": 112,
+                  "y": 110,
                   "w": 12,
                   "h": 19,
                   "i": "16",
@@ -352,7 +352,7 @@
                 },
                 {
                   "x": 12,
-                  "y": 112,
+                  "y": 110,
                   "w": 12,
                   "h": 19,
                   "i": "17",
@@ -381,7 +381,7 @@
                   "x": 0,
                   "y": 35,
                   "w": 12,
-                  "h": 20,
+                  "h": 18,
                   "i": "18",
                   "type": "Widget",
                   "id": "0-0-18",
@@ -408,9 +408,9 @@
                 },
                 {
                   "x": 12,
-                  "y": 35,
+                  "y": 53,
                   "w": 12,
-                  "h": 20,
+                  "h": 18,
                   "i": "19",
                   "type": "Widget",
                   "id": "0-0-19",
@@ -436,8 +436,8 @@
                   }
                 },
                 {
-                  "x": 0,
-                  "y": 55,
+                  "x": 12,
+                  "y": 35,
                   "w": 12,
                   "h": 18,
                   "i": "20",
@@ -465,8 +465,8 @@
                   }
                 },
                 {
-                  "x": 12,
-                  "y": 55,
+                  "x": 0,
+                  "y": 53,
                   "w": 12,
                   "h": 18,
                   "i": "21",
@@ -592,7 +592,8 @@
                     "name": "Job List",
                     "title": "Job List"
                   },
-                  "expressions": []
+                  "expressions": [],
+                  "id": "0-2-0"
                 },
                 {
                   "x": 15,
@@ -615,7 +616,8 @@
                   "widget": {
                     "title": "Top10 runningTime job",
                     "tips": "Top10 runningTime job"
-                  }
+                  },
+                  "id": "0-2-1"
                 }
               ]
             }

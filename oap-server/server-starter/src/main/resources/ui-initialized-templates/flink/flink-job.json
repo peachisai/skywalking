@@ -7,7 +7,7 @@
           "x": 0,
           "y": 0,
           "w": 4,
-          "h": 14,
+          "h": 10,
           "i": "2",
           "type": "Widget",
           "expressions": [
@@ -37,9 +37,9 @@
         },
         {
           "x": 4,
-          "y": 14,
+          "y": 10,
           "w": 4,
-          "h": 14,
+          "h": 10,
           "i": "3",
           "type": "Widget",
           "expressions": [
@@ -63,10 +63,10 @@
           ]
         },
         {
-          "x": 4,
-          "y": 0,
+          "x": 0,
+          "y": 10,
           "w": 4,
-          "h": 14,
+          "h": 10,
           "i": "4",
           "type": "Widget",
           "id": "4",
@@ -95,10 +95,10 @@
           }
         },
         {
-          "x": 0,
-          "y": 14,
+          "x": 4,
+          "y": 0,
           "w": 4,
-          "h": 14,
+          "h": 10,
           "i": "5",
           "type": "Widget",
           "id": "5",
@@ -127,10 +127,10 @@
           }
         },
         {
-          "x": 8,
-          "y": 14,
+          "x": 0,
+          "y": 36,
           "w": 8,
-          "h": 14,
+          "h": 16,
           "i": "6",
           "type": "Widget",
           "id": "6",
@@ -156,10 +156,10 @@
           }
         },
         {
-          "x": 16,
-          "y": 0,
+          "x": 0,
+          "y": 20,
           "w": 8,
-          "h": 14,
+          "h": 16,
           "i": "7",
           "type": "Widget",
           "id": "7",
@@ -185,10 +185,10 @@
           }
         },
         {
-          "x": 16,
-          "y": 14,
+          "x": 8,
+          "y": 20,
           "w": 8,
-          "h": 14,
+          "h": 16,
           "i": "8",
           "type": "Widget",
           "id": "8",
@@ -214,10 +214,10 @@
           }
         },
         {
-          "x": 8,
-          "y": 0,
+          "x": 16,
+          "y": 20,
           "w": 8,
-          "h": 14,
+          "h": 16,
           "i": "9",
           "type": "Widget",
           "id": "9",
@@ -240,6 +240,209 @@
             "name": "checkpoints_inProgress",
             "title": "checkpoints_inProgress",
             "tips": "checkpoints_inProgress"
+          }
+        },
+        {
+          "x": 8,
+          "y": 0,
+          "w": 16,
+          "h": 20,
+          "i": "10",
+          "type": "Widget",
+          "id": "10",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_currentEmitEventTimeLag"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "currentEmitEventTimeLag",
+            "title": "currentEmitEventTimeLag",
+            "tips": "currentEmitEventTimeLag"
+          }
+        },
+        {
+          "x": 0,
+          "y": 52,
+          "w": 12,
+          "h": 18,
+          "i": "11",
+          "type": "Widget",
+          "id": "11",
+          "moved": false,
+          "expressions": [
+            "meter_flink_job_numRecordsIn"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "widget": {
+            "name": "numRecordsIn",
+            "title": "numRecordsIn",
+            "tips": "numRecordsIn"
+          }
+        },
+        {
+          "x": 12,
+          "y": 52,
+          "w": 12,
+          "h": 18,
+          "i": "12",
+          "type": "Widget",
+          "id": "12",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_numRecordsOut"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "numRecordsOut",
+            "title": "numRecordsOut",
+            "tips": "numRecordsOut"
+          }
+        },
+        {
+          "x": 0,
+          "y": 70,
+          "w": 12,
+          "h": 16,
+          "i": "13",
+          "type": "Widget",
+          "id": "13",
+          "moved": false,
+          "expressions": [
+            "meter_flink_job_numBytesInPerSecond/1024"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "numBytesInPerSecond",
+            "title": "numBytesInPerSecond",
+            "tips": "numBytesInPerSecond"
+          }
+        },
+        {
+          "x": 12,
+          "y": 70,
+          "w": 12,
+          "h": 16,
+          "i": "14",
+          "type": "Widget",
+          "id": "14",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_numBytesOutPerSecond/1024"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "numBytesOutPerSecond",
+            "title": "numBytesOutPerSecond",
+            "tips": "numBytesOutPerSecond"
+          }
+        },
+        {
+          "x": 16,
+          "y": 36,
+          "w": 8,
+          "h": 16,
+          "i": "15",
+          "type": "Widget",
+          "id": "15",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_job_lastCheckpointSize"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "lastCheckpointSize",
+            "title": "lastCheckpointSize(Bytes)",
+            "tips": "lastCheckpointSize"
+          }
+        },
+        {
+          "x": 8,
+          "y": 36,
+          "w": 8,
+          "h": 16,
+          "i": "16",
+          "type": "Widget",
+          "id": "16",
+          "moved": false,
+          "expressions": [
+            "meter_flink_job_lastCheckpointDuration"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "lastCheckpointDuration",
+            "title": "lastCheckpointDuration(ms)",
+            "tips": "lastCheckpointDuration"
+          },
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
           }
         }
       ],

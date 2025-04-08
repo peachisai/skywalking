@@ -6,62 +6,8 @@
         {
           "x": 0,
           "y": 0,
-          "w": 3,
-          "h": 8,
-          "i": "1",
-          "type": "Widget",
-          "id": "1",
-          "moved": false,
-          "expressions": [
-            "latest(meter_flink_taskManager_running_job_number)"
-          ],
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ],
-          "graph": {
-            "type": "Card",
-            "fontSize": 19,
-            "textAlign": "center",
-            "showUnit": true
-          },
-          "widget": {
-            "name": "Running Job",
-            "title": "Running Job",
-            "tips": "The number of running jobs"
-          }
-        },
-        {
-          "x": 3,
-          "y": 8,
-          "w": 3,
-          "h": 8,
-          "i": "2",
-          "type": "Widget",
-          "id": "2",
-          "moved": false,
-          "expressions": [
-            "latest(meter_flink_taskManager_taskManagers_registered_number)"
-          ],
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ],
-          "graph": {
-            "type": "Card",
-            "fontSize": 20,
-            "textAlign": "center",
-            "showUnit": true
-          },
-          "widget": {
-            "title": "taskManagers",
-            "tips": "The number of taskManagers",
-            "name": "taskManagers"
-          }
-        },
-        {
-          "x": 6,
-          "y": 0,
-          "w": 9,
-          "h": 16,
+          "w": 8,
+          "h": 15,
           "i": "3",
           "type": "Widget",
           "id": "3",
@@ -87,10 +33,10 @@
           }
         },
         {
-          "x": 15,
-          "y": 16,
-          "w": 9,
-          "h": 18,
+          "x": 16,
+          "y": 0,
+          "w": 8,
+          "h": 15,
           "i": "4",
           "type": "Widget",
           "id": "4",
@@ -117,9 +63,9 @@
         },
         {
           "x": 0,
-          "y": 16,
-          "w": 7,
-          "h": 18,
+          "y": 15,
+          "w": 8,
+          "h": 17,
           "i": "5",
           "type": "Widget",
           "id": "5",
@@ -144,9 +90,9 @@
         },
         {
           "x": 0,
-          "y": 34,
-          "w": 7,
-          "h": 13,
+          "y": 32,
+          "w": 8,
+          "h": 16,
           "i": "7",
           "type": "Widget",
           "id": "7",
@@ -170,64 +116,10 @@
           }
         },
         {
-          "x": 0,
-          "y": 8,
-          "w": 3,
-          "h": 8,
-          "i": "8",
-          "type": "Widget",
-          "id": "8",
-          "moved": false,
-          "expressions": [
-            "latest(meter_flink_taskManager_taskManagers_slots_total)"
-          ],
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ],
-          "graph": {
-            "type": "Card",
-            "fontSize": 20,
-            "textAlign": "center",
-            "showUnit": true
-          },
-          "widget": {
-            "name": "Task Managers Slots Total",
-            "title": "Total Slots",
-            "tips": "Total Task Managers Slots"
-          }
-        },
-        {
-          "x": 3,
+          "x": 8,
           "y": 0,
-          "w": 3,
-          "h": 8,
-          "i": "9",
-          "type": "Widget",
-          "id": "9",
-          "moved": false,
-          "expressions": [
-            "latest(meter_flink_taskManager_taskManagers_slots_available)"
-          ],
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ],
-          "graph": {
-            "type": "Card",
-            "fontSize": 20,
-            "textAlign": "center",
-            "showUnit": true
-          },
-          "widget": {
-            "name": "task_managers_slots_available",
-            "tips": "task_managers_slots_available",
-            "title": "available slots"
-          }
-        },
-        {
-          "x": 15,
-          "y": 0,
-          "w": 9,
-          "h": 16,
+          "w": 8,
+          "h": 15,
           "i": "13",
           "type": "Widget",
           "id": "13",
@@ -252,10 +144,10 @@
           }
         },
         {
-          "x": 7,
-          "y": 16,
+          "x": 8,
+          "y": 15,
           "w": 8,
-          "h": 18,
+          "h": 17,
           "i": "14",
           "type": "Widget",
           "id": "14",
@@ -285,10 +177,10 @@
           }
         },
         {
-          "x": 7,
-          "y": 34,
-          "w": 6,
-          "h": 13,
+          "x": 8,
+          "y": 32,
+          "w": 8,
+          "h": 16,
           "i": "15",
           "type": "Widget",
           "id": "15",
@@ -312,10 +204,10 @@
           }
         },
         {
-          "x": 13,
-          "y": 34,
-          "w": 6,
-          "h": 13,
+          "x": 16,
+          "y": 32,
+          "w": 8,
+          "h": 16,
           "i": "16",
           "type": "Widget",
           "id": "16",
@@ -339,10 +231,10 @@
           }
         },
         {
-          "x": 19,
-          "y": 34,
-          "w": 5,
-          "h": 13,
+          "x": 16,
+          "y": 15,
+          "w": 8,
+          "h": 17,
           "i": "17",
           "type": "Widget",
           "id": "17",
@@ -366,9 +258,9 @@
         },
         {
           "x": 0,
-          "y": 47,
-          "w": 11,
-          "h": 16,
+          "y": 120,
+          "w": 12,
+          "h": 18,
           "i": "18",
           "type": "Widget",
           "id": "18",
@@ -394,10 +286,10 @@
           }
         },
         {
-          "x": 0,
-          "y": 63,
-          "w": 11,
-          "h": 12,
+          "x": 12,
+          "y": 120,
+          "w": 12,
+          "h": 18,
           "i": "19",
           "type": "Widget",
           "id": "19",
@@ -423,16 +315,16 @@
           }
         },
         {
-          "x": 11,
-          "y": 47,
-          "w": 9,
-          "h": 16,
+          "x": 0,
+          "y": 138,
+          "w": 12,
+          "h": 18,
           "i": "20",
           "type": "Widget",
           "id": "20",
           "moved": false,
           "expressions": [
-            "meter_flink_taskManager_numBytesIn"
+            "meter_flink_taskManager_numBytesInPerSecond"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
@@ -452,16 +344,16 @@
           }
         },
         {
-          "x": 11,
-          "y": 63,
-          "w": 9,
-          "h": 12,
+          "x": 12,
+          "y": 138,
+          "w": 12,
+          "h": 18,
           "i": "21",
           "type": "Widget",
           "id": "21",
           "moved": false,
           "expressions": [
-            "meter_flink_taskManager_numBytesOut"
+            "meter_flink_taskManager_numBytesOutPerSecond"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
@@ -478,6 +370,263 @@
             "showSymbol": true,
             "showXAxis": true,
             "showYAxis": true
+          }
+        },
+        {
+          "x": 8,
+          "y": 48,
+          "w": 8,
+          "h": 18,
+          "i": "22",
+          "type": "Widget",
+          "id": "22",
+          "moved": false,
+          "expressions": [
+            "meter_flink_taskManager_netty_usedMemory/1024/1024"
+          ],
+          "graph": {
+            "type": "Area",
+            "opacity": 0.4,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "netty_usedMemory",
+            "title": "netty_usedMemory(mb)",
+            "tips": "netty_usedMemory"
+          }
+        },
+        {
+          "x": 0,
+          "y": 48,
+          "w": 8,
+          "h": 18,
+          "i": "23",
+          "type": "Widget",
+          "id": "23",
+          "moved": false,
+          "expressions": [
+            "meter_flink_taskManager_netty_availableMemory/1024/1024"
+          ],
+          "graph": {
+            "type": "Area",
+            "opacity": 0.4,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "netty_availableMemory",
+            "title": "netty_availableMemory(mb)",
+            "tips": "netty_availableMemory"
+          }
+        },
+        {
+          "x": 16,
+          "y": 48,
+          "w": 8,
+          "h": 18,
+          "i": "24",
+          "type": "Widget",
+          "id": "24",
+          "moved": false,
+          "expressions": [
+            "meter_flink_taskManager_isBackPressured"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "isBackPressured",
+            "title": "isBackPressured",
+            "tips": "isBackPressured"
+          }
+        },
+        {
+          "x": 0,
+          "y": 102,
+          "w": 12,
+          "h": 18,
+          "i": "25",
+          "type": "Widget",
+          "id": "25",
+          "moved": false,
+          "expressions": [
+            "meter_flink_taskManager_inPoolUsage*10"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "inPoolUsage",
+            "title": "inPoolUsage(%)",
+            "tips": "inPoolUsage"
+          }
+        },
+        {
+          "x": 12,
+          "y": 102,
+          "w": 12,
+          "h": 18,
+          "i": "26",
+          "type": "Widget",
+          "id": "26",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_taskManager_outPoolUsage"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "outPoolUsage",
+            "title": "outPoolUsage(%)",
+            "tips": "outPoolUsage"
+          }
+        },
+        {
+          "x": 12,
+          "y": 84,
+          "w": 12,
+          "h": 18,
+          "i": "27",
+          "type": "Widget",
+          "id": "27",
+          "moved": false,
+          "expressions": [
+            "meter_flink_taskManager_softBackPressuredTimeMsPerSecond"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "softBackPressuredTimeMsPerSecond",
+            "title": "softBackPressuredTimeMsPerSecond",
+            "tips": "softBackPressuredTimeMsPerSecond"
+          }
+        },
+        {
+          "x": 0,
+          "y": 84,
+          "w": 12,
+          "h": 18,
+          "i": "28",
+          "type": "Widget",
+          "id": "28",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_taskManager_hardBackPressuredTimeMsPerSecond"
+          ],
+          "typesOfMQE": [
+            "UNKNOWN"
+          ],
+          "widget": {
+            "name": "hardBackPressuredTimeMsPerSecond",
+            "title": "hardBackPressuredTimeMsPerSecond",
+            "tips": "hardBackPressuredTimeMsPerSecond"
+          }
+        },
+        {
+          "x": 0,
+          "y": 66,
+          "w": 12,
+          "h": 18,
+          "i": "29",
+          "type": "Widget",
+          "id": "29",
+          "moved": false,
+          "expressions": [
+            "meter_flink_taskManager_idleTimeMsPerSecond"
+          ],
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "idleTimeMsPerSecond",
+            "title": "idleTimeMsPerSecond(ms)",
+            "tips": "idleTimeMsPerSecond"
+          }
+        },
+        {
+          "x": 12,
+          "y": 66,
+          "w": 12,
+          "h": 18,
+          "i": "30",
+          "type": "Widget",
+          "id": "30",
+          "moved": false,
+          "graph": {
+            "type": "Line",
+            "step": false,
+            "smooth": false,
+            "showSymbol": true,
+            "showXAxis": true,
+            "showYAxis": true
+          },
+          "expressions": [
+            "meter_flink_taskManager_busyTimeMsPerSecond"
+          ],
+          "typesOfMQE": [
+            "TIME_SERIES_VALUES"
+          ],
+          "widget": {
+            "name": "busyTimeMsPerSecond",
+            "title": "busyTimeMsPerSecond(ms)",
+            "tips": "busyTimeMsPerSecond"
           }
         }
       ],
