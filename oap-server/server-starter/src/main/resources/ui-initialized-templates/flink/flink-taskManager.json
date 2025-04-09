@@ -58,7 +58,7 @@
           "widget": {
             "name": "Jvm thread count",
             "title": "Jvm Thread Count",
-            "tips": "The count of jvm threads"
+            "tips": "The number of jvm threads"
           }
         },
         {
@@ -85,7 +85,7 @@
           "widget": {
             "name": "Jvm Memory Heap Used",
             "title": "Jvm Memory Heap Used(MB)",
-            "tips": "Jvm Memory Heap Used"
+            "tips": "The amount of jvm memory heap used"
           }
         },
         {
@@ -112,7 +112,7 @@
           "widget": {
             "name": "Jvm Memory NonHeap Used",
             "title": "Jvm Memory NonHeap Used(MB)",
-            "tips": "Jvm Memory NonHeap Used"
+            "tips": "The amount of jvm nonHeap memory used"
           }
         },
         {
@@ -139,8 +139,9 @@
             "showYAxis": true
           },
           "widget": {
-            "title": "jvm_cpu_time",
-            "tips": "jvm_cpu_time"
+            "title": "Jvm Cpu Time(ms)",
+            "name": "Jvm Cpu Time",
+            "tips": "The cpu time used by the JVM"
           }
         },
         {
@@ -171,9 +172,9 @@
             "showUnit": true
           },
           "widget": {
-            "name": "jvm_memory_available",
-            "title": "jvm memory available",
-            "tips": "jvm_memory_available"
+            "name": "Jvm Memory Heap Available",
+            "title": "Jvm Memory Heap Available(MB)",
+            "tips": "The amount of available JVM memory Heap"
           }
         },
         {

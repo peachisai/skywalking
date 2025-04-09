@@ -150,7 +150,7 @@
                   "widget": {
                     "name": "Jvm Memory Heap Used",
                     "title": "Jvm Memory Heap Used(MB)",
-                    "tips": "The amount of jvm memory used"
+                    "tips": "The amount of jvm memory heap used"
                   }
                 },
                 {
@@ -163,7 +163,7 @@
                   "id": "0-0-7",
                   "moved": false,
                   "expressions": [
-                    "(meter_flink_jobManager_jvm_memory_NonHeap_used)/1024/1024"
+                    "(meter_flink_jobManager_jvm_memory_nonHeap_used)/1024/1024"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -278,7 +278,7 @@
                     }
                   ],
                   "expressions": [
-                    "(meter_flink_jobManager_jvm_memory_heap_max-meter_flink_jobManager_jvm_memory_heap_used)/1024/1024"
+                    "(meter_flink_jobManager_jvm_memory_heap_available)/1024/1024"
                   ],
                   "typesOfMQE": [
                     "TIME_SERIES_VALUES"
@@ -291,9 +291,9 @@
                     "showUnit": true
                   },
                   "widget": {
-                    "name": "Jvm Memory Available",
-                    "title": "Jvm Memory Available(MB)",
-                    "tips": "The amount of available JVM memory"
+                    "name": "Jvm Memory Heap Available",
+                    "title": "Jvm Memory Heap Available(MB)",
+                    "tips": "The amount of available JVM memory Heap"
                   }
                 },
                 {
@@ -312,15 +312,15 @@
                     "showYAxis": true
                   },
                   "expressions": [
-                    "(meter_flink_jobManager_jvm_memory_NonHeap_max-meter_flink_jobManager_jvm_memory_NonHeap_used)/1024/1024"
+                    "(meter_flink_jobManager_jvm_memory_nonHeap_available)/1024/1024)"
                   ],
                   "typesOfMQE": [
-                    "UNKNOWN"
+                    "TIME_SERIES_VALUES"
                   ],
                   "widget": {
-                    "name": "Jvm NoHeap Available",
-                    "title": "Jvm NoHeap Available(MB)",
-                    "tips": "The amount of available JVM noHeap Memory"
+                    "name": "Jvm Memory NoHeap Available",
+                    "title": "Jvm Memory NoHeap Available(MB)",
+                    "tips": "The amount of available JVM memory noHeap"
                   }
                 },
                 {
@@ -360,10 +360,10 @@
                   "id": "0-0-17",
                   "moved": false,
                   "expressions": [
-                    "(meter_flink_jobManager_jvm_memory_metaspace_max-meter_flink_jobManager_jvm_memory_metaspace_used)/1024/1024"
+                    "(meter_flink_jobManager_jvm_memory_metaspace_available)/1024/1024"
                   ],
                   "typesOfMQE": [
-                    "TIME_SERIES_VALUES"
+                    "UNKNOWN"
                   ],
                   "graph": {
                     "type": "Area",
@@ -374,7 +374,7 @@
                   "widget": {
                     "title": "Jvm Metaspace Available(MB)",
                     "tips": "The amount of Available Jvm Metaspace Memory",
-                    "name": "Jvm Memory Metaspace Available"
+                    "name": "Jvm Metaspace Available"
                   }
                 },
                 {
@@ -401,9 +401,9 @@
                     "TIME_SERIES_VALUES"
                   ],
                   "widget": {
-                    "name": "jvm_g1_young_generation_count",
-                    "title": "jvm_g1_young_generation_count",
-                    "tips": "jvm_g1_young_generation_count"
+                    "name": "Jvm G1 Young Generation Count",
+                    "title": "Jvm G1 Young Generation Count",
+                    "tips": "The number of Jvm g1 young generation count"
                   }
                 },
                 {
@@ -430,9 +430,9 @@
                     "showYAxis": true
                   },
                   "widget": {
-                    "name": "jvm_g1_old_generation_count",
-                    "title": "jvm_g1_old_generation_count",
-                    "tips": "jvm_g1_old_generation_count"
+                    "name": "Jvm G1 Old Generation Count",
+                    "title": "Jvm G1 Old Generation Count",
+                    "tips": "The number of Jvm g1 old generation count"
                   }
                 },
                 {
@@ -451,9 +451,9 @@
                     "TIME_SERIES_VALUES"
                   ],
                   "widget": {
-                    "name": "jvm_g1_young_generation_time",
-                    "title": "jvm_g1_young_generation_time(ms)",
-                    "tips": "jvm_g1_young_generation_time"
+                    "name": "Jvm G1 Young Generation Time",
+                    "title": "Jvm G1 Young Generation Time(ms)",
+                    "tips": "The time of Jvm g1 young generation"
                   },
                   "graph": {
                     "type": "Line",
@@ -488,9 +488,9 @@
                     "showYAxis": true
                   },
                   "widget": {
-                    "name": "jvm_g1_old_generation_time",
-                    "title": "jvm_g1_old_generation_time(ms)",
-                    "tips": "jvm_g1_old_generation_time"
+                    "name": "Jvm G1 Old Generation Time",
+                    "title": "Jvm G1 Old Generation Time(ms)",
+                    "tips": "The time of Jvm g1 old generation"
                   }
                 },
                 {
@@ -517,9 +517,9 @@
                     "showYAxis": true
                   },
                   "widget": {
-                    "name": "jvm_all_garbageCollector_count",
-                    "title": "jvm_all_garbageCollector_count",
-                    "tips": "jvm_all_garbageCollector_count"
+                    "name": "Jvm All GarbageCollector Count",
+                    "title": "Jvm All GarbageCollector Count",
+                    "tips": "The number of Jvm all garbageCollector count"
                   }
                 },
                 {
@@ -546,9 +546,9 @@
                     "UNKNOWN"
                   ],
                   "widget": {
-                    "name": "jvm_all_garbageCollector_time",
-                    "title": "jvm_all_garbageCollector_time",
-                    "tips": "jvm_all_garbageCollector_time"
+                    "name": "Jvm All GarbageCollector Time",
+                    "title": "Jvm All GarbageCollector Time",
+                    "tips": "The time of Jvm all garbageCollector"
                   }
                 }
               ]
@@ -593,7 +593,8 @@
                     "title": "Job List"
                   },
                   "expressions": [],
-                  "id": "0-2-0"
+                  "id": "0-2-0",
+                  "moved": false
                 },
                 {
                   "x": 15,
@@ -617,7 +618,8 @@
                     "title": "Top10 runningTime job",
                     "tips": "Top10 runningTime job"
                   },
-                  "id": "0-2-1"
+                  "id": "0-2-1",
+                  "moved": false
                 }
               ]
             }

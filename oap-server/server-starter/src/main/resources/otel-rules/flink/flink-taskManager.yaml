@@ -60,7 +60,7 @@ metricsRules:
   - name: numRecordsOut
     exp: flink_taskmanager_job_task_numRecordsOut.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: numBytesInPerSecond
-    exp: flink_taskmanager_job_task_numBytesInPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
+    exp: flink_taskmanager_job_task_numBytesInPerSecond.sum(['cluster','taskManager_node','flink_job_name'])
   - name: numBytesOutPerSecond
     exp: flink_taskmanager_job_task_numBytesOutPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
 
