@@ -33,7 +33,7 @@ cases:
     expected: expected/metrics-has-value-jobManager-node-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_heap_used --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_NonHeap_used --service-name=flink::flink-cluster
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_nonHeap_used --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_thread_count --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
