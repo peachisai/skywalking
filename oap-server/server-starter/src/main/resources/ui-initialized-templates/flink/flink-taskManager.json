@@ -199,9 +199,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "jvm",
-            "title": "jvm noHeap available(MB)",
-            "tips": "jvm noHeap available"
+            "name": "Jvm Memory NonHeap Available",
+            "title": "Jvm Memory NonHeap Available(MB)",
+            "tips": "The amount of available JVM memory nonHeap"
           }
         },
         {
@@ -226,9 +226,9 @@
             "showYAxis": true
           },
           "widget": {
-            "name": "jvm_memory_metaspace_used",
-            "title": "jvm_memory_metaspace_used",
-            "tips": "jvm_memory_metaspace_used"
+            "name": "Jvm Memory Metaspace Used",
+            "title": "Jvm Memory Metaspace Used(MB)",
+            "tips": "The amount of Used Jvm metaspace memory"
           }
         },
         {
@@ -253,8 +253,9 @@
             "showYAxis": true
           },
           "widget": {
-            "title": "jvm metaspace available",
-            "tips": "jvm metaspace available"
+            "title": "Jvm Metaspace Available(MB)",
+            "tips": "The amount of Available Jvm Metaspace Memory",
+            "name": "Jvm Metaspace Available"
           }
         },
         {
@@ -281,9 +282,9 @@
             "showYAxis": true
           },
           "widget": {
-            "name": "numRecordsIn",
-            "title": "numRecordsIn",
-            "tips": "numRecordsIn"
+            "name": "NumRecordsIn",
+            "title": "NumRecordsIn",
+            "tips": "The total number of records this task has received."
           }
         },
         {
@@ -310,9 +311,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "numRecordsOut",
-            "title": "numRecordsOut",
-            "tips": "numRecordsOut"
+            "name": "NumRecordsOut",
+            "title": "NumRecordsOut",
+            "tips": "The total number of records this task has emitted."
           }
         },
         {
@@ -339,9 +340,9 @@
             "showYAxis": true
           },
           "widget": {
-            "name": "numBytesIn",
-            "title": "numBytesIn",
-            "tips": "numBytesIn"
+            "name": "NumBytesInPerSecond",
+            "title": "NumBytesInPerSecond",
+            "tips": "The number of bytes received per second"
           }
         },
         {
@@ -360,9 +361,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "numBytesOut",
-            "title": "numBytesOut",
-            "tips": "numBytesOut"
+            "name": "NumBytesOutPerSecond",
+            "title": "NumBytesOutPerSecond",
+            "tips": "The number of bytes this task emits per second"
           },
           "graph": {
             "type": "Line",
@@ -395,9 +396,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "netty_usedMemory",
-            "title": "netty_usedMemory(mb)",
-            "tips": "netty_usedMemory"
+            "name": "Netty UsedMemory",
+            "title": "Netty UsedMemory(MB)",
+            "tips": "The amount of used netty memory"
           }
         },
         {
@@ -422,9 +423,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "netty_availableMemory",
-            "title": "netty_availableMemory(mb)",
-            "tips": "netty_availableMemory"
+            "name": "Netty AvailableMemory",
+            "title": "Netty AvailableMemory(MB)",
+            "tips": "The amount of available netty memory"
           }
         },
         {
@@ -451,9 +452,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "isBackPressured",
-            "title": "isBackPressured",
-            "tips": "isBackPressured"
+            "name": "IsBackPressured",
+            "title": "IsBackPressured",
+            "tips": "Whether the task is back-pressured."
           }
         },
         {
@@ -480,9 +481,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "inPoolUsage",
-            "title": "inPoolUsage(%)",
-            "tips": "inPoolUsage"
+            "name": "InPoolUsage",
+            "title": "InPoolUsage(%)",
+            "tips": "An estimate of the input buffers usage. (ignores LocalInputChannels)"
           }
         },
         {
@@ -509,9 +510,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "outPoolUsage",
+            "name": "OutPoolUsage",
             "title": "outPoolUsage(%)",
-            "tips": "outPoolUsage"
+            "tips": "An estimate of the output buffers usage. The pool usage can be > 100% if overdraft buffers are being used."
           }
         },
         {
@@ -538,9 +539,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "softBackPressuredTimeMsPerSecond",
-            "title": "softBackPressuredTimeMsPerSecond",
-            "tips": "softBackPressuredTimeMsPerSecond"
+            "name": "SoftBackPressuredTimeMsPerSecond",
+            "title": "SoftBackPressuredTimeMsPerSecond(ms)",
+            "tips": "The time this task is softly back pressured per second.Softly back pressured task will be still responsive and capable of for example triggering unaligned checkpoints."
           }
         },
         {
@@ -567,9 +568,9 @@
             "UNKNOWN"
           ],
           "widget": {
-            "name": "hardBackPressuredTimeMsPerSecond",
-            "title": "hardBackPressuredTimeMsPerSecond",
-            "tips": "hardBackPressuredTimeMsPerSecond"
+            "name": "HardBackPressuredTimeMsPerSecond",
+            "title": "HardBackPressuredTimeMsPerSecond(ms)",
+            "tips": "The time this task is back pressured in a hard way per second.During hard back pressured task is completely blocked and unresponsive preventing for example unaligned checkpoints from triggering. "
           }
         },
         {
@@ -596,9 +597,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "idleTimeMsPerSecond",
-            "title": "idleTimeMsPerSecond(ms)",
-            "tips": "idleTimeMsPerSecond"
+            "name": "IdleTimeMsPerSecond",
+            "title": "IdleTimeMsPerSecond(ms)",
+            "tips": "The time this task is idle (has no data to process) per second. Idle time excludes back pressured time, so if the task is back pressured it is not idle."
           }
         },
         {
@@ -625,9 +626,9 @@
             "TIME_SERIES_VALUES"
           ],
           "widget": {
-            "name": "busyTimeMsPerSecond",
-            "title": "busyTimeMsPerSecond(ms)",
-            "tips": "busyTimeMsPerSecond"
+            "name": "BusyTimeMsPerSecond",
+            "title": "BusyTimeMsPerSecond(ms)",
+            "tips": "The time this task is busy (neither idle nor back pressured) per second. Can be NaN, if the value could not be calculated."
           }
         }
       ],
