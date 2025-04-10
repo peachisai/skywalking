@@ -86,7 +86,7 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_numBytesOutPerSecond --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
     expected: expected/metrics-has-value-operator-name-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_isBackPressured --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
-    expected: expected/metrics-has-value-operator-name-label.yml
+    expected: expected/metrics-has-value-task-name-label.yml
 
   # instance cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-name=flink::flink-cluster
