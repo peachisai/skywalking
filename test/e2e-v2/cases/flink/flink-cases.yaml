@@ -102,7 +102,15 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_jvm_memory_nonHeap_used --service-name=flink::flink-cluster --instance-name=taskmanager
     expected: expected/metrics-has-value.yml
 
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_netty_usedMemory --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_netty_availableMemory --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value.yml
 
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_isBackPressured --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value-job-task-label.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_idleTimeMsPerSecond --service-name=flink::flink-cluster --instance-name=taskmanager
+    expected: expected/metrics-has-value-job-task-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_numBytesInPerSecond --service-name=flink::flink-cluster --instance-name=taskmanager
     expected: expected/metrics-has-value-empty-label.yml
 

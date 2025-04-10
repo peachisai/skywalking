@@ -52,8 +52,6 @@ metricsRules:
     exp: flink_jobmanager_job_numberOfCompletedCheckpoints.sum(['cluster','flink_job_name'])
   - name: checkpoints_inProgress
     exp: flink_jobmanager_job_numberOfInProgressCheckpoints.sum(['cluster','flink_job_name'])
-  - name: checkpoints_inProgress
-    exp: flink_jobmanager_job_numberOfInProgressCheckpoints.sum(['cluster','flink_job_name'])
   - name: lastCheckpointSize
     exp: flink_jobmanager_job_lastCheckpointSize.sum(['cluster','flink_job_name'])
   - name: lastCheckpointDuration
