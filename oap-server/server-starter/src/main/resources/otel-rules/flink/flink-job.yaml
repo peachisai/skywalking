@@ -69,4 +69,7 @@ metricsRules:
   - name: numBytesOutPerSecond
     exp: flink_taskmanager_job_task_operator_numBytesOutPerSecond.sum(['cluster','flink_job_name','operator_name'])
 
+  - name: isBackPressured
+    exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','flink_job_name','task_name'])
+
 

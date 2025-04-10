@@ -19,8 +19,8 @@ results:
   {{- contains .results }}
   - metric:
       labels:
-        - key: flink_job_name
-          value: Source:_Grades_Data_Generator
+        - key: task_name
+          value: TumblingEventTimeWindows____Sink:_Print_to_Std__Out
     values:
       {{- contains .values }}
       - id: {{ notEmpty .id }}
