@@ -76,7 +76,7 @@ metricsRules:
 
   # backPressured
   - name: isBackPressured
-    exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','taskManager_node','flink_job_name'])
+    exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','taskManager_node','task_name'])
   - name: idleTimeMsPerSecond
     exp: flink_taskmanager_job_task_idleTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name'])
   - name: busyTimeMsPerSecond
