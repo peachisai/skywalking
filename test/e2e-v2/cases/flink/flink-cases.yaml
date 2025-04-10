@@ -55,7 +55,17 @@ cases:
   # endpoint cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql endpoint ls --service-name=flink::flink-cluster
     expected: expected/endpoint.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_restart_number --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_runningTime --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_restartingTime --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_cancellingTime --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
+    expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_currentEmitEventTimeLag --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
+    expected: expected/metrics-has-value-operator-name-label.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_job_numRecordsIn --service-name=flink::flink-cluster --endpoint-name=Windowed_Join_Example
     expected: expected/metrics-has-value-operator-name-label.yml
 
   # instance cases
