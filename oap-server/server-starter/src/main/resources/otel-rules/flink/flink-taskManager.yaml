@@ -40,14 +40,10 @@ metricsRules:
     exp: flink_taskmanager_Status_JVM_CPU_Time.sum(['cluster','taskManager_node']).increase('PT1M')
   - name: jvm_memory_heap_used
     exp: flink_taskmanager_Status_JVM_Memory_Heap_Used.sum(['cluster','taskManager_node'])
-  - name: jvm_memory_heap_max
-    exp: flink_taskmanager_Status_JVM_Memory_Heap_Max.sum(['cluster','taskManager_node'])
   - name: jvm_memory_heap_available
     exp: flink_taskmanager_Status_JVM_Memory_Heap_Max.sum(['cluster','taskManager_node'])-flink_taskmanager_Status_JVM_Memory_Heap_Used.sum(['cluster','taskManager_node'])
   - name: jvm_thread_count
     exp: flink_taskmanager_Status_JVM_Threads_Count.sum(['cluster','taskManager_node'])
-  - name: jvm_memory_metaspace_max
-    exp: flink_taskmanager_Status_JVM_Memory_Metaspace_Max.sum(['cluster','taskManager_node'])
   - name: jvm_memory_metaspace_available
     exp: flink_taskmanager_Status_JVM_Memory_Metaspace_Max.sum(['cluster','taskManager_node'])-flink_taskmanager_Status_JVM_Memory_Metaspace_Used.sum(['cluster','taskManager_node'])
   - name: jvm_memory_metaspace_used
@@ -55,8 +51,6 @@ metricsRules:
 
   - name: jvm_memory_nonHeap_used
     exp: flink_taskmanager_Status_JVM_Memory_NonHeap_Used.sum(['cluster','taskManager_node'])
-  - name: jvm_memory_nonHeap_max
-    exp: flink_taskmanager_Status_JVM_Memory_NonHeap_Max.sum(['cluster','taskManager_node'])
   - name: jvm_memory_nonHeap_available
     exp: flink_taskmanager_Status_JVM_Memory_NonHeap_Max.sum(['cluster','taskManager_node'])-flink_taskmanager_Status_JVM_Memory_NonHeap_Used.sum(['cluster','taskManager_node'])
 
@@ -82,7 +76,7 @@ metricsRules:
 
   # backPressured
   - name: isBackPressured
-    exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','taskManager_node','flink_job_name'])
+    exp: flink_taskmanager_job_task_isBackPressured.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: idleTimeMsPerSecond
     exp: flink_taskmanager_job_task_idleTimeMsPerSecond.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: busyTimeMsPerSecond
