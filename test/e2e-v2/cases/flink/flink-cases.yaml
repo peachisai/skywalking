@@ -33,11 +33,17 @@ cases:
     expected: expected/metrics-has-value-jobManager-node-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_heap_used --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_heap_available --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value-jobManager-node-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_nonHeap_used --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value-jobManager-node-label.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_nonHeap_available --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_thread_count --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_metaspace_used --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value-jobManager-node-label.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_memory_metaspace_available --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_jvm_g1_young_generation_count --service-name=flink::flink-cluster
     expected: expected/metrics-has-value-jobManager-node-label.yml
@@ -110,7 +116,7 @@ cases:
     expected: expected/metrics-has-value.yml
 
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_isBackPressured --service-name=flink::flink-cluster --instance-name=taskmanager:9261
-    expected: expected/metrics-has-value.yml
+    expected: expected/metrics-has-value-job-task-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_idleTimeMsPerSecond --service-name=flink::flink-cluster --instance-name=taskmanager:9261
     expected: expected/metrics-has-value-job-task-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_taskManager_numBytesInPerSecond --service-name=flink::flink-cluster --instance-name=taskmanager:9261
