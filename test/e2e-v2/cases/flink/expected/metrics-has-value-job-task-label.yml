@@ -20,7 +20,7 @@ results:
   - metric:
       labels:
         - key: flink_job_name
-          value: Source:_Grades_Data_Generator
+          value: Windowed_Join_Example
     values:
       {{- contains .values }}
       - id: {{ notEmpty .id }}
