@@ -21,6 +21,8 @@ results:
       labels:
         - key: flink_job_name
           value: Windowed_Join_Example
+        - key: task_name
+          value: Source:_Grades_Data_Generator____Map
     values:
       {{- contains .values }}
       - id: {{ notEmpty .id }}
