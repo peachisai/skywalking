@@ -44,6 +44,7 @@ receivers:
                 cluster: flink-cluster
           relabel_configs:
             - source_labels: [ __address__ ]
+              regex: (.+)
               target_label: taskManager_node
               replacement: $$1
           metric_relabel_configs:
