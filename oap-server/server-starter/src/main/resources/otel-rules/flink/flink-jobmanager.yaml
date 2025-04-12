@@ -54,16 +54,12 @@ metricsRules:
     exp: flink_jobmanager_Status_JVM_Memory_Heap_Used.sum(['cluster','jobManager_node'])
   - name: jvm_memory_heap_available
     exp: flink_jobmanager_Status_JVM_Memory_Heap_Max.sum(['cluster','jobManager_node'])-flink_jobmanager_Status_JVM_Memory_Heap_Used.sum(['cluster','jobManager_node'])
-  - name: jvm_memory_NonHeap_max
-    exp: flink_jobmanager_Status_JVM_Memory_NonHeap_Max.sum(['cluster','jobManager_node'])
   - name: jvm_memory_nonHeap_used
     exp: flink_jobmanager_Status_JVM_Memory_NonHeap_Used.sum(['cluster','jobManager_node'])
   - name: jvm_memory_nonHeap_available
     exp: flink_jobmanager_Status_JVM_Memory_NonHeap_Max.sum(['cluster','jobManager_node'])-flink_jobmanager_Status_JVM_Memory_NonHeap_Used.sum(['cluster','jobManager_node'])
   - name: jvm_thread_count
     exp: flink_jobmanager_Status_JVM_Threads_Count.sum(['cluster','jobManager_node'])
-  - name: jvm_memory_metaspace_max
-    exp: flink_jobmanager_Status_JVM_Memory_Metaspace_Max.sum(['cluster','jobManager_node'])
   - name: jvm_memory_metaspace_used
     exp: flink_jobmanager_Status_JVM_Memory_Metaspace_Used.sum(['cluster','jobManager_node'])
   - name: jvm_memory_metaspace_available
