@@ -56,7 +56,7 @@ metricsRules:
 
 #  # records
   - name: numRecordsIn
-    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','taskManager_node','flink_job_name'])
+    exp: flink_taskmanager_job_task_numRecordsIn.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: numRecordsOut
     exp: flink_taskmanager_job_task_numRecordsOut.sum(['cluster','taskManager_node','flink_job_name','task_name'])
   - name: numBytesInPerSecond
