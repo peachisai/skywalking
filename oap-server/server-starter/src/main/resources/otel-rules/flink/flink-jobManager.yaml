@@ -66,15 +66,15 @@ metricsRules:
     exp: flink_jobmanager_Status_JVM_Memory_Metaspace_Max.sum(['cluster','jobManager_node'])-flink_jobmanager_Status_JVM_Memory_Metaspace_Used.sum(['cluster','jobManager_node'])
 
   - name: jvm_g1_young_generation_count
-    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Young_Generation_Count.sum(['cluster','jobManager_node'])
+    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Young_Generation_Count.sum(['cluster','jobManager_node']).increase('PT1M')
   - name: jvm_g1_old_generation_count
-    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Old_Generation_Count.sum(['cluster','jobManager_node'])
+    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Old_Generation_Count.sum(['cluster','jobManager_node']).increase('PT1M')
   - name: jvm_g1_young_generation_time
-    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Young_Generation_Time.sum(['cluster','jobManager_node'])
+    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Young_Generation_Time.sum(['cluster','jobManager_node']).increase('PT1M')
   - name: jvm_g1_old_generation_time
-    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Old_Generation_Time.sum(['cluster','jobManager_node'])
+    exp: flink_jobmanager_Status_JVM_GarbageCollector_G1_Old_Generation_Time.sum(['cluster','jobManager_node']).increase('PT1M')
 
   - name: jvm_all_garbageCollector_count
-    exp: flink_jobmanager_Status_JVM_GarbageCollector_All_Count.sum(['cluster','jobManager_node'])
+    exp: flink_jobmanager_Status_JVM_GarbageCollector_All_Count.sum(['cluster','jobManager_node']).increase('PT1M')
   - name: jvm_all_garbageCollector_time
-    exp: flink_jobmanager_Status_JVM_GarbageCollector_All_Time.sum(['cluster','jobManager_node'])
+    exp: flink_jobmanager_Status_JVM_GarbageCollector_All_Time.sum(['cluster','jobManager_node']).increase('PT1M')

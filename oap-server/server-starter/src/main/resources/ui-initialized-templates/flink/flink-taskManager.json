@@ -27,7 +27,7 @@
             "showYAxis": true
           },
           "widget": {
-            "name": "Jvm cpu load",
+            "name": "Jvm Cpu Load",
             "title": "Jvm cpu load(%)",
             "tips": "The number of the Jvm cpu load"
           }
@@ -58,7 +58,7 @@
           "widget": {
             "name": "Jvm thread count",
             "title": "Jvm Thread Count",
-            "tips": "The number of jvm threads"
+            "tips": "The total number of jvm threads"
           }
         },
         {
@@ -159,7 +159,7 @@
             }
           ],
           "expressions": [
-            "(meter_flink_taskManager_jvm_memory_heap_max-meter_flink_taskManager_jvm_memory_heap_used)/1024/1024"
+            "(meter_flink_taskManager_jvm_memory_heap_available)/1024/1024"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
@@ -193,7 +193,7 @@
             "showYAxis": true
           },
           "expressions": [
-            "(meter_flink_taskManager_jvm_memory_nonHeap_max-meter_flink_taskManager_jvm_memory_nonHeap_used)/1024/1024"
+            "(meter_flink_taskManager_jvm_memory_nonHeap_available)/1024/1024"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
@@ -241,7 +241,7 @@
           "id": "17",
           "moved": false,
           "expressions": [
-            "(meter_flink_taskManager_jvm_memory_metaspace_max-meter_flink_taskManager_jvm_memory_metaspace_used)/1024/1024"
+            "(meter_flink_taskManager_jvm_memory_metaspace_available)/1024/1024"
           ],
           "typesOfMQE": [
             "TIME_SERIES_VALUES"
@@ -511,7 +511,7 @@
           ],
           "widget": {
             "name": "OutPoolUsage",
-            "title": "outPoolUsage(%)",
+            "title": "OutPoolUsage(%)",
             "tips": "An estimate of the output buffers usage. The pool usage can be > 100% if overdraft buffers are being used."
           }
         },
@@ -570,7 +570,7 @@
           "widget": {
             "name": "HardBackPressuredTimeMsPerSecond",
             "title": "HardBackPressuredTimeMsPerSecond(ms)",
-            "tips": "The time this task is back pressured in a hard way per second.During hard back pressured task is completely blocked and unresponsive preventing for example unaligned checkpoints from triggering. "
+            "tips": "The time this task is back pressured in a hard way per second.During hard back pressured task is completely blocked and unresponsive preventing for example unaligned checkpoints from triggering."
           }
         },
         {

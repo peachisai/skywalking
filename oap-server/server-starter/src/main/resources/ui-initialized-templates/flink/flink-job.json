@@ -14,9 +14,9 @@
             "latest(meter_flink_job_runningTime)/1000/60"
           ],
           "widget": {
-            "name": "job_runningTime",
-            "title": "job_runningTime",
-            "tips": "job_runningTime"
+            "name": "Job RunningTime",
+            "title": "Job RunningTime",
+            "tips": "The job running time"
           },
           "metricConfig": [
             {
@@ -30,10 +30,7 @@
             "showUnit": true
           },
           "id": "2",
-          "moved": false,
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ]
+          "moved": false
         },
         {
           "x": 4,
@@ -46,9 +43,9 @@
             "latest(meter_flink_job_restart_number)"
           ],
           "widget": {
-            "name": "job_restart_number",
-            "title": "job_restart_number",
-            "tips": "job_restart_number"
+            "name": "Job Restart Number",
+            "title": "Job Restart Number",
+            "tips": "The number of job restart"
           },
           "graph": {
             "type": "Card",
@@ -57,10 +54,7 @@
             "showUnit": true
           },
           "id": "3",
-          "moved": false,
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ]
+          "moved": false
         },
         {
           "x": 0,
@@ -80,18 +74,15 @@
           "expressions": [
             "latest(meter_flink_job_restartingTime)/1000/60"
           ],
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ],
           "metricConfig": [
             {
               "unit": "min"
             }
           ],
           "widget": {
-            "name": "job_restartingTime",
-            "title": "job_restartingTime",
-            "tips": "job_restartingTime"
+            "name": "Job RestartingTime",
+            "title": "Job RestartingTime",
+            "tips": "The job restarting Time"
           }
         },
         {
@@ -106,9 +97,6 @@
           "expressions": [
             "latest(meter_flink_job_cancellingTime)/1000/60"
           ],
-          "typesOfMQE": [
-            "SINGLE_VALUE"
-          ],
           "metricConfig": [
             {
               "unit": "min"
@@ -121,9 +109,9 @@
             "showUnit": true
           },
           "widget": {
-            "name": "job_cancellingTime",
-            "title": "job_cancellingTime",
-            "tips": "job_cancellingTime"
+            "name": "Job CancellingTime",
+            "title": "Job CancellingTime",
+            "tips": "The job cancelling time"
           }
         },
         {
@@ -146,13 +134,10 @@
           "expressions": [
             "meter_flink_job_checkpoints_total"
           ],
-          "typesOfMQE": [
-            "UNKNOWN"
-          ],
           "widget": {
-            "name": "job_checkpoints_total",
-            "title": "job_checkpoints_total",
-            "tips": "job_checkpoints_total"
+            "name": "Job Checkpoints Total",
+            "title": "Job Checkpoints Total",
+            "tips": "The total number of checkpoints"
           }
         },
         {
@@ -175,13 +160,10 @@
           "expressions": [
             "meter_flink_job_checkpoints_failed"
           ],
-          "typesOfMQE": [
-            "UNKNOWN"
-          ],
           "widget": {
-            "name": "checkpoints_failed",
-            "title": "checkpoints_failed",
-            "tips": "checkpoints_failed"
+            "name": "Checkpoints Failed",
+            "title": "Checkpoints Failed",
+            "tips": "The number of failed checkpoints"
           }
         },
         {
@@ -204,13 +186,10 @@
           "expressions": [
             "meter_flink_job_checkpoints_completed"
           ],
-          "typesOfMQE": [
-            "UNKNOWN"
-          ],
           "widget": {
-            "name": "checkpoints_completed",
-            "title": "checkpoints_completed",
-            "tips": "checkpoints_completed"
+            "name": "Checkpoints Completed",
+            "title": "Checkpoints Completed",
+            "tips": "The number of completed checkpoints"
           }
         },
         {
@@ -233,13 +212,10 @@
           "expressions": [
             "meter_flink_job_checkpoints_inProgress"
           ],
-          "typesOfMQE": [
-            "UNKNOWN"
-          ],
           "widget": {
-            "name": "checkpoints_inProgress",
-            "title": "checkpoints_inProgress",
-            "tips": "checkpoints_inProgress"
+            "name": "Checkpoints InProgress",
+            "title": "Checkpoints InProgress",
+            "tips": "The number of inProgress checkpoints"
           }
         },
         {
@@ -262,13 +238,10 @@
           "expressions": [
             "meter_flink_job_currentEmitEventTimeLag"
           ],
-          "typesOfMQE": [
-            "TIME_SERIES_VALUES"
-          ],
           "widget": {
-            "name": "currentEmitEventTimeLag",
-            "title": "currentEmitEventTimeLag",
-            "tips": "currentEmitEventTimeLag"
+            "name": "CurrentEmitEventTimeLag",
+            "title": "CurrentEmitEventTimeLag(ms)",
+            "tips": "The latency between a data record's event time and its emission time from the source."
           }
         },
         {
@@ -283,9 +256,6 @@
           "expressions": [
             "meter_flink_job_numRecordsIn"
           ],
-          "typesOfMQE": [
-            "TIME_SERIES_VALUES"
-          ],
           "graph": {
             "type": "Line",
             "step": false,
@@ -295,9 +265,9 @@
             "showYAxis": true
           },
           "widget": {
-            "name": "numRecordsIn",
-            "title": "numRecordsIn",
-            "tips": "numRecordsIn"
+            "name": "NumRecordsIn",
+            "title": "NumRecordsIn",
+            "tips": "The total number of records this operator/task has received."
           }
         },
         {
@@ -320,13 +290,10 @@
           "expressions": [
             "meter_flink_job_numRecordsOut"
           ],
-          "typesOfMQE": [
-            "TIME_SERIES_VALUES"
-          ],
           "widget": {
-            "name": "numRecordsOut",
-            "title": "numRecordsOut",
-            "tips": "numRecordsOut"
+            "name": "NumRecordsOut",
+            "title": "NumRecordsOut",
+            "tips": "The total number of records this operator/task has emitted."
           }
         },
         {
@@ -339,7 +306,7 @@
           "id": "13",
           "moved": false,
           "expressions": [
-            "meter_flink_job_numBytesInPerSecond/1024"
+            "meter_flink_job_numBytesInPerSecond"
           ],
           "graph": {
             "type": "Line",
@@ -349,13 +316,10 @@
             "showXAxis": true,
             "showYAxis": true
           },
-          "typesOfMQE": [
-            "TIME_SERIES_VALUES"
-          ],
           "widget": {
-            "name": "numBytesInPerSecond",
-            "title": "numBytesInPerSecond",
-            "tips": "numBytesInPerSecond"
+            "name": "NumBytesInPerSecond",
+            "title": "NumBytesInPerSecond",
+            "tips": "The number of bytes this task received per second."
           }
         },
         {
@@ -376,15 +340,12 @@
             "showYAxis": true
           },
           "expressions": [
-            "meter_flink_job_numBytesOutPerSecond/1024"
-          ],
-          "typesOfMQE": [
-            "TIME_SERIES_VALUES"
+            "meter_flink_job_numBytesOutPerSecond"
           ],
           "widget": {
-            "name": "numBytesOutPerSecond",
-            "title": "numBytesOutPerSecond",
-            "tips": "numBytesOutPerSecond"
+            "name": "NumBytesOutPerSecond",
+            "title": "NumBytesOutPerSecond",
+            "tips": "The number of bytes this task emits per second."
           }
         },
         {
@@ -407,13 +368,10 @@
           "expressions": [
             "meter_flink_job_lastCheckpointSize"
           ],
-          "typesOfMQE": [
-            "TIME_SERIES_VALUES"
-          ],
           "widget": {
-            "name": "lastCheckpointSize",
-            "title": "lastCheckpointSize(Bytes)",
-            "tips": "lastCheckpointSize"
+            "name": "LastCheckpointSize",
+            "title": "LastCheckpointSize(Bytes)",
+            "tips": "The checkPointed size of the last checkpoint (in bytes), this metric could be different from lastCheckpointFullSize if incremental checkpoint or changelog is enabled."
           }
         },
         {
@@ -428,13 +386,10 @@
           "expressions": [
             "meter_flink_job_lastCheckpointDuration"
           ],
-          "typesOfMQE": [
-            "TIME_SERIES_VALUES"
-          ],
           "widget": {
-            "name": "lastCheckpointDuration",
-            "title": "lastCheckpointDuration(ms)",
-            "tips": "lastCheckpointDuration"
+            "name": "LastCheckpointDuration",
+            "title": "LastCheckpointDuration(ms)",
+            "tips": "The time it took to complete the last checkpoint."
           },
           "graph": {
             "type": "Line",
