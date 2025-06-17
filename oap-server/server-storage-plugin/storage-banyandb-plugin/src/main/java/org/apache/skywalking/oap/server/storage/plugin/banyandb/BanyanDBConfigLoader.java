@@ -21,12 +21,15 @@ package org.apache.skywalking.oap.server.storage.plugin.banyandb;
 import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.skywalking.oap.server.core.storage.annotation.BanyanDB;
 import org.apache.skywalking.oap.server.library.module.ModuleProvider;
 import org.apache.skywalking.oap.server.library.module.ModuleStartException;
 import org.apache.skywalking.oap.server.library.util.ResourceUtils;
+import org.apache.skywalking.oap.server.storage.plugin.banyandb.BanyanDBStorageConfig.TopN;
 import org.yaml.snakeyaml.Yaml;
 
 import static org.apache.skywalking.oap.server.library.util.YamlConfigLoaderUtils.copyProperties;
@@ -35,16 +38,23 @@ import static org.apache.skywalking.oap.server.library.util.YamlConfigLoaderUtil
 @Slf4j
 public class BanyanDBConfigLoader {
     private final ModuleProvider moduleProvider;
+    private final BanyanDBStorageConfig config;
     private final Yaml yaml;
 
     public BanyanDBConfigLoader(final ModuleProvider moduleProvider) {
         this.moduleProvider = moduleProvider;
+        this.config = new BanyanDBStorageConfig();
         this.yaml = new Yaml();
     }
 
     public BanyanDBStorageConfig loadConfig() throws ModuleStartException {
-        BanyanDBStorageConfig config = new BanyanDBStorageConfig();
-        Reader applicationReader = null;
+         loadBaseConfig();
+         loadTopNConfig();
+         return config;
+    }
+
+    private void loadBaseConfig() throws ModuleStartException {
+        Reader applicationReader;
         try {
             applicationReader = ResourceUtils.read("bydb.yml");
         } catch (FileNotFoundException e) {
@@ -52,7 +62,7 @@ public class BanyanDBConfigLoader {
         }
         Map<String, Map<String, ?>> configMap = yaml.loadAs(applicationReader, Map.class);
         if (configMap == null) {
-            return config;
+            return;
         }
 
         Map<String, Properties> configProperties = new HashMap<>();
@@ -69,35 +79,56 @@ public class BanyanDBConfigLoader {
                 moduleProvider.name()
             );
             Properties groups = configProperties.get("groups");
-            Properties recordsNormal = (Properties) groups.get("recordsNormal");
+            Properties recordsNormal = (Properties) groups.get(BanyanDB.StreamGroup.RECORDS.getName());
             copyProperties(
                 config.getRecordsNormal(), recordsNormal,
                 moduleProvider.getModule().name(), moduleProvider.name()
             );
             copyStages(recordsNormal, config.getRecordsNormal());
 
-            Properties recordsSupper = (Properties) groups.get("recordsSuper");
+            Properties log = (Properties) groups.get(BanyanDB.StreamGroup.RECORDS_LOG.getName());
             copyProperties(
-                config.getRecordsSuper(), recordsSupper,
+                    config.getRecordsLog(), log,
+                    moduleProvider.getModule().name(), moduleProvider.name()
+            );
+            copyStages(log, config.getRecordsLog());
+
+            Properties segment = (Properties) groups.get(BanyanDB.StreamGroup.RECORDS_TRACE.getName());
+            copyProperties(
+                config.getRecordsTrace(), segment,
                 moduleProvider.getModule().name(), moduleProvider.name()
             );
-            copyStages(recordsSupper, config.getRecordsSuper());
+            copyStages(segment, config.getRecordsTrace());
 
-            Properties metricsMin = (Properties) groups.get("metricsMin");
+            Properties zipkinSpan = (Properties) groups.get(BanyanDB.StreamGroup.RECORDS_ZIPKIN_TRACE.getName());
+            copyProperties(
+                config.getRecordsZipkinTrace(), zipkinSpan,
+                moduleProvider.getModule().name(), moduleProvider.name()
+            );
+            copyStages(zipkinSpan, config.getRecordsZipkinTrace());
+
+            Properties browserErrorLog = (Properties) groups.get(BanyanDB.StreamGroup.RECORDS_BROWSER_ERROR_LOG.getName());
+            copyProperties(
+                config.getRecordsBrowserErrorLog(), browserErrorLog,
+                moduleProvider.getModule().name(), moduleProvider.name()
+            );
+            copyStages(browserErrorLog, config.getRecordsBrowserErrorLog());
+
+            Properties metricsMin = (Properties) groups.get(BanyanDB.MeasureGroup.METRICS_MINUTE.getName());
             copyProperties(
                 config.getMetricsMin(), metricsMin,
                 moduleProvider.getModule().name(), moduleProvider.name()
             );
             copyStages(metricsMin, config.getMetricsMin());
 
-            Properties metricsHour = (Properties) groups.get("metricsHour");
+            Properties metricsHour = (Properties) groups.get(BanyanDB.MeasureGroup.METRICS_HOUR.getName());
             copyProperties(
                 config.getMetricsHour(), metricsHour,
                 moduleProvider.getModule().name(), moduleProvider.name()
             );
             copyStages(metricsHour, config.getMetricsHour());
 
-            Properties metricsDay = (Properties) groups.get("metricsDay");
+            Properties metricsDay = (Properties) groups.get(BanyanDB.MeasureGroup.METRICS_DAY.getName());
             copyProperties(
                 config.getMetricsDay(), metricsDay,
                 moduleProvider.getModule().name(), moduleProvider.name()
@@ -105,17 +136,16 @@ public class BanyanDBConfigLoader {
             copyStages(metricsDay, config.getMetricsDay());
 
             copyProperties(
-                config.getMetadata(), (Properties) groups.get("metadata"),
+                config.getMetadata(), (Properties) groups.get(BanyanDB.MeasureGroup.METADATA.getName()),
                 moduleProvider.getModule().name(), moduleProvider.name()
             );
             copyProperties(
-                config.getProperty(), (Properties) groups.get("property"),
+                config.getProperty(), (Properties) groups.get(BanyanDB.PropertyGroup.PROPERTY.getName()),
                 moduleProvider.getModule().name(), moduleProvider.name()
             );
         } catch (IllegalAccessException e) {
             throw new ModuleStartException("Failed to load BanyanDB configuration.", e);
         }
-        return config;
     }
 
     private Properties parseConfig(final Map<String, ?> config) {
@@ -157,6 +187,59 @@ public class BanyanDBConfigLoader {
                 moduleProvider.getModule().name(), moduleProvider.name()
             );
             groupResource.getAdditionalLifecycleStages().add(cold);
+        }
+    }
+
+    private void loadTopNConfig() throws ModuleStartException {
+        Reader applicationReader;
+        try {
+            applicationReader = ResourceUtils.read("bydb-topn.yml");
+        } catch (FileNotFoundException e) {
+            throw new ModuleStartException("Cannot find the BanyanDB topN configuration file [bydb-topn.yml].", e);
+        }
+        Map<String, List<Map<String, ?>>> configMap = new Yaml().loadAs(applicationReader, Map.class);
+        if (configMap == null) {
+            return;
+        }
+        List<Map<String, ?>> topNConfig = configMap.get("TopN-Rules");
+        if (topNConfig == null) {
+            return;
+        }
+        for (Map<String, ?> rule : topNConfig) {
+            TopN topN = new TopN();
+            var name = rule.get("name");
+            if (name == null) {
+                throw new ModuleStartException("TopN rule name is missing in file [bydb-topn.yml].");
+            }
+            var metricName = rule.get("metricName");
+            if (metricName == null) {
+                throw new ModuleStartException("TopN rule metricName is missing in file [bydb-topn.yml].");
+            }
+            topN.setName(name.toString());
+            var groupByTagNames = rule.get("groupByTagNames");
+            if (groupByTagNames != null) {
+                topN.setGroupByTagNames((List<String>) groupByTagNames);
+            }
+            var countersNumber = rule.get("countersNumber");
+            if (countersNumber != null) {
+                topN.setLruSizeMinute((int) countersNumber);
+            }
+            var lruSizeMinute = rule.get("lruSizeMinute");
+            if (lruSizeMinute != null) {
+                topN.setLruSizeMinute((int) lruSizeMinute);
+            }
+            var lruSizeHourDay = rule.get("lruSizeHourDay");
+            if (lruSizeHourDay != null) {
+                topN.setLruSizeMinute((int) lruSizeHourDay);
+            }
+            var sort = rule.get("sort");
+            if (sort != null) {
+                topN.setSort(TopN.Sort.valueOf(sort.toString()));
+            }
+            Map<String, TopN> map = config.getTopNConfigs().computeIfAbsent(metricName.toString(), k -> new HashMap<>());
+            if (map.put(name.toString(), topN) != null) {
+                throw new ModuleStartException("Duplicate TopN rule name: " + name + " in file [bydb-topn.yml].");
+            }
         }
     }
 }

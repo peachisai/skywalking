@@ -18,6 +18,7 @@
 
 package org.apache.skywalking.oap.server.storage.plugin.banyandb;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import lombok.Builder;
 import lombok.Data;
@@ -42,7 +43,6 @@ import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TagFamilySpec
 import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TagSpec;
 import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TagType;
 import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TopNAggregation;
-import org.apache.skywalking.banyandb.model.v1.BanyandbModel;
 import org.apache.skywalking.banyandb.v1.client.metadata.Duration;
 import org.apache.skywalking.oap.server.core.analysis.DownSampling;
 import org.apache.skywalking.oap.server.core.analysis.metrics.IntList;
@@ -142,11 +142,12 @@ public enum MetadataRegistry {
         MeasureMetadata tagsAndFields = parseTagAndFieldMetadata(model, schemaBuilder, seriesIDColumns, schemaMetadata.group);
         List<TagFamilySpec> tagFamilySpecs = schemaMetadata.extractTagFamilySpec(tagsAndFields.tags, model.getBanyanDBModelExtension().isStoreIDTag());
         // iterate over tagFamilySpecs to save tag names
-        for (final TagFamilySpec tagFamilySpec : tagFamilySpecs) {
-            for (final TagSpec tagSpec : tagFamilySpec.getTagsList()) {
-                schemaBuilder.tag(tagSpec.getName());
-            }
-        }
+        Set<String> tags = tagFamilySpecs.stream()
+                .flatMap(tagFamilySpec -> tagFamilySpec.getTagsList().stream())
+
+                .map(TagSpec::getName)
+                .collect(Collectors.toSet());
+        schemaBuilder.tags(tags);
         List<IndexRule> indexRules = tagsAndFields.tags.stream()
                 .map(TagMetadata::getIndexRule)
                 .filter(Objects::nonNull)
@@ -177,8 +178,11 @@ public enum MetadataRegistry {
             schemaBuilder.field(field.getName());
         }
         // parse TopN
-        schemaBuilder.topNSpec(parseTopNSpec(model, schemaMetadata.group, schemaMetadata.name()));
-
+        schemaBuilder.topNSpecs(parseTopNSpecs(
+            model, schemaMetadata.group, schemaMetadata.name(),
+            config.getTopNConfigs().get(model.getName()),
+            tags
+        ));
         registry.put(schemaMetadata.name(), schemaBuilder.build());
         return new MeasureModel(builder.build(), indexRules);
     }
@@ -196,9 +200,12 @@ public enum MetadataRegistry {
         return new PropertyModel(builder.build());
     }
 
-    private TopNAggregation parseTopNSpec(final Model model, final String group, final String measureName)
-            throws StorageException {
-        if (model.getBanyanDBModelExtension().getTopN() == null) {
+    private Map<ImmutableSet<String>, TopNAggregation> parseTopNSpecs(final Model model,
+                                                                      final String group,
+                                                                      final String measureName,
+                                                                      final Map<String, BanyanDBStorageConfig.TopN> topNConfig,
+                                                                      final Set<String> tags) throws StorageException {
+        if (topNConfig == null) {
             return null;
         }
 
@@ -207,20 +214,45 @@ public enum MetadataRegistry {
             // skip non-single valued metrics
             return null;
         }
+        Map<ImmutableSet<String>, TopNAggregation> topNAggregations = new HashMap<>();
+        topNConfig.forEach((name, topN) -> {
+            ImmutableSet<String> key = ImmutableSet.of();
+            TopNAggregation.Builder topNAggregation = TopNAggregation.newBuilder()
+                                                                     .setMetadata(
+                                                                         Metadata.newBuilder().setGroup(group).setName(name))
+                                                                     .setSourceMeasure(Metadata.newBuilder().setGroup(group).setName(measureName))
+                                                                     .setFieldValueSort(topN.getSort().getBanyandbSort())
+                                                                     .setFieldName(valueColumnOpt.get().getValueCName())
+                                                                     .setCountersNumber(topN.getCountersNumber());
+            if (topN.getGroupByTagNames() != null) {
+                key = ImmutableSet.copyOf(topN.getGroupByTagNames());
+                //check tags
+                topN.getGroupByTagNames().forEach(tag -> {
+                    if (!tags.contains(tag)) {
+                        throw new IllegalArgumentException(
+                            "In file [bydb-topn.yml], TopN rule " + topN.getName() + "'s groupByTagName [" + tag + "] is not defined in metric " + model.getName());
+                    }
+                });
+                topNAggregation.addAllGroupByTagNames(topN.getGroupByTagNames());
+            }
 
-        if (CollectionUtils.isEmpty(model.getBanyanDBModelExtension().getTopN().getGroupByTagNames())) {
-            throw new StorageException("invalid groupBy tags: " + model.getBanyanDBModelExtension().getTopN().getGroupByTagNames());
-        }
-        return TopNAggregation.newBuilder()
-                              .setMetadata(
-                                  Metadata.newBuilder().setGroup(group).setName(Schema.formatTopNName(measureName)))
-                              .setSourceMeasure(Metadata.newBuilder().setGroup(group).setName(measureName))
-                              .setFieldValueSort(BanyandbModel.Sort.SORT_UNSPECIFIED) // include both TopN and BottomN
-                              .setFieldName(valueColumnOpt.get().getValueCName())
-                              .addAllGroupByTagNames(model.getBanyanDBModelExtension().getTopN().getGroupByTagNames())
-                              .setCountersNumber(model.getBanyanDBModelExtension().getTopN().getCountersNumber())
-                              .setLruSize(model.getBanyanDBModelExtension().getTopN().getLruSize())
-                              .build();
+            switch (model.getDownsampling()) {
+                case Minute:
+                    topNAggregation.setLruSize(topN.getLruSizeMinute());
+                    break;
+                case Hour:
+                case Day:
+                    topNAggregation.setLruSize(topN.getLruSizeHourDay());
+                    break;
+                default:
+                    throw new UnsupportedOperationException("unsupported downsampling: " + model.getDownsampling());
+            }
+            if (topNAggregations.containsKey(key)) {
+                throw new IllegalArgumentException("In file [bydb-topn.yml], TopN rule " + topN.getName() + "'s groupByTagNames " + key + " already exist in the same metric " + model.getName());
+            }
+            topNAggregations.put(key, topNAggregation.build());
+        });
+        return topNAggregations;
     }
 
     public Schema findMetadata(final Model model) {
@@ -494,25 +526,56 @@ public enum MetadataRegistry {
 
     public SchemaMetadata parseMetadata(Model model, BanyanDBStorageConfig config, DownSamplingConfigService configService) {
         if (!model.isTimeSeries()) {
-            return new SchemaMetadata(BanyanDBStorageConfig.PROPERTY_GROUP_NAME, model.getName(), Kind.PROPERTY, DownSampling.None, config.getProperty());
+            return new SchemaMetadata(BanyanDB.PropertyGroup.PROPERTY.getName(), model.getName(), Kind.PROPERTY, DownSampling.None, config.getProperty());
         }
         if (model.isRecord()) { // stream
-            return new SchemaMetadata(model.isSuperDataset() ? model.getName() : "normal",
-                    model.getName(),
-                    Kind.STREAM,
-                    model.getDownsampling(),
-                    model.isSuperDataset() ? config.getRecordsSuper() : config.getRecordsNormal());
+            BanyanDB.StreamGroup streamGroup = model.getBanyanDBModelExtension().getStreamGroup();
+                switch (streamGroup) {
+                    case RECORDS_LOG:
+                        return new SchemaMetadata(BanyanDB.StreamGroup.RECORDS_LOG.getName(),
+                                model.getName(),
+                                Kind.STREAM,
+                                model.getDownsampling(),
+                                config.getRecordsLog());
+                    case RECORDS_TRACE:
+                        return new SchemaMetadata(BanyanDB.StreamGroup.RECORDS_TRACE.getName(),
+                                model.getName(),
+                                Kind.STREAM,
+                                model.getDownsampling(),
+                                config.getRecordsTrace());
+                    case RECORDS_ZIPKIN_TRACE:
+                        return new SchemaMetadata(BanyanDB.StreamGroup.RECORDS_ZIPKIN_TRACE.getName(),
+                                model.getName(),
+                                Kind.STREAM,
+                                model.getDownsampling(),
+                                config.getRecordsZipkinTrace());
+                    case RECORDS_BROWSER_ERROR_LOG:
+                        return new SchemaMetadata(BanyanDB.StreamGroup.RECORDS_BROWSER_ERROR_LOG.getName(),
+                                model.getName(),
+                                Kind.STREAM,
+                                model.getDownsampling(),
+                                config.getRecordsBrowserErrorLog());
+                    case RECORDS:
+                        return new SchemaMetadata(BanyanDB.StreamGroup.RECORDS.getName(),
+                                model.getName(),
+                                Kind.STREAM,
+                                model.getDownsampling(),
+                                config.getRecordsBrowserErrorLog());
+                    default:
+                        throw new IllegalStateException("unknown stream group " + streamGroup);
+
+                }
         }
 
         if (model.getBanyanDBModelExtension().isIndexMode()) {
-            return new SchemaMetadata("index", model.getName(), Kind.MEASURE,
+            return new SchemaMetadata(BanyanDB.MeasureGroup.METADATA.getName(), model.getName(), Kind.MEASURE,
                     model.getDownsampling(),
                     config.getMetadata());
         }
 
         switch (model.getDownsampling()) {
             case Minute:
-                return new SchemaMetadata(DownSampling.Minute.getName(),
+                return new SchemaMetadata(BanyanDB.MeasureGroup.METRICS_MINUTE.getName(),
                         model.getName(),
                         Kind.MEASURE,
                         model.getDownsampling(),
@@ -521,7 +584,7 @@ public enum MetadataRegistry {
                 if (!configService.shouldToHour()) {
                     throw new UnsupportedOperationException("downsampling to hour is not supported");
                 }
-                return new SchemaMetadata(DownSampling.Hour.getName(),
+                return new SchemaMetadata(BanyanDB.MeasureGroup.METRICS_HOUR.getName(),
                         model.getName(),
                         Kind.MEASURE,
                         model.getDownsampling(),
@@ -530,7 +593,7 @@ public enum MetadataRegistry {
                 if (!configService.shouldToDay()) {
                     throw new UnsupportedOperationException("downsampling to day is not supported");
                 }
-                return new SchemaMetadata(DownSampling.Day.getName(),
+                return new SchemaMetadata(BanyanDB.MeasureGroup.METRICS_DAY.getName(),
                         model.getName(),
                         Kind.MEASURE,
                         model.getDownsampling(),
@@ -659,14 +722,10 @@ public enum MetadataRegistry {
 
         @Getter
         @Nullable
-        private final TopNAggregation topNSpec;
+        private final Map<ImmutableSet<String>/*groupBy tags*/, TopNAggregation> topNSpecs;
 
         public ColumnSpec getSpec(String columnName) {
             return this.specs.get(columnName);
-        }
-
-        public static String formatTopNName(String measureName) {
-            return measureName + "_topn";
         }
     }
 

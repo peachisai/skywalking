@@ -18,7 +18,6 @@
 
 package org.apache.skywalking.oap.server.core.storage.ttl;
 
-import com.google.gson.Gson;
 import lombok.Data;
 
 /**
@@ -26,11 +25,11 @@ import lombok.Data;
  */
 @Data
 public class TTLDefinition {
-    private final static Gson GSON = new Gson();
     private final MetricsTTL metrics;
     private final RecordsTTL records;
 
-    public String generateTTLDefinition() {
+    @Override
+    public String toString() {
         StringBuilder ttlDefinition = new StringBuilder();
         ttlDefinition.append("# Metrics TTL includes the definition of the TTL of the metrics-ish data in the storage,\n");
         ttlDefinition.append("# e.g.\n");
@@ -54,15 +53,17 @@ public class TTLDefinition {
         ttlDefinition.append("# Super dataset of records are traces and logs, which volume should be much larger.\n");
         ttlDefinition.append("#\n");
         ttlDefinition.append("# Cover hot and warm data for BanyanDB.\n");
-        ttlDefinition.append("records.default=").append(records.getValue()).append("\n");
-        ttlDefinition.append("records.superDataset=").append(records.getSuperDataset()).append("\n");
+        ttlDefinition.append("records.normal=").append(records.getNormal()).append("\n");
+        ttlDefinition.append("records.trace=").append(records.getTrace()).append("\n");
+        ttlDefinition.append("records.zipkinTrace=").append(records.getZipkinTrace()).append("\n");
+        ttlDefinition.append("records.log=").append(records.getLog()).append("\n");
+        ttlDefinition.append("records.browserErrorLog=").append(records.getBrowserErrorLog()).append("\n");
         ttlDefinition.append("# Cold data, '-1' represents no cold stage data.\n");
-        ttlDefinition.append("records.default.cold=").append(records.getColdValue()).append("\n");
-        ttlDefinition.append("records.superDataset.cold=").append(records.getColdSuperDataset()).append("\n");
+        ttlDefinition.append("records.normal.cold=").append(records.getColdNormal()).append("\n");
+        ttlDefinition.append("records.trace.cold=").append(records.getColdTrace()).append("\n");
+        ttlDefinition.append("records.zipkinTrace.cold=").append(records.getColdZipkinTrace()).append("\n");
+        ttlDefinition.append("records.log.cold=").append(records.getColdLog()).append("\n");
+        ttlDefinition.append("records.browserErrorLog.cold=").append(records.getColdBrowserErrorLog()).append("\n");
         return ttlDefinition.toString();
-    }
-
-    public String generateTTLDefinitionAsJSONStr() {
-        return GSON.toJson(this);
     }
 }

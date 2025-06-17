@@ -9,7 +9,7 @@ microservices, cloud native and container-based architectures.
 [![GitHub stars](https://img.shields.io/github/stars/apache/skywalking.svg?style=for-the-badge&label=Stars&logo=github)](https://github.com/apache/skywalking)
 [![X Follow](https://img.shields.io/badge/2K%2B-follow?style=for-the-badge&logo=X&label=%40ASFSKYWALKING)](https://x.com/AsfSkyWalking)
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.skywalking/apache-skywalking-apm.svg)](http://skywalking.apache.org/downloads/)
+![GitHub Release](https://img.shields.io/github/v/release/apache/skywalking)
 
 # Abstract
 **SkyWalking** is an open-source APM system that provides monitoring, tracing and diagnosing capabilities for distributed systems in Cloud Native architectures.
@@ -33,6 +33,8 @@ microservices, cloud native and container-based architectures.
   * Support log formatting, extract metrics, various sampling policies through script pipeline in high performance.
 * Alerting and Telemetry Pipelines
   * Support service-centric, deployment-centric, API-centric alarm rule setting. Support forwarding alarms and all telemetry data to 3rd party.
+* AI Power Enabled
+  * Machine Learning (ML) and Artificial Intelligence (AI) analyze observability data to identify patterns and enhance capabilities, such as recognizing HTTP URI patterns and automatically calculating metric baselines for intelligent alerting, improving anomaly detection.
 
 <img src="https://skywalking.apache.org/images/home/architecture.svg?t=20220516"/>
 

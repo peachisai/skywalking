@@ -265,7 +265,7 @@ public class CoreModuleProvider extends ModuleProvider {
         httpServer.initialize();
 
         this.registerServiceImplementation(ConfigService.class, new ConfigService(moduleConfig, this));
-        this.registerServiceImplementation(ServerStatusService.class, new ServerStatusService(getManager(), moduleConfig));
+        this.registerServiceImplementation(ServerStatusService.class, new ServerStatusService(getManager()));
         this.registerServiceImplementation(HierarchyDefinitionService.class, new HierarchyDefinitionService(moduleConfig));
         hierarchyService = new HierarchyService(getManager(), moduleConfig);
         this.registerServiceImplementation(HierarchyService.class, hierarchyService);
@@ -405,15 +405,15 @@ public class CoreModuleProvider extends ModuleProvider {
             moduleConfig.getMaxHttpUrisNumberPerService()
         );
 
+        // Disable OAL script has higher priority
+        oalEngineLoaderService.load(DisableOALDefine.INSTANCE);
+
         try {
             receiver.scan();
             annotationScan.scan();
         } catch (IOException | IllegalAccessException | InstantiationException | StorageException e) {
             throw new ModuleStartException(e.getMessage(), e);
         }
-
-        // Disable OAL script has higher priority
-        oalEngineLoaderService.load(DisableOALDefine.INSTANCE);
 
         Address gRPCServerInstanceAddress = new Address(moduleConfig.getGRPCHost(), moduleConfig.getGRPCPort(), true);
         TelemetryRelatedContext.INSTANCE.setId(gRPCServerInstanceAddress.toString());

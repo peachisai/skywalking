@@ -31,17 +31,15 @@ setup:
 trigger:
   action: http
   interval: 3s
-  times: 10
+  times: 20
   url: http://${php_host}:${php_8080}/php/info
   method: POST
 
 verify:
   # verify with retry strategy
   retry:
-    # max retry count
-    count: 20
-    # the interval between two retries, in millisecond.
-    interval: 3s
+    count: 10
+    interval: 15s
   cases:
     # layer list
     - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql layer ls

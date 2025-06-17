@@ -18,15 +18,15 @@
 
 package org.apache.skywalking.oap.query.debug;
 
-import com.linecorp.armeria.common.HttpHeaderNames;
-import com.linecorp.armeria.common.HttpRequest;
-import com.linecorp.armeria.common.HttpResponse;
-import com.linecorp.armeria.common.MediaType;
 import com.linecorp.armeria.server.annotation.ExceptionHandler;
 import com.linecorp.armeria.server.annotation.Get;
+import com.linecorp.armeria.server.annotation.ProducesJson;
+import com.linecorp.armeria.server.annotation.ProducesText;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.query.TTLStatusQuery;
+import org.apache.skywalking.oap.server.core.storage.ttl.TTLDefinition;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 
 @Slf4j
@@ -48,11 +48,10 @@ public class TTLConfigQueryHandler {
         return ttlStatusQuery;
     }
 
+    @ProducesText
+    @ProducesJson
     @Get("/status/config/ttl")
-    public HttpResponse affectedTTLConfigurations(HttpRequest request) {
-        if ("application/json".equalsIgnoreCase(request.headers().get(HttpHeaderNames.ACCEPT))) {
-            return HttpResponse.of(MediaType.JSON_UTF_8, getTTLStatusQuery().getTTL().generateTTLDefinitionAsJSONStr());
-        }
-        return HttpResponse.of(MediaType.PLAIN_TEXT_UTF_8, getTTLStatusQuery().getTTL().generateTTLDefinition());
+    public TTLDefinition effectiveTTLConfigurations() {
+        return getTTLStatusQuery().getTTL();
     }
 }

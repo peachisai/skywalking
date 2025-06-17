@@ -19,7 +19,7 @@
 package org.apache.skywalking.oap.server.storage.plugin.banyandb.stream;
 
 import com.google.gson.Gson;
-import java.util.Objects;
+import javax.annotation.Nullable;
 import org.apache.skywalking.banyandb.model.v1.BanyandbModel;
 import org.apache.skywalking.banyandb.v1.client.AbstractCriteria;
 import org.apache.skywalking.banyandb.v1.client.AbstractQuery;
@@ -36,12 +36,14 @@ import org.apache.skywalking.banyandb.v1.client.TopNQuery;
 import org.apache.skywalking.banyandb.v1.client.TopNQueryResponse;
 import org.apache.skywalking.banyandb.v1.client.Trace;
 import org.apache.skywalking.oap.server.core.query.input.AttrCondition;
+import org.apache.skywalking.oap.server.core.query.input.Duration;
 import org.apache.skywalking.oap.server.core.query.type.KeyValue;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingSpan;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingTraceContext;
 import org.apache.skywalking.oap.server.core.storage.AbstractDAO;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 import org.apache.skywalking.oap.server.storage.plugin.banyandb.BanyanDBStorageClient;
+import org.apache.skywalking.oap.server.storage.plugin.banyandb.BanyanDBStorageConfig;
 import org.apache.skywalking.oap.server.storage.plugin.banyandb.MetadataRegistry;
 import java.io.IOException;
 import java.time.Instant;
@@ -63,11 +65,17 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
         super(client);
     }
 
-    protected StreamQueryResponse query(String streamModelName, Set<String> tags, QueryBuilder<StreamQuery> builder) throws IOException {
-        return this.query(streamModelName, tags, null, builder);
+    protected StreamQueryResponse query(boolean isColdStage,
+                                        String streamModelName,
+                                        Set<String> tags,
+                                        QueryBuilder<StreamQuery> builder) throws IOException {
+        return this.query(isColdStage, streamModelName, tags, null, builder);
     }
 
-    protected StreamQueryResponse query(String streamModelName, Set<String> tags, TimestampRange timestampRange,
+    protected StreamQueryResponse query(boolean isColdStage,
+                                        String streamModelName,
+                                        Set<String> tags,
+                                        TimestampRange timestampRange,
                                         QueryBuilder<StreamQuery> builder) throws IOException {
         MetadataRegistry.Schema schema = MetadataRegistry.INSTANCE.findRecordMetadata(streamModelName);
         if (schema == null) {
@@ -79,6 +87,9 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
         } else {
             query = new StreamQuery(List.of(schema.getMetadata().getGroup()), schema.getMetadata().name(), timestampRange, tags);
         }
+        if (isColdStage) {
+            query.setStages(Set.of(BanyanDBStorageConfig.StageName.cold.name()));
+        }
 
         builder.apply(query);
         DebuggingTraceContext traceContext = DebuggingTraceContext.TRACE_CONTEXT.get();
@@ -88,7 +99,10 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
         return getClient().query(query);
     }
 
-    protected StreamQueryResponse queryDebuggable(String modelName, Set<String> tags, TimestampRange timestampRange,
+    protected StreamQueryResponse queryDebuggable(boolean isColdStage,
+                                                  String modelName,
+                                                  Set<String> tags,
+                                                  TimestampRange timestampRange,
                                                   QueryBuilder<StreamQuery> queryBuilder) throws IOException {
         DebuggingTraceContext traceContext = DebuggingTraceContext.TRACE_CONTEXT.get();
         DebuggingSpan span = null;
@@ -105,10 +119,12 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
                        .append(", Tags: ")
                        .append(tags)
                        .append(", TimestampRange: ")
-                       .append(timestampRange);
+                       .append(timestampRange)
+                       .append(", Is cold data query: ")
+                       .append(isColdStage);
                 span.setMsg(builder.toString());
             }
-            StreamQueryResponse response = query(modelName, tags, timestampRange, queryBuilder);
+            StreamQueryResponse response = query(isColdStage, modelName, tags, timestampRange, queryBuilder);
             if (traceContext != null && traceContext.isDumpStorageRsp()) {
                 builder.append("\n").append(" Response: ").append(new Gson().toJson(response.getElements()));
                 span.setMsg(builder.toString());
@@ -122,28 +138,14 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
         }
     }
 
-    protected TopNQueryResponse topN(MetadataRegistry.Schema schema,
-                                     TimestampRange timestampRange,
-                                     int number,
-                                     List<KeyValue> additionalConditions,
-                                     List<AttrCondition> attributes) throws IOException {
-        return topNQuery(schema, timestampRange, number, AbstractQuery.Sort.DESC, additionalConditions, attributes);
-    }
-
-    protected TopNQueryResponse bottomN(MetadataRegistry.Schema schema,
-                                        TimestampRange timestampRange,
-                                        int number,
-                                        List<KeyValue> additionalConditions,
-                                        List<AttrCondition> attributes) throws IOException {
-        return topNQuery(schema, timestampRange, number, AbstractQuery.Sort.ASC, additionalConditions, attributes);
-    }
-
-    protected TopNQueryResponse topNQueryDebuggable(MetadataRegistry.Schema schema,
+    protected TopNQueryResponse topNQueryDebuggable(boolean isColdStage,
+                                                    MetadataRegistry.Schema schema,
                                                     TimestampRange timestampRange,
                                                     int number,
                                                     AbstractQuery.Sort sort,
                                                     List<KeyValue> additionalConditions,
-                                                    List<AttrCondition> attributes) throws IOException {
+                                                    List<AttrCondition> attributes,
+                                                    String topNRuleName) throws IOException {
         DebuggingTraceContext traceContext = DebuggingTraceContext.TRACE_CONTEXT.get();
         DebuggingSpan span = null;
         try {
@@ -153,6 +155,8 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
                 builder.append("Condition: ")
                        .append("Schema: ")
                        .append(schema)
+                       .append(", TopNRuleName: ")
+                       .append(topNRuleName)
                        .append(", TimestampRange: ")
                        .append(timestampRange)
                        .append(", Number: ")
@@ -162,10 +166,12 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
                        .append(", AdditionalConditions: ")
                        .append(additionalConditions)
                        .append(", Attributes: ")
-                       .append(attributes);
+                       .append(attributes)
+                       .append(", Is cold data query: ")
+                       .append(isColdStage);
                 span.setMsg(builder.toString());
             }
-            TopNQueryResponse response = topNQuery(schema, timestampRange, number, sort, additionalConditions, attributes);
+            TopNQueryResponse response = topNQuery(isColdStage, schema, timestampRange, number, sort, additionalConditions, attributes, topNRuleName);
             if (traceContext != null && traceContext.isDumpStorageRsp()) {
                 builder.append("\n").append(" Response: ").append(new Gson().toJson(response.getTopNLists()));
                 span.setMsg(builder.toString());
@@ -178,14 +184,16 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
         }
     }
 
-    private TopNQueryResponse topNQuery(MetadataRegistry.Schema schema,
+    private TopNQueryResponse topNQuery(boolean isColdStage,
+                                        MetadataRegistry.Schema schema,
                                         TimestampRange timestampRange,
                                         int number,
                                         AbstractQuery.Sort sort,
                                         List<KeyValue> additionalConditions,
-                                        List<AttrCondition> attributes) throws IOException {
-        final TopNQuery q = new TopNQuery(List.of(schema.getMetadata().getGroup()), Objects.requireNonNull(
-            schema.getTopNSpec()).getMetadata().getName(),
+                                        List<AttrCondition> attributes,
+                                        String topNRuleName) throws IOException {
+        final TopNQuery q = new TopNQuery(List.of(schema.getMetadata().getGroup()),
+                                          topNRuleName,
                                           timestampRange,
                                           number, sort);
         q.setAggregationType(MeasureQuery.Aggregation.Type.MEAN);
@@ -205,11 +213,15 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
             });
         }
         q.setConditions(conditions);
+        if (isColdStage) {
+            q.setStages(List.of(BanyanDBStorageConfig.StageName.cold.name()));
+        }
 
         return getClient().query(q);
     }
 
-    protected MeasureQueryResponse queryDebuggable(MetadataRegistry.Schema schema,
+    protected MeasureQueryResponse queryDebuggable(boolean isColdStage,
+                                                   MetadataRegistry.Schema schema,
                                                    Set<String> tags,
                                                    Set<String> fields,
                                                    TimestampRange timestampRange,
@@ -228,10 +240,12 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
                        .append(", Fields: ")
                        .append(fields)
                        .append(", TimestampRange: ")
-                       .append(timestampRange);
+                       .append(timestampRange)
+                       .append(", Is cold data query: ")
+                       .append(isColdStage);
                 span.setMsg(builder.toString());
             }
-            MeasureQueryResponse response = query(schema, tags, fields, timestampRange, queryBuilder);
+            MeasureQueryResponse response = query(isColdStage, schema, tags, fields, timestampRange, queryBuilder);
             if (traceContext != null && traceContext.isDumpStorageRsp()) {
                 builder.append("\n").append(" Response: ").append(new Gson().toJson(response.getDataPoints()));
                 span.setMsg(builder.toString());
@@ -245,15 +259,20 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
         }
     }
 
-    protected MeasureQueryResponse query(MetadataRegistry.Schema schema,
+    protected MeasureQueryResponse query(boolean isColdStage,
+                                         MetadataRegistry.Schema schema,
                                          Set<String> tags,
                                          Set<String> fields,
                                          QueryBuilder<MeasureQuery> builder) throws IOException {
-        return query(schema, tags, fields, null, builder);
+        return query(isColdStage, schema, tags, fields, null, builder);
     }
 
-    protected MeasureQueryResponse query(MetadataRegistry.Schema schema, Set<String> tags, Set<String> fields,
-                                         TimestampRange timestampRange, QueryBuilder<MeasureQuery> builder) throws IOException {
+    protected MeasureQueryResponse query(boolean isColdStage,
+                                         MetadataRegistry.Schema schema,
+                                         Set<String> tags,
+                                         Set<String> fields,
+                                         TimestampRange timestampRange,
+                                         QueryBuilder<MeasureQuery> builder) throws IOException {
         if (schema == null) {
             throw new IllegalArgumentException("measure is not registered");
         }
@@ -262,6 +281,9 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
             query = new MeasureQuery(List.of(schema.getMetadata().getGroup()), schema.getMetadata().name(), LARGEST_TIME_RANGE, tags, fields);
         } else {
             query = new MeasureQuery(List.of(schema.getMetadata().getGroup()), schema.getMetadata().name(), timestampRange, tags, fields);
+        }
+        if (isColdStage) {
+            query.setStages(Set.of(BanyanDBStorageConfig.StageName.cold.name()));
         }
 
         builder.apply(query);
@@ -377,5 +399,21 @@ public abstract class AbstractBanyanDBDAO extends AbstractDAO<BanyanDBStorageCli
                     (BiFunction<AbstractCriteria, AbstractCriteria, AbstractCriteria>) Or::create,
                     Or::create);
         }
+    }
+
+    protected TimestampRange getTimestampRange(@Nullable Duration duration) {
+        long startTimeMillis = 0;
+        long endTimeMillis = 0;
+        if (duration != null) {
+            startTimeMillis = duration.getStartTimestamp();
+            endTimeMillis = duration.getEndTimestamp();
+        }
+        TimestampRange tsRange = null;
+
+        if (startTimeMillis > 0 && endTimeMillis > 0) {
+            tsRange = new TimestampRange(startTimeMillis, endTimeMillis);
+        }
+
+        return tsRange;
     }
 }

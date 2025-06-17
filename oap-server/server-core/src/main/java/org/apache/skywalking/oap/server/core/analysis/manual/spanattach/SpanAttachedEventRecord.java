@@ -39,6 +39,7 @@ import static org.apache.skywalking.oap.server.core.source.DefaultScopeDefine.SP
 @ScopeDeclaration(id = SPAN_ATTACHED_EVENT, name = "SpanAttachedEvent")
 @Stream(name = SpanAttachedEventRecord.INDEX_NAME, scopeId = SPAN_ATTACHED_EVENT, builder = SpanAttachedEventRecord.Builder.class, processor = RecordStreamProcessor.class)
 @BanyanDB.TimestampColumn(SpanAttachedEventRecord.TIMESTAMP)
+@BanyanDB.Group(streamGroup = BanyanDB.StreamGroup.RECORDS_ZIPKIN_TRACE)
 public class SpanAttachedEventRecord extends Record {
 
     public static final String INDEX_NAME = "span_attached_event_record";
