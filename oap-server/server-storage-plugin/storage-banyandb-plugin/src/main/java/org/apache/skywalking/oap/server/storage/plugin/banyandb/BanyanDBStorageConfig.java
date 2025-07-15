@@ -22,12 +22,15 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.skywalking.banyandb.model.v1.BanyandbModel;
+import org.apache.skywalking.oap.server.core.query.type.KeyValue;
 import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 
 @Getter
@@ -46,7 +49,7 @@ public class BanyanDBStorageConfig extends ModuleConfig {
     private Metadata metadata = new Metadata();
     private Property property = new Property();
 
-    private Map<String/*metric name*/, Map<String, TopN>> topNConfigs = new HashMap<>();
+    private Map<String/*metric name*/, Map<String, TopN>/*ruleName, topN*/> topNConfigs = new HashMap<>();
 
     public String[] getTargetArray() {
         return Iterables.toArray(
@@ -98,6 +101,7 @@ public class BanyanDBStorageConfig extends ModuleConfig {
         private int metadataQueryMaxSize = 5000;
         private int segmentQueryMaxSize = 200;
         private int profileDataQueryBatchSize = 100;
+        private boolean cleanupUnusedTopNRules = true;
     }
 
     // The configuration of the groups.
@@ -257,6 +261,8 @@ public class BanyanDBStorageConfig extends ModuleConfig {
          * Default is "all", which means include `des and asc`.
          */
         private Sort sort = Sort.all;
+
+        private Set<KeyValue> excludes = new HashSet<>();
 
         public enum Sort {
             all(BanyandbModel.Sort.SORT_UNSPECIFIED),

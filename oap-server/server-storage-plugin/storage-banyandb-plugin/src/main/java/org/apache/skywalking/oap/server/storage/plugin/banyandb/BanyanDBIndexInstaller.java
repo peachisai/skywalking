@@ -475,6 +475,7 @@ public class BanyanDBIndexInstaller extends ModelInstaller {
                                        .build()
                                        .equals(measure.toBuilder().clearMetadata().build());
             if (!equals) {
+                // banyanDB server can not delete or update Tags.
                 client.update(measure);
                 log.info("update Measure: {} from: {} to: {}", hisMeasure.getMetadata().getName(), hisMeasure, measure);
             }
@@ -619,7 +620,7 @@ public class BanyanDBIndexInstaller extends ModelInstaller {
 
     /**
      * Check if the TopN aggregation exists and update it if necessary.
-     * todo:// can not delete TopN here now.
+     * If the TopN rules are not used, will be checked and deleted after install, in the `BanyanDBStorageProvider.notifyAfterCompleted()`
      */
     private void checkTopNAggregation(Model model, BanyanDBClient client) throws BanyanDBException {
         MetadataRegistry.Schema schema = MetadataRegistry.INSTANCE.findMetadata(model);

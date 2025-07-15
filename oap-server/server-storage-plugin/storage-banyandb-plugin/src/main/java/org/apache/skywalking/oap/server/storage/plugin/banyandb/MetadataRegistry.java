@@ -20,6 +20,8 @@ package org.apache.skywalking.oap.server.storage.plugin.banyandb;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
+import java.util.HashSet;
+import java.util.function.BiFunction;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,6 +45,9 @@ import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TagFamilySpec
 import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TagSpec;
 import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TagType;
 import org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.TopNAggregation;
+import org.apache.skywalking.banyandb.v1.client.AbstractCriteria;
+import org.apache.skywalking.banyandb.v1.client.And;
+import org.apache.skywalking.banyandb.v1.client.PairQueryCondition;
 import org.apache.skywalking.banyandb.v1.client.metadata.Duration;
 import org.apache.skywalking.oap.server.core.analysis.DownSampling;
 import org.apache.skywalking.oap.server.core.analysis.metrics.IntList;
@@ -50,6 +55,7 @@ import org.apache.skywalking.oap.server.core.analysis.metrics.Metrics;
 import org.apache.skywalking.oap.server.core.analysis.record.Record;
 import org.apache.skywalking.oap.server.core.config.DownSamplingConfigService;
 import org.apache.skywalking.oap.server.core.query.enumeration.Step;
+import org.apache.skywalking.oap.server.core.query.type.KeyValue;
 import org.apache.skywalking.oap.server.core.storage.StorageException;
 import org.apache.skywalking.oap.server.core.storage.annotation.BanyanDB;
 import org.apache.skywalking.oap.server.core.storage.annotation.Column;
@@ -74,6 +80,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.IndexRule.Type.TYPE_INVERTED;
+import static org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.IndexRule.Type.TYPE_SKIPPING;
+import static org.apache.skywalking.banyandb.database.v1.BanyandbDatabase.IndexRule.Type.TYPE_TREE;
 
 @Slf4j
 public enum MetadataRegistry {
@@ -154,7 +164,7 @@ public enum MetadataRegistry {
                 .collect(Collectors.toList());
 
         if (model.getBanyanDBModelExtension().isStoreIDTag()) {
-            indexRules.add(indexRule(schemaMetadata.group, BanyanDBConverter.ID, false, null));
+            indexRules.add(indexRule(schemaMetadata.group, BanyanDBConverter.ID, false, null, null));
         }
 
         final Measure.Builder builder = Measure.newBuilder();
@@ -217,6 +227,7 @@ public enum MetadataRegistry {
         Map<ImmutableSet<String>, TopNAggregation> topNAggregations = new HashMap<>();
         topNConfig.forEach((name, topN) -> {
             ImmutableSet<String> key = ImmutableSet.of();
+            Set<String> queryConditions = new HashSet<>();
             TopNAggregation.Builder topNAggregation = TopNAggregation.newBuilder()
                                                                      .setMetadata(
                                                                          Metadata.newBuilder().setGroup(group).setName(name))
@@ -225,7 +236,7 @@ public enum MetadataRegistry {
                                                                      .setFieldName(valueColumnOpt.get().getValueCName())
                                                                      .setCountersNumber(topN.getCountersNumber());
             if (topN.getGroupByTagNames() != null) {
-                key = ImmutableSet.copyOf(topN.getGroupByTagNames());
+                queryConditions.addAll(topN.getGroupByTagNames());
                 //check tags
                 topN.getGroupByTagNames().forEach(tag -> {
                     if (!tags.contains(tag)) {
@@ -247,8 +258,28 @@ public enum MetadataRegistry {
                 default:
                     throw new UnsupportedOperationException("unsupported downsampling: " + model.getDownsampling());
             }
+
+            if (CollectionUtils.isNotEmpty(topN.getExcludes())) {
+                AbstractCriteria criteria;
+                List<AbstractCriteria> conditions = new ArrayList<>(topN.getExcludes().size());
+                for (KeyValue keyValue : topN.getExcludes()) {
+                    conditions.add(PairQueryCondition.StringQueryCondition.ne(keyValue.getKey(), keyValue.getValue()));
+                    queryConditions.remove(keyValue.getKey());
+                    queryConditions.add(keyValue.getKey() + "!=" + keyValue.getValue());
+                }
+                if (conditions.size() == 1) {
+                    criteria = conditions.get(0);
+                } else {
+                    criteria = conditions.subList(2, conditions.size()).stream().reduce(
+                        And.create(conditions.get(0), conditions.get(1)),
+                        (BiFunction<AbstractCriteria, AbstractCriteria, AbstractCriteria>) And::create,
+                        And::create);
+                }
+                topNAggregation.setCriteria(criteria.build());
+            }
+            key = ImmutableSet.copyOf(queryConditions);
             if (topNAggregations.containsKey(key)) {
-                throw new IllegalArgumentException("In file [bydb-topn.yml], TopN rule " + topN.getName() + "'s groupByTagNames " + key + " already exist in the same metric " + model.getName());
+                throw new IllegalArgumentException("In file [bydb-topn.yml], TopN rule " + topN.getName() + "'s groupByTagNames and excludes " + key + " already exist in the same metric " + model.getName());
             }
             topNAggregations.put(key, topNAggregation.build());
         });
@@ -341,12 +372,35 @@ public enum MetadataRegistry {
         }
     }
 
-    IndexRule indexRule(String group, String tagName, boolean enableSort,  BanyanDB.MatchQuery.AnalyzerType analyzer) {
+    IndexRule indexRule(String group,
+                        String tagName,
+                        boolean enableSort,
+                        BanyanDB.MatchQuery.AnalyzerType analyzer,
+                        BanyanDB.IndexRule.IndexType type) {
         IndexRule.Builder builder = IndexRule.newBuilder()
                                              .setMetadata(Metadata.newBuilder().setName(tagName).setGroup(group))
-                                             .setType(IndexRule.Type.TYPE_INVERTED).addTags(tagName);
+                                             .addTags(tagName);
         // *Notice*: here is a reverse logic, if enableSort is true, then setNoSort is false
         builder.setNoSort(!enableSort);
+
+        if (type != null) {
+            switch (type) {
+                case INVERTED:
+                    builder.setType(TYPE_INVERTED);
+                    break;
+                case TREE:
+                    builder.setType(TYPE_TREE);
+                    break;
+                case SKIPPING:
+                    builder.setType(TYPE_SKIPPING);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("unsupported index type: " + type);
+            }
+        } else {
+            builder.setType(TYPE_INVERTED);
+        }
+
         if (analyzer != null) {
             switch (analyzer) {
                 case KEYWORD:
@@ -422,7 +476,8 @@ public enum MetadataRegistry {
                     tagMetadataList.add(new TagMetadata(
                         indexRule(
                             group, tagSpec.getName(), col.getBanyanDBExtension().isEnableSort(),
-                            col.getBanyanDBExtension().getAnalyzer()
+                            col.getBanyanDBExtension().getAnalyzer(),
+                            col.getBanyanDBExtension().getIndexType()
                         ), tagSpec));
                 } else {
                     tagMetadataList.add(new TagMetadata(null, tagSpec));
@@ -472,7 +527,8 @@ public enum MetadataRegistry {
                     result.tag(new TagMetadata(
                         indexRule(
                             group, tagSpec.getName(), col.getBanyanDBExtension().isEnableSort(),
-                            col.getBanyanDBExtension().getAnalyzer()
+                            col.getBanyanDBExtension().getAnalyzer(),
+                            col.getBanyanDBExtension().getIndexType()
                         ), tagSpec));
                 } else {
                     result.tag(new TagMetadata(null, tagSpec));
@@ -516,10 +572,6 @@ public enum MetadataRegistry {
             }
         } else {
             throw new IllegalStateException("type " + modelColumn.getType().toString() + " is not supported");
-        }
-
-        if (modelColumn.isIndexOnly()) {
-            tagSpec.setIndexedOnly(true);
         }
         return tagSpec.build();
     }
