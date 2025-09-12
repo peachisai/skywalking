@@ -66,6 +66,36 @@
 * BanyanDB: fix Zipkin query missing tag `QUERY`.
 * Fix `IllegalArgumentException: Incorrect number of labels`, tags in the `LogReportServiceHTTPHandler` and `LogReportServiceGrpcHandler` inconsistent with `LogHandler`.
 * BanyanDB: fix Zipkin query by `annotationQuery`
+* HTTP Server: Use the default shared thread pool rather than creating a new event loop thread pool for each server. Remove the `MAX_THREADS` from each server config.
+* Optimize all Armeria HTTP Server(s) to share the `CommonPools` for the whole JVM.
+  In the `CommonPools`, the max threads for `EventLoopGroup` is `processor * 2`, and for `BlockingTaskExecutor` is `200` and can be recycled if over the keepAliveTimeMillis (60000L by default).
+  Here is a summary of the thread dump without UI query in a simple Kind env deployed by SkyWalking showcase:
+
+| **Thread Type**                 | **Count** | **Main State**              | **Description**                                                                                                                       |
+|---------------------------------|-----------|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| **JVM System Threads**          | 12        | RUNNABLE/WAITING            | Includes Reference Handler, Finalizer, Signal Dispatcher, Service Thread, C2/C1 CompilerThreads, Sweeper thread, Common-Cleaner, etc. |
+| **Netty I/O Worker Threads**    | 32        | RUNNABLE                    | Threads named "armeria-common-worker-epoll-*", handling network I/O operations.                                                       |
+| **gRPC Worker Threads**         | 16        | RUNNABLE                    | Threads named "grpc-default-worker-*".                                                                                                |
+| **HTTP Client Threads**         | 4         | RUNNABLE                    | Threads named "HttpClient-*-SelectorManager".                                                                                         |
+| **Data Consumer Threads**       | 47        | TIMED_WAITING (sleeping)    | Threads named "DataCarrier.*", used for metrics data consumption.                                                                     |
+| **Scheduled Task Threads**      | 10        | TIMED_WAITING (parking)     | Threads named "pool-*-thread-*".                                                                                                      |
+| **ForkJoinPool Worker Threads** | 2         | WAITING (parking)           | Threads named "ForkJoinPool-*".                                                                                                       |
+| **BanyanDB Processor Threads**  | 2         | TIMED_WAITING (parking)     | Threads named "BanyanDB BulkProcessor".                                                                                               |
+| **gRPC Executor Threads**       | 3         | TIMED_WAITING (parking)     | Threads named "grpc-default-executor-*".                                                                                              |
+| **JVM GC Threads**              | 13        | RUNNABLE                    | Threads named "GC Thread#*" for garbage collection.                                                                                   |
+| **Other JVM Internal Threads**  | 3         | RUNNABLE                    | Includes VM Thread, G1 Main Marker, VM Periodic Task Thread.                                                                          |
+| **Attach Listener**             | 1         | RUNNABLE                    | JVM attach listener thread.                                                                                                           |
+| **Total**                       | **158**   | -                           | -                                                                                                                                     |
+
+* BanyanDB: make `BanyanDBMetricsDAO` output `scan all blocks` info log only when the model is not `indexModel`.
+* BanyanDB: fix the `BanyanDBMetricsDAO.multiGet` not work properly in `IndexMode`.
+* BanyanDB: remove `@StoreIDAsTag`, and automatically create a virtual String tag `id` for the SeriesID in `IndexMode`.
+* Remove method `appendMutant` from StorageID.
+* Fix otlp log handler reponse error and otlp span convert error.
+* Fix service_relation source layer in mq entry span analyse.
+* Fix metrics comparison in promql with bool modifier.
+* Add rate limiter for Zipkin trace receiver to limit maximum spans per second.
+* Open `health-checker` module by default due to latest UI changes. Change the default check period to 30s.
 
 #### UI
 
@@ -90,6 +120,7 @@
 * fix: optimize appearing the wrong prompt by pop-up for the HTTP environments in copy function.
 * refactor the configuration view and implement the optional config for displaying timestamp in Log widget.
 * test: implement unit tests for hooks and refactor some types.
+* fix: share OAP proxy servies for different endpoins and use health checked endpoints group.
 
 #### Documentation
 
