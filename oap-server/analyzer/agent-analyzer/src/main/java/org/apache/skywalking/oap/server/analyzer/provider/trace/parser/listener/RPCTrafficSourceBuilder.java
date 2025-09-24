@@ -95,6 +95,7 @@ class RPCTrafficSourceBuilder extends EndpointSourceBuilder {
         service.setRpcStatusCode(rpcStatusCode);
         service.setType(type);
         service.setTags(tags);
+        service.setTags(tags);
         service.setTimeBucket(timeBucket);
         service.setOriginalTags(originalTags);
         return service;
