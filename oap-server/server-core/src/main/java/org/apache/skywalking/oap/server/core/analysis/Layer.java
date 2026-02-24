@@ -261,7 +261,14 @@ public enum Layer {
     /**
      * BanyanDB is a distributed time-series database with built-in self-monitoring for real-time tracking of system health, performance, and resource utilization.
      */
-    BANYANDB(43, true);
+    BANYANDB(43, true),
+
+    /**
+     * Virtual GenAI is a virtual layer designed for monitoring Generative AI services.
+     * It enables real-time tracking of AI-specific metrics such as token consumption, model latency, and throughput (CPM)
+     * across different AI providers and models.
+     */
+    VIRTUAL_GENAI(44, false);
 
     private final int value;
     /**
