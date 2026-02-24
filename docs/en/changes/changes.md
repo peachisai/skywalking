@@ -49,6 +49,7 @@
 * PromQL service: fix time parse issue when using RFC3339 time format for querying.
 * Envoy metrics service receiver: support adapter listener metrics.
 * Envoy metrics service receiver: support config MAL rules files.
+* Add the spring-ai components and the GenAI layer.
 
 #### UI
 * Fix the missing icon in new native trace view.
