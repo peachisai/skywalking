@@ -81,7 +81,6 @@ public class UITemplateInitializer {
         Layer.SO11Y_GO_AGENT.name(),
         Layer.FLINK.name(),
         Layer.BANYANDB.name(),
-        Layer.VIRTUAL_GENAI.name(),
         "custom"
     };
     private final UITemplateManagementService uiTemplateManagementService;
