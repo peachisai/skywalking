@@ -264,11 +264,18 @@ public enum Layer {
     BANYANDB(43, true),
 
     /**
+     * GenAI is a virtual layer designed for monitoring Generative AI services.
+     * It enables real-time tracking of AI-specific metrics such as token consumption, model latency, and throughput (CPM)
+     * across different AI providers and models.
+     */
+    GENAI(44, true),
+
+    /**
      * Virtual GenAI is a virtual layer designed for monitoring Generative AI services.
      * It enables real-time tracking of AI-specific metrics such as token consumption, model latency, and throughput (CPM)
      * across different AI providers and models.
      */
-    VIRTUAL_GENAI(44, false);
+    VIRTUAL_GENAI(45, false);
 
     private final int value;
     /**
