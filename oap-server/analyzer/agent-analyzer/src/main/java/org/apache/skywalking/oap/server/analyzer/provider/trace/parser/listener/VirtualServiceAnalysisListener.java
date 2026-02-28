@@ -26,6 +26,7 @@ import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
 import org.apache.skywalking.oap.server.analyzer.provider.AnalyzerModuleConfig;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.vservice.VirtualCacheProcessor;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.vservice.VirtualDatabaseProcessor;
+import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.vservice.VirtualGenAIProcessor;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.vservice.VirtualMQProcessor;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.vservice.VirtualServiceProcessor;
 import org.apache.skywalking.oap.server.core.CoreModule;
@@ -86,7 +87,8 @@ public class VirtualServiceAnalysisListener implements ExitAnalysisListener, Loc
                 Arrays.asList(
                     new VirtualCacheProcessor(namingControl, config),
                     new VirtualDatabaseProcessor(namingControl, config),
-                    new VirtualMQProcessor(namingControl)
+                    new VirtualMQProcessor(namingControl),
+                    new VirtualGenAIProcessor()
                 )
             );
         }
