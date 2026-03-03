@@ -33,6 +33,7 @@
         <module>log-analyzer</module>
         <module>meter-analyzer</module>
         <module>event-analyzer</module>
+        <module>genAI-analyzer</module>
     </modules>
 
     <dependencies>
