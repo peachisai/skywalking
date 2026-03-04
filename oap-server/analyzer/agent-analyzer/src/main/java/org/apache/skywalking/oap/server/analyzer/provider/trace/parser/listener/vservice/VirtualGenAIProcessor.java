@@ -41,8 +41,6 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
             return;
         }
 
-        // Handle tool-related components
-        int componentId = span.getComponentId();
         meterAnalyzerService.doTraceAnalysis(span,segmentObject);
     }
 

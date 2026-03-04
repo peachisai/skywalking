@@ -1,3 +1,42 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This file is used to configure the GenAI provider matching rules and estimated pricing.
+# The rules define how to map model names to providers and calculate token costs.
+#
+# - provider: Required. The unique name of the AI service provider.
+# - base-url: Optional. The entry point for the provider's API.
+# - prefix-match: Required. A list of model name prefixes used to identify the provider.
+#
+# Pricing Configuration (specifically for Ollama or cost estimation):
+# - input-price-per-m: Optional. The cost for 1,000,000 (one million) input tokens.
+# - output-price-per-m: Optional. The cost for 1,000,000 (one million) output tokens.
+# - models: Optional. A list of specific model overrides for granular pricing.
+#   - name: The model name prefix to match (e.g., "llama3").
+#   - input-price-per-m: Price per 1M input tokens for this specific model.
+#   - output-price-per-m: Price per 1M output tokens for this specific model.
+
+# Example for Ollama with per-million token pricing
+#  - provider: ollama
+#    prefix-match:
+#      - ollama
+#    models:
+#      - name: ollama
+#        input-price-per-m: 1
+#        output-price-per-m: 1
+
 providers:
   - provider: openai
     base-url: https://api.openai.com/v1
@@ -27,3 +66,6 @@ providers:
   - provider: deepseek
     prefix-match:
       - deepseek
+
+
+
