@@ -274,11 +274,11 @@ menus:
         i18nKey: self_observability_go_agent
   - title: GenAI
     icon: gen_ai
-    description: Generative AI observability provides comprehensive insights into LLM interactions, tracking model performance, token consumption, and cost-related metrics across various AI providers.
+    description: Generative AI (GenAI) observability provides comprehensive monitoring and performance insights for various AI services and large language models (LLM).
     i18nKey: gen_ai
     menus:
       - title: Virtual GenAI
-        layer: VIRTUAL_GENAI
-        description: Monitor remote and uninstrumented AI services.
-        documentLink: https://skywalking.apache.org/docs/main/next/en/setup/backend/backend-flink-monitoring/
-        i18nKey: data_processing_engine_flink
+        layer: VIRTUAL_DATABASE
+        description: Observe the virtual GenAI providers and models which are conjectured by language agents through various plugins.
+        documentLink: https://skywalking.apache.org/docs/main/next/en/setup/service-agent/virtual-genai/
+        i18nKey: virtual_gen_ai

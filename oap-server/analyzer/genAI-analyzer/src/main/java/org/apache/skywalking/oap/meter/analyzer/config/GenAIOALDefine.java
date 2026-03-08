@@ -18,33 +18,16 @@
 
 package org.apache.skywalking.oap.meter.analyzer.config;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.skywalking.oap.server.library.module.ModuleConfig;
+import org.apache.skywalking.oap.server.core.oal.rt.OALDefine;
 
-import java.util.ArrayList;
-import java.util.List;
+public class GenAIOALDefine extends OALDefine {
 
-public class GenAIConfig extends ModuleConfig {
+    public static final GenAIOALDefine INSTANCE = new GenAIOALDefine();
 
-    @Getter
-    @Setter
-    private List<Provider> providers = new ArrayList<>();
-
-    @Getter
-    @Setter
-    public static class Provider {
-        private String provider;
-        private String baseUrl;
-        private List<String> prefixMatch = new ArrayList<>();
-        private List<Model> models = new ArrayList<>();
-    }
-
-    @Getter
-    @Setter
-    public static class Model {
-        private String name;
-        private double inputCostPerM;
-        private double outputCostPerM;
+    private GenAIOALDefine() {
+        super(
+                "oal/gen-ai.oal",
+                "org.apache.skywalking.oap.server.core.source"
+        );
     }
 }

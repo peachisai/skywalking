@@ -16,20 +16,19 @@
  *
  */
 
-package org.apache.skywalking.oap.meter.analyzer.source;
+package org.apache.skywalking.oap.server.core.source;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.skywalking.oap.server.core.analysis.IDManager;
 import org.apache.skywalking.oap.server.core.analysis.Layer;
-import org.apache.skywalking.oap.server.core.source.ScopeDeclaration;
-import org.apache.skywalking.oap.server.core.source.ScopeDefaultColumn;
-import org.apache.skywalking.oap.server.core.source.Source;
 
 import static org.apache.skywalking.oap.server.core.source.DefaultScopeDefine.GEN_AI_MODEL_ACCESS;
 import static org.apache.skywalking.oap.server.core.source.DefaultScopeDefine.SERVICE_INSTANCE_CATALOG_NAME;
 
-@ScopeDeclaration(id = GEN_AI_MODEL_ACCESS, name = "GenAIModelAccess ", catalog = SERVICE_INSTANCE_CATALOG_NAME)
+@Data
+@ScopeDeclaration(id = GEN_AI_MODEL_ACCESS, name = "GenAIModelAccess", catalog = SERVICE_INSTANCE_CATALOG_NAME)
 @ScopeDefaultColumn.VirtualColumnDefinition(fieldName = "entityId", columnName = "entity_id", isID = true, type = String.class)
 public class GenAIModelAccess extends Source {
 
@@ -40,14 +39,15 @@ public class GenAIModelAccess extends Source {
 
     @Override
     public String getEntityId() {
+        if (entityId == null) {
+            serviceId = IDManager.ServiceID.buildId(provider, Layer.VIRTUAL_GENAI.isNormal());
+            entityId = IDManager.ServiceInstanceID.buildId(serviceId, modelName);
+        }
         return entityId;
     }
 
     private String entityId;
 
-    @Getter
-    @Setter
-    @ScopeDefaultColumn.DefinedByField(columnName = "service_id")
     private String serviceId;
 
     @Getter
@@ -62,7 +62,15 @@ public class GenAIModelAccess extends Source {
 
     @Getter
     @Setter
-    private long tokenUsage;
+    private long inputTokens;
+
+    @Getter
+    @Setter
+    private long outputTokens;
+
+    @Getter
+    @Setter
+    private double totalCost;
 
     @Getter
     @Setter

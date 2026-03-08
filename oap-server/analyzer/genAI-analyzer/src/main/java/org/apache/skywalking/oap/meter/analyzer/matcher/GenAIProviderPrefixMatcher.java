@@ -27,9 +27,11 @@ import java.util.Map;
 public class GenAIProviderPrefixMatcher {
     private static final String UNKNOWN = "unknown";
     private final TrieNode root;
+    private final Map<String, GenAIConfig.Model> modelMap;
 
-    private GenAIProviderPrefixMatcher(TrieNode root) {
+    private GenAIProviderPrefixMatcher(TrieNode root, Map<String, GenAIConfig.Model> modelMap) {
         this.root = root;
+        this.modelMap = modelMap;
     }
 
     private static class TrieNode {
@@ -37,41 +39,75 @@ public class GenAIProviderPrefixMatcher {
         String providerName;
     }
 
+    public static class MatchResult {
+        private final String provider;
+        private final GenAIConfig.Model modelConfig;
+
+        public MatchResult(String provider, GenAIConfig.Model modelConfig) {
+            this.provider = provider;
+            this.modelConfig = modelConfig;
+        }
+
+        public String getProvider() {
+            return provider;
+        }
+
+        public GenAIConfig.Model getModelConfig() {
+            return modelConfig;
+        }
+    }
+
     public static GenAIProviderPrefixMatcher build(GenAIConfig config) {
         TrieNode root = new TrieNode();
+        Map<String, GenAIConfig.Model> modelMap = new HashMap<>();
 
         for (GenAIConfig.Provider p : config.getProviders()) {
             List<String> prefixes = p.getPrefixMatch();
-            if (prefixes == null) continue;
+            if (prefixes != null) {
+                for (String prefix : prefixes) {
+                    if (prefix == null || prefix.isEmpty()) continue;
 
-            for (String prefix : prefixes) {
-                if (prefix == null || prefix.isEmpty()) continue;
-
-                TrieNode current = root;
-                for (int i = 0; i < prefix.length(); i++) {
-                    char c = prefix.charAt(i);
-                    current = current.children
-                            .computeIfAbsent(c, k -> new TrieNode());
+                    TrieNode current = root;
+                    for (int i = 0; i < prefix.length(); i++) {
+                        char c = prefix.charAt(i);
+                        current = current.children.computeIfAbsent(c, k -> new TrieNode());
+                    }
+                    current.providerName = p.getProvider();
                 }
-                current.providerName = p.getProvider();
+            }
+
+            List<GenAIConfig.Model> models = p.getModels();
+            if (models != null) {
+                for (GenAIConfig.Model model : models) {
+                    if (model.getName() != null) {
+                        modelMap.put(model.getName(), model);
+                    }
+                }
             }
         }
 
-        return new GenAIProviderPrefixMatcher(root);
+        return new GenAIProviderPrefixMatcher(root, modelMap);
     }
 
-    public String findProvider(String modelName) {
+    public MatchResult match(String modelName) {
+        if (modelName == null || modelName.isEmpty()) {
+            return new MatchResult(UNKNOWN, null);
+        }
 
         TrieNode current = root;
-        String matched = null;
+        String matchedProvider = null;
 
         for (int i = 0; i < modelName.length(); i++) {
             current = current.children.get(modelName.charAt(i));
             if (current == null) break;
             if (current.providerName != null) {
-                matched = current.providerName;
+                matchedProvider = current.providerName;
             }
         }
-        return matched != null ? matched : UNKNOWN;
+
+        String provider = matchedProvider != null ? matchedProvider : UNKNOWN;
+        GenAIConfig.Model modelConfig = modelMap.get(modelName);
+
+        return new MatchResult(provider, modelConfig);
     }
 }

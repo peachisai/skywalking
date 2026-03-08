@@ -18,21 +18,23 @@
 package org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.vservice;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.skywalking.apm.network.common.v3.KeyStringValuePair;
 import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanLayer;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
 import org.apache.skywalking.oap.meter.analyzer.service.IGenAIMeterAnalyzerService;
 import org.apache.skywalking.oap.server.core.source.Source;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class VirtualGenAIProcessor implements VirtualServiceProcessor {
 
     private final IGenAIMeterAnalyzerService meterAnalyzerService;
+
+    private List<Source> recordList = new ArrayList<>();
 
     @Override
     public void prepareVSIfNecessary(SpanObject span, SegmentObject segmentObject) {
@@ -41,11 +43,13 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
             return;
         }
 
-        meterAnalyzerService.doTraceAnalysis(span,segmentObject);
+        recordList.add(meterAnalyzerService.doTraceAnalysis(span, segmentObject));
     }
 
     @Override
     public void emitTo(Consumer<Source> consumer) {
-
+        recordList.stream()
+                .filter(Objects::nonNull)
+                .forEach(consumer);
     }
 }

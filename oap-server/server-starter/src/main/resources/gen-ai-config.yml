@@ -34,8 +34,8 @@
 #      - ollama
 #    models:
 #      - name: ollama
-#        input-price-per-m: 1
-#        output-price-per-m: 1
+#        input-cost-per-m: 1
+#        output-cost-per-m: 1
 
 providers:
   - provider: openai
@@ -67,5 +67,11 @@ providers:
     prefix-match:
       - deepseek
 
-
+  - provider: ollama
+    prefix-match:
+      - ollama
+    models:
+      - name: ollama
+        input-cost-per-m: 1
+        output-cost-per-m: 1
 

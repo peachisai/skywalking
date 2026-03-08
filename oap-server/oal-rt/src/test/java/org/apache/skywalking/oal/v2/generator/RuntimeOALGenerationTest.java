@@ -98,6 +98,8 @@ public class RuntimeOALGenerationTest {
         // DisableOALDefine - no catalog
         registerOALDefine("disable", createOALDefine("oal/disable.oal", SOURCE_PACKAGE, ""));
 
+        registerOALDefine("disable", createOALDefine("oal/gen-ai.oal", SOURCE_PACKAGE, ""));
+
         // Set generated file path for IDE inspection
         OALClassGeneratorV2.setGeneratedFilePath("target/test-classes");
     }
@@ -184,6 +186,9 @@ public class RuntimeOALGenerationTest {
         // Process sources
         notifyClass(listener, SOURCE_PACKAGE, "Process");
         notifyClass(listener, SOURCE_PACKAGE, "ProcessRelation");
+
+        // gen_ai
+        notifyClass(listener, SOURCE_PACKAGE, "GenAIModelCall");
 
         // Register decorators
         registerDecorator(SOURCE_PACKAGE, "ServiceDecorator");

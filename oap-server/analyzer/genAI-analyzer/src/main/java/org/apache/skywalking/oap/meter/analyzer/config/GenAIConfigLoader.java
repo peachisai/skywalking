@@ -72,9 +72,31 @@ public class GenAIConfigLoader {
                 throw new ModuleStartException("prefix-match must be a list in [gen-ai-config.yml] for provider: " + name);
             }
 
+            // Parse specific model overrides
+            Object modelsConfig = providerMap.get("models");
+            if (modelsConfig instanceof List) {
+                for (Object modelObj : (List<?>) modelsConfig) {
+                    if (modelObj instanceof Map) {
+                        Map<String, Object> modelMap = (Map<String, Object>) modelObj;
+                        GenAIConfig.Model model = new GenAIConfig.Model();
+                        model.setName(String.valueOf(modelMap.get("name")));
+                        model.setInputCostPerM(parseCost(modelMap.get("input-cost-per-m")));
+                        model.setOutputCostPerM(parseCost(modelMap.get("output-cost-per-m")));
+                        provider.getModels().add(model);
+                    }
+                }
+            }
+
             config.getProviders().add(provider);
         }
 
         return config;
+    }
+
+    private double parseCost(Object value) {
+        if (value == null) {
+            return 0.0;
+        }
+        return Double.parseDouble(value.toString());
     }
 }
