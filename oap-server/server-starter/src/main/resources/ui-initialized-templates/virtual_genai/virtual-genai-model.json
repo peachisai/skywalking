@@ -249,26 +249,6 @@
                   "moved": false
                 }
               ]
-            },
-            {
-              "name": "model",
-              "children": [
-                {
-                  "x": 0,
-                  "y": 0,
-                  "w": 24,
-                  "h": 30,
-                  "i": "0",
-                  "type": "Widget",
-                  "graph": {
-                    "type": "InstanceList",
-                    "dashboardName": "Virtual-GenAI-Model",
-                    "fontSize": 12
-                  },
-                  "id": "0-1-0",
-                  "moved": false
-                }
-              ]
             }
           ],
           "id": "0",
@@ -277,9 +257,9 @@
         }
       ],
       "layer": "VIRTUAL_GENAI",
-      "entity": "Service",
-      "name": "Virtual-GenAI-Provider",
-      "id": "Virtual-GenAI-Provider",
+      "entity": "ServiceInstance",
+      "name": "Virtual-GenAI-Model",
+      "id": "Virtual-GenAI-Model",
       "isRoot": false
     }
   }
