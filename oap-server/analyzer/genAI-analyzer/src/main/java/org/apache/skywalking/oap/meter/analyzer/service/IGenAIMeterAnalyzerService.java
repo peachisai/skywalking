@@ -25,6 +25,6 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 public interface IGenAIMeterAnalyzerService extends Service {
 
-    GenAIMetrics doTraceAnalysis(SpanObject span, SegmentObject segment);
+    GenAIMetrics extractMetricsFromSWSpan(SpanObject span, SegmentObject segment);
 
 }

@@ -18,7 +18,7 @@
                   "x": 0,
                   "y": 0,
                   "w": 4,
-                  "h": 9,
+                  "h": 11,
                   "i": "2",
                   "type": "Widget",
                   "expressions": [
@@ -40,13 +40,18 @@
                     "name": "TotalCost",
                     "title": "Total Cost",
                     "tips": "The total cost of GenAI model calls."
-                  }
+                  },
+                  "id": "0-0-2",
+                  "moved": false,
+                  "typesOfMQE": [
+                    "SINGLE_VALUE"
+                  ]
                 },
                 {
                   "x": 4,
                   "y": 0,
                   "w": 4,
-                  "h": 9,
+                  "h": 11,
                   "i": "18",
                   "type": "Widget",
                   "expressions": [
@@ -54,7 +59,7 @@
                   ],
                   "graph": {
                     "type": "Card",
-                    "fontSize": 14,
+                    "fontSize": 24,
                     "textAlign": "center",
                     "showUnit": true
                   },
@@ -67,13 +72,18 @@
                     "name": "OutputTokens",
                     "title": "Output Tokens",
                     "tips": "The sum of output tokens."
-                  }
+                  },
+                  "id": "0-0-18",
+                  "moved": false,
+                  "typesOfMQE": [
+                    "SINGLE_VALUE"
+                  ]
                 },
                 {
                   "x": 8,
                   "y": 0,
                   "w": 4,
-                  "h": 9,
+                  "h": 11,
                   "i": "19",
                   "type": "Widget",
                   "expressions": [
@@ -81,7 +91,7 @@
                   ],
                   "graph": {
                     "type": "Card",
-                    "fontSize": 14,
+                    "fontSize": 24,
                     "textAlign": "center",
                     "showUnit": true
                   },
@@ -94,7 +104,12 @@
                     "name": "InputTokens",
                     "title": "Input Tokens",
                     "tips": "The sum of input tokens."
-                  }
+                  },
+                  "id": "0-0-19",
+                  "moved": false,
+                  "typesOfMQE": [
+                    "SINGLE_VALUE"
+                  ]
                 },
                 {
                   "x": 12,
@@ -121,11 +136,13 @@
                       "label": "SLA",
                       "unit": "%"
                     }
-                  ]
+                  ],
+                  "id": "0-0-1",
+                  "moved": false
                 },
                 {
                   "x": 0,
-                  "y": 9,
+                  "y": 11,
                   "w": 12,
                   "h": 11,
                   "i": "0",
@@ -148,13 +165,15 @@
                     "name": "ResponseTime",
                     "title": "Response Time",
                     "tips": "The average response time of GenAI provider."
-                  }
+                  },
+                  "id": "0-0-0",
+                  "moved": false
                 },
                 {
                   "x": 12,
                   "y": 11,
                   "w": 12,
-                  "h": 9,
+                  "h": 11,
                   "i": "5",
                   "type": "Widget",
                   "expressions": [
@@ -174,13 +193,15 @@
                     "name": "CPM",
                     "title": "Calls Per Minute",
                     "tips": "The number of calls per minute."
-                  }
+                  },
+                  "id": "0-0-5",
+                  "moved": false
                 },
                 {
                   "x": 0,
-                  "y": 20,
-                  "w": 6,
-                  "h": 11,
+                  "y": 22,
+                  "w": 12,
+                  "h": 12,
                   "i": "14",
                   "type": "Widget",
                   "expressions": [
@@ -201,13 +222,15 @@
                       "label": "Avg Latency",
                       "unit": "ms"
                     }
-                  ]
+                  ],
+                  "id": "0-0-14",
+                  "moved": false
                 },
                 {
-                  "x": 6,
-                  "y": 20,
-                  "w": 6,
-                  "h": 11,
+                  "x": 12,
+                  "y": 22,
+                  "w": 12,
+                  "h": 12,
                   "i": "13",
                   "type": "Widget",
                   "expressions": [
@@ -221,7 +244,9 @@
                     "name": "LatencyPercentile",
                     "title": "Latency Percentile",
                     "tips": "The percentile of model access latency."
-                  }
+                  },
+                  "id": "0-0-13",
+                  "moved": false
                 }
               ]
             },
@@ -239,11 +264,16 @@
                     "type": "InstanceList",
                     "dashboardName": "Virtual-GenAI-Model",
                     "fontSize": 12
-                  }
+                  },
+                  "id": "0-1-0",
+                  "moved": false
                 }
               ]
             }
-          ]
+          ],
+          "id": "0",
+          "activedTabIndex": 0,
+          "moved": false
         }
       ],
       "layer": "VIRTUAL_GENAI",

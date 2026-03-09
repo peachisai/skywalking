@@ -31,7 +31,7 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
     private static final String TAG_TTFT = "gen_ai.usage.ttft";
 
     @Override
-    public GenAIMetrics doTraceAnalysis(SpanObject span, SegmentObject segment) {
+    public GenAIMetrics extractMetricsFromSWSpan(SpanObject span, SegmentObject segment) {
         Map<String, String> tags = span.getTagsList().stream()
                 .collect(toMap(
                         KeyStringValuePair::getKey,
@@ -55,6 +55,7 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         long inputTokens = parseSafeInt(tags.get(TAG_INPUT_TOKENS));
         long outputTokens = parseSafeInt(tags.get(TAG_OUTPUT_TOKENS));
 
+        // calculate the total cost by the cost configs
         double totalCost = 0.0;
         if (modelConfig != null) {
             if (modelConfig.getInputCostPerM() > 0) {
@@ -65,6 +66,8 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
             }
         }
 
+        tags.put("gen_ai.usage.total_cost", String.valueOf(totalCost));
+
         GenAIMetrics metrics = new GenAIMetrics();
 
         metrics.setProvider(provider);
@@ -73,7 +76,6 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         metrics.setOutputTokens(outputTokens);
         metrics.setTotalCost(totalCost);
 
-        // Calculate latency from span timestamps
         long latency = span.getEndTime() - span.getStartTime();
         metrics.setLatency(latency);
         metrics.setStatus(!span.getIsError());

@@ -31,7 +31,6 @@ import org.apache.skywalking.oap.server.core.source.Source;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
@@ -43,12 +42,11 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
 
     @Override
     public void prepareVSIfNecessary(SpanObject span, SegmentObject segmentObject) {
-        // Only process spans related to Generative AI
         if (span.getSpanLayer() != SpanLayer.GenAI) {
             return;
         }
 
-        GenAIMetrics metrics = meterAnalyzerService.doTraceAnalysis(span, segmentObject);
+        GenAIMetrics metrics = meterAnalyzerService.extractMetricsFromSWSpan(span, segmentObject);
         if (metrics == null) {
             return;
         }
