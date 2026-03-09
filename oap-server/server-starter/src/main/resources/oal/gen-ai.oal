@@ -16,15 +16,27 @@
  *
  */
 
-gen_ai_call_cpm = from(GenAIModelAccess.*).cpm();
+gen_ai_provider_resp_time = from(GenAIProviderAccess.latency).longAvg();
+gen_ai_provider_sla = from(GenAIProviderAccess.*).percent(status == true);
+gen_ai_provider_cpm = from(GenAIProviderAccess.*).cpm();
 
-gen_ai_latency_avg = from(GenAIModelAccess.latency).longAvg();
-gen_ai_latency_percentile = from(GenAIModelAccess.latency).percentile(10);
+gen_ai_provider_latency_avg = from(GenAIProviderAccess.latency).longAvg();
+gen_ai_provider_latency_percentile = from(GenAIProviderAccess.latency).percentile(10);
 
-gen_ai_ttft_avg = from(GenAIModelAccess.timeToFirstToken).longAvg();
-gen_ai_ttft_percentile = from(GenAIModelAccess.timeToFirstToken).percentile(10);
+gen_ai_provider_input_tokens_sum = from(GenAIProviderAccess.inputTokens).sum();
+gen_ai_provider_output_tokens_sum = from(GenAIProviderAccess.outputTokens).sum();
 
-gen_ai_input_tokens_sum = from(GenAIModelAccess.inputTokens).sum();
-gen_ai_output_tokens_sum = from(GenAIModelAccess.outputTokens).sum();
+gen_ai_provider_total_cost = from(GenAIProviderAccess.totalCost).sum();
 
-gen_ai_total_cost = from(GenAIModelAccess.totalCost).sum();
+gen_ai_model_call_cpm = from(GenAIModelAccess.*).cpm();
+
+gen_ai_model_latency_avg = from(GenAIModelAccess.latency).longAvg();
+gen_ai_model_latency_percentile = from(GenAIModelAccess.latency).percentile(10);
+
+gen_ai_model_ttft_avg = from(GenAIModelAccess.timeToFirstToken).longAvg();
+gen_ai_model_ttft_percentile = from(GenAIModelAccess.timeToFirstToken).percentile(10);
+
+gen_ai_model_input_tokens_sum = from(GenAIModelAccess.inputTokens).sum();
+gen_ai_model_output_tokens_sum = from(GenAIModelAccess.outputTokens).sum();
+
+gen_ai_model_total_cost = from(GenAIModelAccess.totalCost).sum();

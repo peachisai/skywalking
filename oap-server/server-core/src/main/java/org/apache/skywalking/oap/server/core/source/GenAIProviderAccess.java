@@ -22,17 +22,17 @@ import lombok.Data;
 import org.apache.skywalking.oap.server.core.analysis.IDManager;
 import org.apache.skywalking.oap.server.core.analysis.Layer;
 
-import static org.apache.skywalking.oap.server.core.source.DefaultScopeDefine.GEN_AI_MODEL_ACCESS;
-import static org.apache.skywalking.oap.server.core.source.DefaultScopeDefine.SERVICE_INSTANCE_CATALOG_NAME;
+import static org.apache.skywalking.oap.server.core.source.DefaultScopeDefine.GEN_AI_PROVIDER_ACCESS;
+import static org.apache.skywalking.oap.server.core.source.DefaultScopeDefine.SERVICE_CATALOG_NAME;
 
 @Data
-@ScopeDeclaration(id = GEN_AI_MODEL_ACCESS, name = "GenAIModelAccess", catalog = SERVICE_INSTANCE_CATALOG_NAME)
+@ScopeDeclaration(id = GEN_AI_PROVIDER_ACCESS, name = "GenAIProviderAccess", catalog = SERVICE_CATALOG_NAME)
 @ScopeDefaultColumn.VirtualColumnDefinition(fieldName = "entityId", columnName = "entity_id", isID = true, type = String.class)
-public class GenAIModelAccess extends Source {
+public class GenAIProviderAccess extends Source {
 
     @Override
     public int scope() {
-        return GEN_AI_MODEL_ACCESS;
+        return GEN_AI_PROVIDER_ACCESS;
     }
 
     @Override
@@ -42,13 +42,8 @@ public class GenAIModelAccess extends Source {
 
     private String entityId;
 
-    private String serviceId;
-
     @ScopeDefaultColumn.DefinedByField(columnName = "name", requireDynamicActive = true)
     private String name;
-
-    @ScopeDefaultColumn.DefinedByField(columnName = "model_name")
-    private String modelName;
 
     private long inputTokens;
 
@@ -64,7 +59,6 @@ public class GenAIModelAccess extends Source {
 
     @Override
     public void prepare() {
-        serviceId = IDManager.ServiceID.buildId(name, Layer.VIRTUAL_GENAI.isNormal());
-        entityId = IDManager.ServiceInstanceID.buildId(serviceId, modelName);
+        entityId = IDManager.ServiceID.buildId(name, Layer.VIRTUAL_GENAI.isNormal());
     }
 }

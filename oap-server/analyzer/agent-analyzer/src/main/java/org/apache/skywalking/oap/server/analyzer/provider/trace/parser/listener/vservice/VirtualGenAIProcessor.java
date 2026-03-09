@@ -22,6 +22,11 @@ import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanLayer;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
 import org.apache.skywalking.oap.meter.analyzer.service.IGenAIMeterAnalyzerService;
+import org.apache.skywalking.oap.server.core.analysis.Layer;
+import org.apache.skywalking.oap.server.core.source.GenAIMetrics;
+import org.apache.skywalking.oap.server.core.source.GenAIModelAccess;
+import org.apache.skywalking.oap.server.core.source.GenAIProviderAccess;
+import org.apache.skywalking.oap.server.core.source.ServiceMeta;
 import org.apache.skywalking.oap.server.core.source.Source;
 
 import java.util.ArrayList;
@@ -43,13 +48,57 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
             return;
         }
 
-        recordList.add(meterAnalyzerService.doTraceAnalysis(span, segmentObject));
+        GenAIMetrics metrics = meterAnalyzerService.doTraceAnalysis(span, segmentObject);
+        if (metrics == null) {
+            return;
+        }
+
+        recordList.add(toServiceMeta(metrics.getProvider(), metrics.getTimeBucket()));
+        recordList.add(toProviderAccess(metrics));
+        recordList.add(toModelAccess(metrics));
+    }
+
+    private ServiceMeta toServiceMeta(String serviceName, Long timeBucket) {
+        ServiceMeta service = new ServiceMeta();
+        service.setName(serviceName);
+        service.setLayer(Layer.VIRTUAL_GENAI);
+        service.setTimeBucket(timeBucket);
+        return service;
+    }
+
+    private GenAIProviderAccess toProviderAccess(GenAIMetrics metrics) {
+        GenAIProviderAccess source = new GenAIProviderAccess();
+        source.setName(metrics.getProvider());
+        source.setInputTokens(metrics.getInputTokens());
+        source.setOutputTokens(metrics.getOutputTokens());
+        source.setTotalCost(metrics.getTotalCost());
+        source.setTimeToFirstToken(metrics.getTimeToFirstToken());
+        source.setLatency(metrics.getLatency());
+        source.setStatus(metrics.isStatus());
+        source.setTimeBucket(metrics.getTimeBucket());
+        return source;
+    }
+
+    private GenAIModelAccess toModelAccess(GenAIMetrics metrics) {
+        GenAIModelAccess source = new GenAIModelAccess();
+        source.setName(metrics.getProvider());
+        source.setModelName(metrics.getModel());
+        source.setInputTokens(metrics.getInputTokens());
+        source.setOutputTokens(metrics.getOutputTokens());
+        source.setTotalCost(metrics.getTotalCost());
+        source.setTimeToFirstToken(metrics.getTimeToFirstToken());
+        source.setLatency(metrics.getLatency());
+        source.setStatus(metrics.isStatus());
+        source.setTimeBucket(metrics.getTimeBucket());
+        return source;
     }
 
     @Override
     public void emitTo(Consumer<Source> consumer) {
-        recordList.stream()
-                .filter(Objects::nonNull)
-                .forEach(consumer);
+        for (Source source : recordList) {
+            if (source != null) {
+                consumer.accept(source);
+            }
+        }
     }
 }

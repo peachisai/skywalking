@@ -16,15 +16,28 @@
  *
  */
 
-package org.apache.skywalking.oap.meter.analyzer.service;
+package org.apache.skywalking.oap.server.core.source;
 
-import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
-import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
-import org.apache.skywalking.oap.server.core.source.GenAIMetrics;
-import org.apache.skywalking.oap.server.library.module.Service;
+import lombok.Data;
 
-public interface IGenAIMeterAnalyzerService extends Service {
+@Data
+public class GenAIMetrics {
 
-    GenAIMetrics doTraceAnalysis(SpanObject span, SegmentObject segment);
+    private String provider;
 
+    private String model;
+
+    private long inputTokens;
+
+    private long outputTokens;
+
+    private double totalCost;
+
+    private long timeToFirstToken;
+
+    private long latency;
+
+    private boolean status;
+
+    private long timeBucket;
 }

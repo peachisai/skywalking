@@ -6,7 +6,7 @@ import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
 import org.apache.skywalking.oap.meter.analyzer.config.GenAIConfig;
 import org.apache.skywalking.oap.meter.analyzer.matcher.GenAIProviderPrefixMatcher;
 import org.apache.skywalking.oap.server.core.analysis.TimeBucket;
-import org.apache.skywalking.oap.server.core.source.GenAIModelAccess;
+import org.apache.skywalking.oap.server.core.source.GenAIMetrics;
 import org.apache.skywalking.oap.server.library.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
     private static final String TAG_TTFT = "gen_ai.usage.ttft";
 
     @Override
-    public GenAIModelAccess doTraceAnalysis(SpanObject span, SegmentObject segment) {
+    public GenAIMetrics doTraceAnalysis(SpanObject span, SegmentObject segment) {
         Map<String, String> tags = span.getTagsList().stream()
                 .collect(toMap(
                         KeyStringValuePair::getKey,
@@ -65,20 +65,21 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
             }
         }
 
-        GenAIModelAccess modelCall = new GenAIModelAccess();
+        GenAIMetrics metrics = new GenAIMetrics();
 
-        modelCall.setProvider(provider);
-        modelCall.setModelName(modelName);
-        modelCall.setInputTokens(inputTokens);
-        modelCall.setOutputTokens(outputTokens);
-        modelCall.setTotalCost(totalCost);
+        metrics.setProvider(provider);
+        metrics.setModel(modelName);
+        metrics.setInputTokens(inputTokens);
+        metrics.setOutputTokens(outputTokens);
+        metrics.setTotalCost(totalCost);
 
         // Calculate latency from span timestamps
         long latency = span.getEndTime() - span.getStartTime();
-        modelCall.setLatency(latency);
-        modelCall.setTimeBucket(TimeBucket.getMinuteTimeBucket(span.getStartTime()));
+        metrics.setLatency(latency);
+        metrics.setStatus(!span.getIsError());
+        metrics.setTimeBucket(TimeBucket.getMinuteTimeBucket(span.getStartTime()));
 
-        return modelCall;
+        return metrics;
     }
 
     private int parseSafeInt(String value) {

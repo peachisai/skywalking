@@ -23,6 +23,7 @@ import org.apache.skywalking.oap.server.library.util.ResourceUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
@@ -38,14 +39,18 @@ public class GenAIConfigLoader {
     }
 
     public GenAIConfig loadConfig() throws ModuleStartException {
-        Reader applicationReader;
-        try {
-            applicationReader = ResourceUtils.read("gen-ai-config.yml");
+        Map<String, List<Map<String, Object>>> configMap;
+        try (Reader applicationReader = ResourceUtils.read("gen-ai-config.yml")) {
+            Yaml yaml = new Yaml();
+            configMap = yaml.loadAs(applicationReader, Map.class);
         } catch (FileNotFoundException e) {
-            throw new ModuleStartException("Cannot find the GenAI configuration file [gen-ai-config.yml].", e);
+            throw new ModuleStartException(
+                    "Cannot find the GenAI configuration file [gen-ai-config.yml].", e);
+        } catch (IOException e) {
+            throw new ModuleStartException(
+                    "Failed to read the GenAI configuration file [gen-ai-config.yml].", e);
         }
 
-        Map<String, List<Map<String, Object>>> configMap = yaml.loadAs(applicationReader, Map.class);
         if (configMap == null || !configMap.containsKey("providers")) {
             return config;
         }
@@ -97,6 +102,10 @@ public class GenAIConfigLoader {
         if (value == null) {
             return 0.0;
         }
-        return Double.parseDouble(value.toString());
+        try {
+            return Double.parseDouble(value.toString());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
 }

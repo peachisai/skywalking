@@ -29,6 +29,8 @@ public class GenAIProviderPrefixMatcher {
     private final TrieNode root;
     private final Map<String, GenAIConfig.Model> modelMap;
 
+    private static final MatchResult UNKNOWN_RESULT = new MatchResult(UNKNOWN, null);
+
     private GenAIProviderPrefixMatcher(TrieNode root, Map<String, GenAIConfig.Model> modelMap) {
         this.root = root;
         this.modelMap = modelMap;
@@ -91,7 +93,7 @@ public class GenAIProviderPrefixMatcher {
 
     public MatchResult match(String modelName) {
         if (modelName == null || modelName.isEmpty()) {
-            return new MatchResult(UNKNOWN, null);
+            return UNKNOWN_RESULT;
         }
 
         TrieNode current = root;

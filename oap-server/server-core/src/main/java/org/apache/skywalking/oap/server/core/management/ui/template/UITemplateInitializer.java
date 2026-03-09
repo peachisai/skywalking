@@ -81,6 +81,7 @@ public class UITemplateInitializer {
         Layer.SO11Y_GO_AGENT.name(),
         Layer.FLINK.name(),
         Layer.BANYANDB.name(),
+        Layer.VIRTUAL_GENAI.name(),
         "custom"
     };
     private final UITemplateManagementService uiTemplateManagementService;
@@ -109,6 +110,7 @@ public class UITemplateInitializer {
 
     public void initTemplate(File template) throws IOException {
         JsonNode jsonNode = mapper.readTree(template);
+        log.info("template:{}", template.getName());
         if (jsonNode == null || jsonNode.size() == 0) {
             return;
         }
@@ -116,8 +118,11 @@ public class UITemplateInitializer {
             throw new IllegalArgumentException(
                 "File:  " + template.getName() + " should be only one dashboard setting json object.");
         }
-        JsonNode configNode = jsonNode.get(0).get("configuration");
-        String inId = jsonNode.get(0).get("id").textValue();
+        JsonNode node = jsonNode.get(0);
+        log.info("json node:{}", node);
+
+        JsonNode configNode = node.get("configuration");
+        String inId = node.get("id").textValue();
         String inNameKey = StringUtil.join('_', configNode.get("layer").textValue(), configNode.get("entity").textValue(), configNode.get("name").textValue());
         verifyNameConflict(template, inId, inNameKey);
 
