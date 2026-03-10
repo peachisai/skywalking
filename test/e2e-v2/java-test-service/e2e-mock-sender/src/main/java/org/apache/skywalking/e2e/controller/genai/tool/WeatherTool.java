@@ -16,30 +16,20 @@
  *
  */
 
-package org.apache.skywalking.oap.server.core.source;
+package org.apache.skywalking.e2e.controller.genai.tool;
 
-import lombok.Data;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.stereotype.Component;
 
-@Data
-public class GenAIMetrics {
+@Component
+public class WeatherTool {
 
-    private String serviceId;
-
-    private String providerName;
-
-    private String modelName;
-
-    private long inputTokens;
-
-    private long outputTokens;
-
-    private double totalCost;
-
-    private long timeToFirstToken;
-
-    private long latency;
-
-    private boolean status;
-
-    private long timeBucket;
+    @Tool(name = "get_weather", description = "Get weather by city name")
+    public String getWeather(String city) {
+        return switch (city.toLowerCase()) {
+            case "new york" -> "Sunny, 10°C";
+            case "london" -> "Cloudy, 12°C";
+            default -> "Unknown city";
+        };
+    }
 }

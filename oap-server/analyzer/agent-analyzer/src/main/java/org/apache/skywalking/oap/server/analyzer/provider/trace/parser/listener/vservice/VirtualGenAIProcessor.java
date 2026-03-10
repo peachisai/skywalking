@@ -51,22 +51,22 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
             return;
         }
 
-        recordList.add(toServiceMeta(metrics.getProvider(), metrics.getTimeBucket()));
+        recordList.add(toServiceMeta(metrics));
         recordList.add(toProviderAccess(metrics));
         recordList.add(toModelAccess(metrics));
     }
 
-    private ServiceMeta toServiceMeta(String serviceName, Long timeBucket) {
+    private ServiceMeta toServiceMeta(GenAIMetrics metrics) {
         ServiceMeta service = new ServiceMeta();
-        service.setName(serviceName);
+        service.setName(metrics.getProviderName());
         service.setLayer(Layer.VIRTUAL_GENAI);
-        service.setTimeBucket(timeBucket);
+        service.setTimeBucket(metrics.getTimeBucket());
         return service;
     }
 
     private GenAIProviderAccess toProviderAccess(GenAIMetrics metrics) {
         GenAIProviderAccess source = new GenAIProviderAccess();
-        source.setName(metrics.getProvider());
+        source.setName(metrics.getProviderName());
         source.setInputTokens(metrics.getInputTokens());
         source.setOutputTokens(metrics.getOutputTokens());
         source.setTotalCost(metrics.getTotalCost());
@@ -79,8 +79,8 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
 
     private GenAIModelAccess toModelAccess(GenAIMetrics metrics) {
         GenAIModelAccess source = new GenAIModelAccess();
-        source.setName(metrics.getProvider());
-        source.setModelName(metrics.getModel());
+        source.setServiceName(metrics.getProviderName());
+        source.setModelName(metrics.getModelName());
         source.setInputTokens(metrics.getInputTokens());
         source.setOutputTokens(metrics.getOutputTokens());
         source.setTotalCost(metrics.getTotalCost());

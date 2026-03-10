@@ -19,5 +19,5 @@
   shortname: openai
   layers:
     - VIRTUAL_GENAI
-  normal: true
+  normal: false
 {{- end }}

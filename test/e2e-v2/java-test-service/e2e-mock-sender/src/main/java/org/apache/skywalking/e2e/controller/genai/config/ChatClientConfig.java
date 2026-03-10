@@ -13,33 +13,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package org.apache.skywalking.oap.server.core.source;
+package org.apache.skywalking.e2e.controller.genai.config;
 
-import lombok.Data;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Data
-public class GenAIMetrics {
+@Configuration
+public class ChatClientConfig {
 
-    private String serviceId;
-
-    private String providerName;
-
-    private String modelName;
-
-    private long inputTokens;
-
-    private long outputTokens;
-
-    private double totalCost;
-
-    private long timeToFirstToken;
-
-    private long latency;
-
-    private boolean status;
-
-    private long timeBucket;
+    @Bean
+    public ChatClient openAIChatClient(OpenAiChatModel model) {
+        return ChatClient.create(model);
+    }
 }

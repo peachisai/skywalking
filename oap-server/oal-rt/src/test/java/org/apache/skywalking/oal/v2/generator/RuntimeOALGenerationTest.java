@@ -188,6 +188,7 @@ public class RuntimeOALGenerationTest {
         notifyClass(listener, SOURCE_PACKAGE, "ProcessRelation");
 
         // gen_ai
+        notifyClass(listener, SOURCE_PACKAGE, "GenAIProviderAccess");
         notifyClass(listener, SOURCE_PACKAGE, "GenAIModelCall");
 
         // Register decorators
