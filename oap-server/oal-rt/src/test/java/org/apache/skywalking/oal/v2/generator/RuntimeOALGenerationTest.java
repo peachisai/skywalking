@@ -189,7 +189,7 @@ public class RuntimeOALGenerationTest {
 
         // gen_ai
         notifyClass(listener, SOURCE_PACKAGE, "GenAIProviderAccess");
-        notifyClass(listener, SOURCE_PACKAGE, "GenAIModelCall");
+        notifyClass(listener, SOURCE_PACKAGE, "GenAIModelAccess");
 
         // Register decorators
         registerDecorator(SOURCE_PACKAGE, "ServiceDecorator");

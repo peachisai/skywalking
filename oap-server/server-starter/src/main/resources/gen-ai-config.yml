@@ -15,31 +15,10 @@
 
 # This file is used to configure the GenAI provider matching rules and estimated pricing.
 # The rules define how to map model names to providers and calculate token costs.
-#
-# - provider: Required. The unique name of the AI service provider.
-# - base-url: Optional. The entry point for the provider's API.
-# - prefix-match: Required. A list of model name prefixes used to identify the provider.
-#
-# Pricing Configuration (specifically for Ollama or cost estimation):
-# - input-price-per-m: Optional. The cost for 1,000,000 (one million) input tokens.
-# - output-price-per-m: Optional. The cost for 1,000,000 (one million) output tokens.
-# - models: Optional. A list of specific model overrides for granular pricing.
-#   - name: The model name prefix to match (e.g., "llama3").
-#   - input-price-per-m: Price per 1M input tokens for this specific model.
-#   - output-price-per-m: Price per 1M output tokens for this specific model.
-
-# Example for Ollama with per-million token pricing
-#  - provider: ollama
-#    prefix-match:
-#      - ollama
-#    models:
-#      - name: ollama
-#        input-cost-per-m: 1
-#        output-cost-per-m: 1
 
 providers:
   - provider: openai
-    base-url: https://api.openai.com/v1
+    base-url:
     prefix-match:
       - gpt
     models:
@@ -48,30 +27,66 @@ providers:
         output-cost-per-m: 10000
 
   - provider: anthropic
+    base-url:
     prefix-match:
       - claude
+    models:
+      - name: claude-3-7-sonnet-20250219-thinking
+        input-cost-per-m: 10000
+        output-cost-per-m: 10000
+
+  - provider: gemini
+    base-url:
+    prefix-match:
+      - gemini
+
+  - provider: mistral
+    base-url:
+    prefix-match:
+      - mistral-
+
+  - provider: groq
+    base-url:
+    prefix-match:
+      - llama-3
+
+  - provider: deepseek
+    base-url:
+    prefix-match:
+      - deepseek
 
   - provider: bytedance
+    base-url:
     prefix-match:
       - doubao
 
   - provider: zhipu_ai
+    base-url:
     prefix-match:
       - glm
 
   - provider: alibaba
+    base-url:
     prefix-match:
       - qwen
 
-  - provider: gemini
+  - provider: tencent
+    base-url:
     prefix-match:
-      - gemini
+      - hunyuan-
 
-  - provider: deepseek
+  - provider: moonshot
+    base-url:
     prefix-match:
-      - deepseek
+      - kimi
+
+  - provider: minimax
+    base-url:
+    prefix-match:
+      - minimax
 
   - provider: ollama
+    base-url:
     prefix-match:
       - ollama
     models:
@@ -79,3 +94,7 @@ providers:
         input-cost-per-m: 1
         output-cost-per-m: 1
 
+  - provider: azure_openai
+    base-url:
+    prefix-match:
+      - azure

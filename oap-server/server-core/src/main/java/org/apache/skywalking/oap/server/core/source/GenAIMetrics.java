@@ -35,7 +35,7 @@ public class GenAIMetrics {
 
     private double totalCost;
 
-    private long timeToFirstToken;
+    private int timeToFirstToken;
 
     private long latency;
 

@@ -51,8 +51,6 @@ public class GenAIProviderAccess extends Source {
 
     private double totalCost;
 
-    private long timeToFirstToken;
-
     private long latency;
 
     private boolean status;

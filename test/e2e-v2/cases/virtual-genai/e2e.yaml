@@ -33,8 +33,8 @@ trigger:
   action: http
   interval: 3s
   times: -1
-  url: http://${sender_host}:${sender_9093}/sendZipkinTrace2Kafka
-  method: POST
+  url: http://${sender_host}:${sender_9093}/genai/testSpringAI
+  method: GET
 
 verify:
   retry:

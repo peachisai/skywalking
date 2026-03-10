@@ -20,6 +20,7 @@ package org.apache.skywalking.oap.meter.analyzer.config;
 
 import org.apache.skywalking.oap.server.library.module.ModuleStartException;
 import org.apache.skywalking.oap.server.library.util.ResourceUtils;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;
@@ -31,11 +32,9 @@ import java.util.Map;
 public class GenAIConfigLoader {
 
     private final GenAIConfig config;
-    private final Yaml yaml;
 
     public GenAIConfigLoader(GenAIConfig config, Yaml yaml) {
         this.config = config;
-        this.yaml = yaml;
     }
 
     public GenAIConfig loadConfig() throws ModuleStartException {
@@ -66,7 +65,7 @@ public class GenAIConfigLoader {
             provider.setProvider(name.toString());
 
             Object baseUrl = providerMap.get("base-url");
-            if (baseUrl != null) {
+            if (baseUrl != null && StringUtil.isNotBlank(baseUrl.toString())) {
                 provider.setBaseUrl(baseUrl.toString());
             }
 

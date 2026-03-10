@@ -70,7 +70,6 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
         source.setInputTokens(metrics.getInputTokens());
         source.setOutputTokens(metrics.getOutputTokens());
         source.setTotalCost(metrics.getTotalCost());
-        source.setTimeToFirstToken(metrics.getTimeToFirstToken());
         source.setLatency(metrics.getLatency());
         source.setStatus(metrics.isStatus());
         source.setTimeBucket(metrics.getTimeBucket());

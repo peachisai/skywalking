@@ -47,7 +47,7 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
     private static final String TAG_MODEL = "gen_ai.response.model";
     private static final String TAG_INPUT_TOKENS = "gen_ai.usage.input_tokens";
     private static final String TAG_OUTPUT_TOKENS = "gen_ai.usage.output_tokens";
-    private static final String TAG_TTFT = "gen_ai.usage.ttft";
+    private static final String TAG_TTFT = "gen_ai.stream.ttfr";
 
     @Override
     public GenAIMetrics extractMetricsFromSWSpan(SpanObject span, SegmentObject segment) {
@@ -71,8 +71,8 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         String provider = matchResult.getProvider();
         GenAIConfig.Model modelConfig = matchResult.getModelConfig();
 
-        long inputTokens = parseSafeInt(tags.get(TAG_INPUT_TOKENS));
-        long outputTokens = parseSafeInt(tags.get(TAG_OUTPUT_TOKENS));
+        long inputTokens = parseSafeLong(tags.get(TAG_INPUT_TOKENS));
+        long outputTokens = parseSafeLong(tags.get(TAG_OUTPUT_TOKENS));
 
         // calculate the total cost by the cost configs
         double totalCost = 0.0;
@@ -92,6 +92,8 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         metrics.setModelName(modelName);
         metrics.setInputTokens(inputTokens);
         metrics.setOutputTokens(outputTokens);
+
+        metrics.setTimeToFirstToken(parseSafeInt(tags.get(TAG_OUTPUT_TOKENS)));
         metrics.setTotalCost(totalCost);
 
         long latency = span.getEndTime() - span.getStartTime();
@@ -100,6 +102,18 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         metrics.setTimeBucket(TimeBucket.getMinuteTimeBucket(span.getStartTime()));
 
         return metrics;
+    }
+
+    private long parseSafeLong(String value) {
+        if (StringUtil.isEmpty(value)) {
+            return 0;
+        }
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            LOG.warn("Failed to parse token count: {}", value);
+            return 0;
+        }
     }
 
     private int parseSafeInt(String value) {
