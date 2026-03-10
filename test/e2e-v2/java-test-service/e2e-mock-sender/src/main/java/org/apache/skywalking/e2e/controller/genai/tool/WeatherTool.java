@@ -26,10 +26,13 @@ public class WeatherTool {
 
     @Tool(name = "get_weather", description = "Get weather by city name")
     public String getWeather(String city) {
-        return switch (city.toLowerCase()) {
-            case "new york" -> "Sunny, 10°C";
-            case "london" -> "Cloudy, 12°C";
-            default -> "Unknown city";
-        };
+        switch (city.toLowerCase()) {
+            case "new york":
+                return "Sunny, 10°C";
+            case "london":
+                return "Cloudy, 12°C";
+            default:
+                return "Unknown city";
+        }
     }
 }

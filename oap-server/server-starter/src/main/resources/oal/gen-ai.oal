@@ -30,7 +30,10 @@ gen_ai_provider_total_cost = from(GenAIProviderAccess.totalCost).sum();
 
 gen_ai_model_call_cpm = from(GenAIModelAccess.*).cpm();
 
+gen_ai_model_sla = from(GenAIModelAccess.*).percent(status == true);
+
 gen_ai_model_latency_avg = from(GenAIModelAccess.latency).longAvg();
+
 gen_ai_model_latency_percentile = from(GenAIModelAccess.latency).percentile(10);
 
 gen_ai_model_ttft_avg = from(GenAIModelAccess.timeToFirstToken).longAvg();

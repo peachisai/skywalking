@@ -26,27 +26,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/case")
+@RequestMapping("/genai")
 @RequiredArgsConstructor
 public class GenAICallController {
 
     private final WeatherTool weatherTool;
     private final ChatClient chatClient;
 
-    @GetMapping("/healthCheck")
-    public String healthCheck() {
-        return "Success";
-    }
-
-    @GetMapping("/spring-ai-1.x-scenario-case")
+    @GetMapping("/testSpringAI")
     public String testCase() throws Exception {
 
-        String systemPrompt = """
-                You are a professional technical assistant.
-                Strictly use the provided context to answer questions.
-                If the information is not in the context, say: "I'm sorry, I don't have that information in my knowledge base."
-                Do not use outside knowledge. Be concise.
-                """;
+        String systemPrompt = "You are a professional technical assistant.\n" +
+                "Strictly use the provided context to answer questions.\n" +
+                "If the information is not in the context, say: \"I'm sorry, I don't have that information in my knowledge base.\"\n" +
+                "Do not use outside knowledge. Be concise.\n";
 
         chatClient
                 .prompt("What's the weather in New York?")
