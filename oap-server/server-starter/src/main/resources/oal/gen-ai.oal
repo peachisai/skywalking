@@ -32,12 +32,12 @@ gen_ai_model_call_cpm = from(GenAIModelAccess.*).cpm();
 
 gen_ai_model_sla = from(GenAIModelAccess.*).percent(status == true);
 
-gen_ai_model_latency_avg = from(GenAIModelAccess.latency).filter(timeToFirstToken > 0).longAvg();
+gen_ai_model_latency_avg = from(GenAIModelAccess.latency).longAvg();
 
 gen_ai_model_latency_percentile = from(GenAIModelAccess.latency).percentile(10);
 
-gen_ai_model_ttft_avg = from(GenAIModelAccess.timeToFirstToken).longAvg();
-gen_ai_model_ttft_percentile = from(GenAIModelAccess.timeToFirstToken).percentile(10);
+gen_ai_model_ttft_avg = from(GenAIModelAccess.timeToFirstToken).filter(timeToFirstToken > 0).longAvg();
+gen_ai_model_ttft_percentile = from(GenAIModelAccess.timeToFirstToken).filter(timeToFirstToken > 0).percentile(10);
 
 gen_ai_model_input_tokens_sum = from(GenAIModelAccess.inputTokens).sum();
 gen_ai_model_output_tokens_sum = from(GenAIModelAccess.outputTokens).sum();

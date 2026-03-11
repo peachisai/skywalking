@@ -21,6 +21,7 @@ import org.apache.skywalking.apm.network.common.v3.KeyStringValuePair;
 import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
 import org.apache.skywalking.oap.meter.analyzer.config.GenAIConfig;
+import org.apache.skywalking.oap.meter.analyzer.config.GenAITagKey;
 import org.apache.skywalking.oap.meter.analyzer.matcher.GenAIProviderPrefixMatcher;
 import org.apache.skywalking.oap.server.core.analysis.IDManager;
 import org.apache.skywalking.oap.server.core.analysis.Layer;
@@ -44,11 +45,6 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         this.matcher = matcher;
     }
 
-    private static final String TAG_MODEL = "gen_ai.response.model";
-    private static final String TAG_INPUT_TOKENS = "gen_ai.usage.input_tokens";
-    private static final String TAG_OUTPUT_TOKENS = "gen_ai.usage.output_tokens";
-    private static final String TAG_TTFT = "gen_ai.stream.ttfr";
-
     @Override
     public GenAIMetrics extractMetricsFromSWSpan(SpanObject span, SegmentObject segment) {
         Map<String, String> tags = span.getTagsList().stream()
@@ -58,7 +54,7 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
                         (v1, v2) -> v1
                 ));
 
-        String modelName = tags.get(TAG_MODEL);
+        String modelName = tags.get(GenAITagKey.RESPONSE_MODEL);
 
         if (StringUtil.isBlank(modelName)) {
             if (LOG.isDebugEnabled()) {
@@ -71,8 +67,8 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         String provider = matchResult.getProvider();
         GenAIConfig.Model modelConfig = matchResult.getModelConfig();
 
-        long inputTokens = parseSafeLong(tags.get(TAG_INPUT_TOKENS));
-        long outputTokens = parseSafeLong(tags.get(TAG_OUTPUT_TOKENS));
+        long inputTokens = parseSafeLong(tags.get(GenAITagKey.INPUT_TOKENS));
+        long outputTokens = parseSafeLong(tags.get(GenAITagKey.OUTPUT_TOKENS));
 
         // calculate the total cost by the cost configs
         double totalCost = 0.0;
@@ -93,7 +89,7 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         metrics.setInputTokens(inputTokens);
         metrics.setOutputTokens(outputTokens);
 
-        metrics.setTimeToFirstToken(parseSafeInt(tags.get(TAG_OUTPUT_TOKENS)));
+        metrics.setTimeToFirstToken(parseSafeInt(tags.get(GenAITagKey.STREAM_TTFT)));
         metrics.setTotalCost(totalCost);
 
         long latency = span.getEndTime() - span.getStartTime();

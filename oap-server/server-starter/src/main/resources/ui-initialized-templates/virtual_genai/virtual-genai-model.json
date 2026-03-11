@@ -247,6 +247,72 @@
                   },
                   "id": "0-0-13",
                   "moved": false
+                },
+                {
+                  "x": 0,
+                  "y": 34,
+                  "w": 12,
+                  "h": 10,
+                  "i": "20",
+                  "type": "Widget",
+                  "widget": {
+                    "name": "AvgTTFT",
+                    "title": "Average TTFT",
+                    "tips": "The average time from the start of the request until the model returns the first token (Time To First Token)."
+                  },
+                  "metricConfig": [
+                    {
+                      "label": "Avg TTFT",
+                      "unit": "ms"
+                    }
+                  ],
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "id": "0-0-20",
+                  "moved": false,
+                  "expressions": [
+                    "gen_ai_model_ttft_avg"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ]
+                },
+                {
+                  "x": 12,
+                  "y": 34,
+                  "w": 12,
+                  "h": 10,
+                  "i": "21",
+                  "type": "Widget",
+                  "widget": {
+                    "name": "TTFTPercentile",
+                    "title": "TTFT Percentile",
+                    "tips": "The percentile distribution of Time to First Token."
+                  },
+                  "metricConfig": [
+                    {
+                      "label": "TTFT Percentile",
+                      "unit": "ms"
+                    }
+                  ],
+                  "graph": {
+                    "type": "Bar",
+                    "showBackground": true
+                  },
+                  "id": "0-0-21",
+                  "moved": false,
+                  "expressions": [
+                    "gen_ai_model_ttft_percentile"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ]
                 }
               ]
             }
