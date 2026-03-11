@@ -42,4 +42,4 @@ verify:
     interval: 3s
   cases:
     - includes:
-        - ./virtual-virtual-genai-cases.yaml
+        - ./virtual-genai-cases.yaml

@@ -62,9 +62,13 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
             }
             return null;
         }
-
+        String provider = tags.get(GenAITagKey.PROVIDER_NAME);
         GenAIProviderPrefixMatcher.MatchResult matchResult = matcher.match(modelName);
-        String provider = matchResult.getProvider();
+
+        if (StringUtil.isBlank(provider)) {
+            provider = matchResult.getProvider();
+        }
+
         GenAIConfig.Model modelConfig = matchResult.getModelConfig();
 
         long inputTokens = parseSafeLong(tags.get(GenAITagKey.INPUT_TOKENS));

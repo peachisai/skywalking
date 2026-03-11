@@ -25,6 +25,9 @@ providers:
       - name: gpt-4.1-2025-04-14
         input-cost-per-m: 10000
         output-cost-per-m: 10000
+      - name: gpt-4.1
+        input-cost-per-m: 500
+        output-cost-per-m: 500
 
   - provider: anthropic
     base-url:
@@ -73,7 +76,7 @@ providers:
   - provider: tencent
     base-url:
     prefix-match:
-      - hunyuan-
+      - hunyuan
 
   - provider: moonshot
     base-url:

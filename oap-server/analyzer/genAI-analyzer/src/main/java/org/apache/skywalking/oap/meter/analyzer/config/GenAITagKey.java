@@ -19,6 +19,8 @@ package org.apache.skywalking.oap.meter.analyzer.config;
 
 public class GenAITagKey {
 
+    public static final String PROVIDER_NAME = "gen_ai.provider.name";
+
     public static final String RESPONSE_MODEL = "gen_ai.response.model";
     public static final String INPUT_TOKENS = "gen_ai.usage.input_tokens";
     public static final String OUTPUT_TOKENS = "gen_ai.usage.output_tokens";
