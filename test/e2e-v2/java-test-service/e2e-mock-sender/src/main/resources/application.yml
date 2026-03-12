@@ -20,17 +20,6 @@ spring:
   main:
     banner-mode: 'off'
 
-  ai:
-    openai:
-      api-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-      base-url: http://localhost:9093/llm
-      chat:
-        options:
-          model: gpt-4.1-2025-04-14
-          temperature: 0.7
-          max-tokens: 1000
-          top-p: 0.9
-
 e2e:
   oap-host: ${OAP_HOST:127.0.0.1}
   oap-grpc-port: ${OAP_GRPC_PORT:11800}
@@ -38,4 +27,3 @@ e2e:
   zipkin-kafka-groupId: ${ZIPKIN_KAFKA_GROUPID:zipkin}
   zipkin-kafka-topic: ${ZIPKIN_KAFKA_TOPIC:zipkin}
   otel-metrics-data-path: ${OTEL_METRICS_DATA_PATH:/data/otel-metrics/}
-

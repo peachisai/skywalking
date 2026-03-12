@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.e2e.controller.genai.tool;
+package org.apache.skywalking.e2e.tool;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;

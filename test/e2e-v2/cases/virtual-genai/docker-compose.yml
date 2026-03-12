@@ -32,5 +32,23 @@ services:
     ports:
       - 17912
 
+  genai:
+    image: "eclipse-temurin:8-jre"
+    volumes:
+      - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-genai-2.0.0.jar:/e2e-mock-genai-2.0.0.jar
+    command: [ "java", "-jar", "/e2e-mock-genai-2.0.0.jar" ]
+    networks:
+      - e2e
+    ports:
+      - 9095
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 9095" ]
+      interval: 5s
+      timeout: 60s
+      retries: 120
+    depends_on:
+      oap:
+        condition: service_healthy
+
 networks:
   e2e:

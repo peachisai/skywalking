@@ -13,33 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This file is used to show how to write configuration files and can be used to test.
+server:
+  port: 9095
 
-setup:
-  env: compose
-  file: docker-compose.yml
-  timeout: 20m
-  init-system-environment: ../../script/env
-  steps:
-    - name: set PATH
-      command: export PATH=/tmp/skywalking-infra-e2e/bin:$PATH
-    - name: install yq
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh yq
-    - name: install swctl
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh swctl
+spring:
+  main:
+    banner-mode: 'off'
 
+  ai:
+    openai:
+      api-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      base-url: http://localhost:9095/llm
+      chat:
+        options:
+          model: gpt-4.1-2025-04-14
+          temperature: 0.7
+          max-tokens: 1000
+          top-p: 0.9
 
-trigger:
-  action: http
-  interval: 3s
-  times: -1
-  url: http://${genai_host}:${genai_9095}/genai/testSpringAI
-  method: GET
-
-verify:
-  retry:
-    count: 60
-    interval: 3s
-  cases:
-    - includes:
-        - ./virtual-genai-cases.yaml

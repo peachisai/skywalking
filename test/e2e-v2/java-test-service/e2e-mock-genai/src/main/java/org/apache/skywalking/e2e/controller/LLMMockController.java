@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.e2e.controller.genai;
+package org.apache.skywalking.e2e.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;

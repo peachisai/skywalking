@@ -13,20 +13,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package org.apache.skywalking.e2e.controller.genai.config;
+package org.apache.skywalking.e2e;
 
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-@Configuration
-public class ChatClientConfig {
-
-    @Bean
-    public ChatClient openAIChatClient(OpenAiChatModel model) {
-        return ChatClient.create(model);
+@SpringBootApplication
+@ComponentScan({"org.apache.skywalking"})
+public class ServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceApplication.class, args);
     }
+
 }

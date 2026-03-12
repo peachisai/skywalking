@@ -16,10 +16,10 @@
  *
  */
 
-package org.apache.skywalking.e2e.controller.genai;
+package org.apache.skywalking.e2e.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.skywalking.e2e.controller.genai.tool.WeatherTool;
+import org.apache.skywalking.e2e.tool.WeatherTool;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
