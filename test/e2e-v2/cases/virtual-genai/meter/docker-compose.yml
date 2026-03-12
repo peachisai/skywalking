@@ -13,26 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: "3"
+version: '2.1'
 
 services:
-  oap:
-    extends:
-      file: ../../script/docker-compose/base-compose.yml
-      service: oap
-    ports:
-      - "12800:12800"
-    networks:
-      - e2e
-
-  banyandb:
-    extends:
-      file: ../../script/docker-compose/base-compose.yml
-      service: banyandb
-    ports:
-      - 17912
-
-
   zookeeper:
     image: zookeeper:3.4
     hostname: zookeeper
@@ -88,10 +71,35 @@ services:
       timeout: 60s
       retries: 120
 
+  oap:
+    extends:
+      file: ../../../script/docker-compose/base-compose.yml
+      service: oap
+    environment:
+      SW_KAFKA_FETCHER: default
+      SW_KAFKA_FETCHER_SERVERS: broker-a:9092,broker-b:9092
+      SW_KAFKA_FETCHER_PARTITIONS: 2
+      SW_KAFKA_FETCHER_PARTITIONS_FACTOR: 1
+      SW_METER_ANALYZER_ACTIVE_FILES: spring-micrometer
+    depends_on:
+      broker-a:
+        condition: service_healthy
+      broker-b:
+        condition: service_healthy
+    ports:
+    - 12800
+
+  banyandb:
+    extends:
+      file: ../../../script/docker-compose/base-compose.yml
+      service: banyandb
+    ports:
+      - 17912
+
   provider:
     build:
       context: ../../../
-      dockerfile: cases/virtual-genai/Dockerfile.provider
+      dockerfile: cases/kafka/Dockerfile.provider
       args:
         - SW_AGENT_JDK_VERSION=${SW_AGENT_JDK_VERSION}
         - SW_AGENT_JAVA_COMMIT=${SW_AGENT_JAVA_COMMIT}

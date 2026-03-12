@@ -13,33 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This file is used to show how to write configuration files and can be used to test.
+ARG SW_AGENT_SATELLITE_COMMIT
+FROM ghcr.io/apache/skywalking-satellite/skywalking-satellite:v${SW_AGENT_SATELLITE_COMMIT} as base
 
-setup:
-  env: compose
-  file: docker-compose.yml
-  timeout: 20m
-  init-system-environment: ../../script/env
-  steps:
-    - name: set PATH
-      command: export PATH=/tmp/skywalking-infra-e2e/bin:$PATH
-    - name: install yq
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh yq
-    - name: install swctl
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh swctl
+FROM alpine:3.10
 
+COPY --from=base /skywalking-satellite /sw-satellite
+COPY --from=base /skywalking/configs /skywalking/
 
-trigger:
-  action: http
-  interval: 3s
-  times: -1
-  url: http://${genai_host}:${genai_9095}/genai/testSpringAI
-  method: GET
-
-verify:
-  retry:
-    count: 60
-    interval: 3s
-  cases:
-    - includes:
-        - ./virtual-genai-cases.yaml
+ENTRYPOINT ["/sw-satellite", "start", "--config", "/skywalking/configs/satellite_config.yaml"]
