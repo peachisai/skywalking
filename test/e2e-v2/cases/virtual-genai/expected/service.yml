@@ -13,21 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-server:
-  port: 9095
-
-spring:
-  main:
-    banner-mode: 'off'
-
-  ai:
-    openai:
-      api-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-      base-url: http://localhost:9095/llm
-      chat:
-        options:
-          model: gpt-4.1-2025-04-14
-          temperature: 0.7
-          max-tokens: 1000
-          top-p: 0.9
-
+{{- contains . }}
+- id: {{ b64enc "openai" }}.1
+  name: flink::flink-cluster
+  group: flink
+  shortname: flink-cluster
+  layers:
+    - FLINK
+  normal: true
+{{- end }}

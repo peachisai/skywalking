@@ -35,7 +35,6 @@
         <module>opentelemetry-proto</module>
         <module>e2e-mock-baseline-server</module>
         <module>trace-mocker</module>
-        <module>e2e-mock-genai</module>
     </modules>
 
     <properties>
