@@ -18,21 +18,24 @@ FROM eclipse-temurin:17-jdk AS builder
 RUN apt-get update && apt-get install -y git maven && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /source
-
 RUN git clone https://github.com/spring-projects/spring-ai-examples.git
 
 WORKDIR /source/spring-ai-examples/models/chat/helloworld
-
 RUN mvn clean package -DskipTests
 
 RUN find target/ -maxdepth 1 -name "*.jar" ! -name "*-plain.jar" -exec cp {} /app.jar \;
 
-FROM eclipse-temurin:17-jre
+ARG SW_AGENT_JDK_VERSION=17
+ARG SW_AGENT_JAVA_COMMIT
 
-WORKDIR /app
+FROM ghcr.io/apache/skywalking-java/skywalking-java:${SW_AGENT_JAVA_COMMIT}-java${SW_AGENT_JDK_VERSION}
 
-COPY --from=builder /app.jar app.jar
+WORKDIR /skywalking
+
+VOLUME /services
+
+COPY --from=builder /app.jar /services/app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["sh", "-c", "java -jar /services/app.jar"]

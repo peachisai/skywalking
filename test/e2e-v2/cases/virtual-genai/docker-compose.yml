@@ -40,14 +40,6 @@ services:
       - e2e
     ports:
       - 9090
-    environment:
-      SW_AGENT_COLLECTOR_BACKEND_SERVICES: oap:11800
-      SW_KAFKA_BOOTSTRAP_SERVERS: broker-a:9092,broker-b:9092
-      SW_GET_TOPIC_TIMEOUT: 60
-      SW_AGENT_NAME: e2e-service-provider
-      SW_AGENT_INSTANCE_NAME: provider1
-      SW_LOGGING_OUTPUT: CONSOLE
-      SW_METER_REPORT_INTERVAL: 5
     depends_on:
       oap:
         condition: service_healthy
