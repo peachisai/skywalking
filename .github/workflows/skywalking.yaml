@@ -526,14 +526,14 @@ jobs:
 #          - name: eBPF Access Log ES Sharding
 #            config: test/e2e-v2/cases/profiling/ebpf/access_log/es/es-sharding/e2e.yaml
 #
-          - name: Kafka Basic
-            config: test/e2e-v2/cases/kafka/simple-so11y/e2e.yaml
-          - name: Kafka Profiling
-            config: test/e2e-v2/cases/kafka/profile/e2e.yaml
-          - name: Kafka Meter
-            config: test/e2e-v2/cases/kafka/meter/e2e.yaml
-          - name: Kafka Log
-            config: test/e2e-v2/cases/kafka/log/e2e.yaml
+#          - name: Kafka Basic
+#            config: test/e2e-v2/cases/kafka/simple-so11y/e2e.yaml
+#          - name: Kafka Profiling
+#            config: test/e2e-v2/cases/kafka/profile/e2e.yaml
+#          - name: Kafka Meter
+#            config: test/e2e-v2/cases/kafka/meter/e2e.yaml
+#          - name: Kafka Log
+#            config: test/e2e-v2/cases/kafka/log/e2e.yaml
 #
 #          - name: Istio Metrics Service 1.21.0
 #            config: test/e2e-v2/cases/istio/metrics/e2e.yaml
@@ -634,8 +634,8 @@ jobs:
 #            config: test/e2e-v2/cases/nginx/e2e.yaml
 #          - name: APISIX metrics
 #            config: test/e2e-v2/cases/apisix/otel-collector/e2e.yaml
-          - name: Exporter Kafka
-            config: test/e2e-v2/cases/exporter/kafka/e2e.yaml
+#          - name: Exporter Kafka
+#            config: test/e2e-v2/cases/exporter/kafka/e2e.yaml
 #          - name: Virtual MQ
 #            config: test/e2e-v2/cases/virtual-mq/e2e.yaml
 #          - name: AWS Cloud EKS

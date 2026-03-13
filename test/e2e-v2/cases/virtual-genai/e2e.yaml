@@ -42,4 +42,4 @@ verify:
     interval: 3s
   cases:
     - includes:
-        - ./flink-cases.yaml
+        - ./virtual-genai.yaml

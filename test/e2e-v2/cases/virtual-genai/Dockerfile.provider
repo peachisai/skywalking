@@ -13,33 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This file is used to show how to write configuration files and can be used to test.
+FROM eclipse-temurin:17-jdk AS builder
 
-setup:
-  env: compose
-  file: docker-compose.yml
-  timeout: 20m
-  init-system-environment: ../../script/env
-  steps:
-    - name: set PATH
-      command: export PATH=/tmp/skywalking-infra-e2e/bin:$PATH
-    - name: install yq
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh yq
-    - name: install swctl
-      command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh swctl
+RUN apt-get update && apt-get install -y git maven && rm -rf /var/lib/apt/lists/*
 
+WORKDIR /source
 
-trigger:
-  action: http
-  interval: 3s
-  times: -1
-  url: http://${jobmanager_host}:${jobmanager_9260}/metrics
-  method: GET
+RUN git clone https://github.com/spring-projects/spring-ai-examples.git
 
-verify:
-  retry:
-    count: 60
-    interval: 3s
-  cases:
-    - includes:
-        - ./virtual-genai.yaml
+WORKDIR /source/spring-ai-examples/models/chat/helloworld
+
+RUN mvn clean package -DskipTests
+
+RUN find target/ -maxdepth 1 -name "*.jar" ! -name "*-plain.jar" -exec cp {} /app.jar \;
+
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+COPY --from=builder /app.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

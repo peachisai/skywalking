@@ -15,9 +15,9 @@
 
 {{- contains . }}
 - id: {{ b64enc "openai" }}.1
-  name: flink::flink-cluster
-  group: flink
-  shortname: flink-cluster
+  name: openai
+  group: ""
+  shortname: openai
   layers:
     - FLINK
   normal: true
