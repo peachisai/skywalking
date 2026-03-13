@@ -34,7 +34,7 @@ services:
 
   spring-ai-examples:
     build:
-      context: ../../../
+      context: ../../
       dockerfile: cases/virtual-genai/Dockerfile.provider
     networks:
       - e2e
