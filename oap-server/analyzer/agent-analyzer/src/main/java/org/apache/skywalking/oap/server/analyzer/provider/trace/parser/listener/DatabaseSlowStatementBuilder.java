@@ -18,17 +18,28 @@
 
 package org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener;
 
+import java.util.Optional;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.skywalking.apm.network.logging.v3.LogData;
+import org.apache.skywalking.oap.server.core.CoreModule;
+import org.apache.skywalking.oap.server.core.analysis.DownSampling;
 import org.apache.skywalking.oap.server.core.analysis.IDManager;
 import org.apache.skywalking.oap.server.core.analysis.Layer;
+import org.apache.skywalking.oap.server.core.analysis.TimeBucket;
 import org.apache.skywalking.oap.server.core.config.NamingControl;
 import org.apache.skywalking.oap.server.core.source.DatabaseSlowStatement;
+import org.apache.skywalking.oap.server.core.source.LALOutputBuilder;
+import org.apache.skywalking.oap.server.core.source.SourceReceiver;
+import org.apache.skywalking.oap.server.library.module.ModuleManager;
 
-@RequiredArgsConstructor
-public class DatabaseSlowStatementBuilder {
-    private final NamingControl namingControl;
+@Slf4j
+public class DatabaseSlowStatementBuilder implements LALOutputBuilder {
+    public static final String NAME = "SlowSQL";
+
+    private static NamingControl NAMING_CONTROL;
+    private static boolean INITIALIZED;
 
     @Getter
     @Setter
@@ -55,8 +66,67 @@ public class DatabaseSlowStatementBuilder {
     @Setter
     private long timestamp;
 
+    public DatabaseSlowStatementBuilder() {
+    }
+
+    /**
+     * Constructor for v1 (Groovy) path which doesn't use {@link #init}.
+     */
+    public DatabaseSlowStatementBuilder(final NamingControl namingControl) {
+        NAMING_CONTROL = namingControl;
+        INITIALIZED = true;
+    }
+
+    @Override
+    public String name() {
+        return NAME;
+    }
+
+    @Override
+    public void init(final LogData logData, final Optional<Object> extraLog,
+                     final ModuleManager moduleManager) {
+        if (!INITIALIZED) {
+            NAMING_CONTROL = moduleManager.find(CoreModule.NAME)
+                                          .provider()
+                                          .getService(NamingControl.class);
+            INITIALIZED = true;
+        }
+        // Only populate fields not already set by the LAL extractor.
+        if (this.serviceName == null) {
+            this.serviceName = logData.getService();
+        }
+        if (this.traceId == null) {
+            this.traceId = logData.getTraceContext().getTraceId();
+        }
+        if (this.timestamp == 0) {
+            this.timestamp = logData.getTimestamp();
+        }
+        if (this.timeBucket == 0) {
+            this.timeBucket = TimeBucket.getTimeBucket(
+                this.timestamp > 0 ? this.timestamp : logData.getTimestamp(),
+                DownSampling.Second);
+        }
+    }
+
+    @Override
+    public void complete(final SourceReceiver sourceReceiver) {
+        if (id == null || latency < 1 || statement == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("SlowSQL builder incomplete, skipping dispatch: id={}, latency={}, statement={}",
+                    id, latency, statement);
+            }
+            return;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("SlowSQL builder dispatching: service={}, id={}, statement={}, latency={}",
+                serviceName, id, statement, latency);
+        }
+        prepare();
+        sourceReceiver.receive(toDatabaseSlowStatement());
+    }
+
     public void prepare() {
-        this.serviceName = namingControl.formatServiceName(serviceName);
+        this.serviceName = NAMING_CONTROL.formatServiceName(serviceName);
     }
 
     public DatabaseSlowStatement toDatabaseSlowStatement() {

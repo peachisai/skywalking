@@ -20,9 +20,11 @@ package org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import java.util.Optional;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.skywalking.apm.network.logging.v3.LogData;
 import org.apache.skywalking.oap.server.core.analysis.DownSampling;
 import org.apache.skywalking.oap.server.core.analysis.IDManager;
 import org.apache.skywalking.oap.server.core.analysis.Layer;
@@ -31,15 +33,23 @@ import org.apache.skywalking.oap.server.core.analysis.manual.trace.SampledSlowTr
 import org.apache.skywalking.oap.server.core.analysis.manual.trace.SampledStatus4xxTraceRecord;
 import org.apache.skywalking.oap.server.core.analysis.manual.trace.SampledStatus5xxTraceRecord;
 import org.apache.skywalking.oap.server.core.analysis.record.Record;
+import org.apache.skywalking.oap.server.core.analysis.worker.RecordStreamProcessor;
+import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.config.NamingControl;
 import org.apache.skywalking.oap.server.core.source.DefaultScopeDefine;
 import org.apache.skywalking.oap.server.core.source.DetectPoint;
 import org.apache.skywalking.oap.server.core.source.ISource;
+import org.apache.skywalking.oap.server.core.source.LALOutputBuilder;
 import org.apache.skywalking.oap.server.core.source.ProcessRelation;
+import org.apache.skywalking.oap.server.core.source.SourceReceiver;
+import org.apache.skywalking.oap.server.library.module.ModuleManager;
 
-@RequiredArgsConstructor
-public class SampledTraceBuilder {
-    private final NamingControl namingControl;
+@Slf4j
+public class SampledTraceBuilder implements LALOutputBuilder {
+    public static final String NAME = "SampledTrace";
+
+    private static NamingControl NAMING_CONTROL;
+    private static boolean INITIALIZED;
 
     @Setter
     @Getter
@@ -79,6 +89,71 @@ public class SampledTraceBuilder {
     @Setter
     @Getter
     private long timestamp;
+
+    public SampledTraceBuilder() {
+    }
+
+    /**
+     * Constructor for v1 (Groovy) path which doesn't use {@link #init}.
+     */
+    public SampledTraceBuilder(final NamingControl namingControl) {
+        NAMING_CONTROL = namingControl;
+        INITIALIZED = true;
+    }
+
+    @Override
+    public String name() {
+        return NAME;
+    }
+
+    @Override
+    public void init(final LogData logData, final Optional<Object> extraLog,
+                     final ModuleManager moduleManager) {
+        if (!INITIALIZED) {
+            NAMING_CONTROL = moduleManager.find(CoreModule.NAME)
+                                          .provider()
+                                          .getService(NamingControl.class);
+            INITIALIZED = true;
+        }
+        // Only populate fields not already set by the LAL extractor.
+        if (this.traceId == null) {
+            this.traceId = logData.getTraceContext().getTraceId();
+        }
+        if (this.serviceName == null) {
+            this.serviceName = logData.getService();
+        }
+        if (this.serviceInstanceName == null) {
+            this.serviceInstanceName = logData.getServiceInstance();
+        }
+        if (this.layer == null && !logData.getLayer().isEmpty()) {
+            this.layer = logData.getLayer();
+        }
+        if (this.timestamp == 0) {
+            this.timestamp = logData.getTimestamp();
+        }
+    }
+
+    @Override
+    public void complete(final SourceReceiver sourceReceiver) {
+        if (Strings.isNullOrEmpty(traceId) || reason == null
+                || Strings.isNullOrEmpty(processId) || Strings.isNullOrEmpty(destProcessId)
+                || componentId <= 0 || detectPoint == null || timestamp <= 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("SampledTrace builder incomplete, skipping dispatch: traceId={}, reason={}, "
+                        + "processId={}, destProcessId={}, componentId={}, detectPoint={}, timestamp={}",
+                    traceId, reason, processId, destProcessId, componentId, detectPoint, timestamp);
+            }
+            return;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("SampledTrace builder dispatching: service={}, traceId={}, uri={}, reason={}",
+                serviceName, traceId, uri, reason);
+        }
+        validate();
+        final Record record = toRecord();
+        RecordStreamProcessor.getInstance().in(record);
+        sourceReceiver.receive(toEntity());
+    }
 
     public void validate() {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(traceId), "traceId can't be empty");
@@ -140,9 +215,9 @@ public class SampledTraceBuilder {
 
     public ISource toEntity() {
         final ProcessRelation processRelation = new ProcessRelation();
-        final String serviceId = IDManager.ServiceID.buildId(namingControl.formatServiceName(serviceName),
+        final String serviceId = IDManager.ServiceID.buildId(NAMING_CONTROL.formatServiceName(serviceName),
             Layer.nameOf(layer).isNormal());
-        final String instanceId = IDManager.ServiceInstanceID.buildId(serviceId, namingControl.formatInstanceName(serviceInstanceName));
+        final String instanceId = IDManager.ServiceInstanceID.buildId(serviceId, NAMING_CONTROL.formatInstanceName(serviceInstanceName));
         processRelation.setInstanceId(instanceId);
         processRelation.setSourceProcessId(processId);
         processRelation.setDestProcessId(destProcessId);

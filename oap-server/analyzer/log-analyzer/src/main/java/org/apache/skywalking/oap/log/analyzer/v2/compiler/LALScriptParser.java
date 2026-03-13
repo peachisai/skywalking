@@ -29,6 +29,7 @@ import org.antlr.v4.runtime.Recognizer;
 import org.apache.skywalking.lal.rt.grammar.LALLexer;
 import org.apache.skywalking.lal.rt.grammar.LALParser;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.AbortStatement;
+import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.DefStatement;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.InterpolationPart;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.CompareOp;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.ComparisonCondition;
@@ -55,7 +56,6 @@ import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.Sampler
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.SamplerContent;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.SinkBlock;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.SinkStatement;
-import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.SlowSqlBlock;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.StringConditionValue;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.TagAssignment;
 import org.apache.skywalking.oap.log.analyzer.v2.compiler.LALScriptModel.TagValue;
@@ -135,6 +135,9 @@ public final class LALScriptParser {
         if (ctx.abortBlock() != null) {
             return new AbortStatement();
         }
+        if (ctx.defStatement() != null) {
+            return visitDefStatement(ctx.defStatement());
+        }
         // ifStatement
         return visitIfStatement(ctx.ifStatement());
     }
@@ -191,6 +194,9 @@ public final class LALScriptParser {
 
     private static ExtractorStatement visitExtractorStatement(
             final LALParser.ExtractorStatementContext ctx) {
+        if (ctx.defStatement() != null) {
+            return (ExtractorStatement) visitDefStatement(ctx.defStatement());
+        }
         if (ctx.serviceStatement() != null) {
             return visitFieldAssignment(FieldType.SERVICE, ctx.serviceStatement().valueAccess(),
                 ctx.serviceStatement().typeCast());
@@ -227,11 +233,8 @@ public final class LALScriptParser {
         if (ctx.metricsBlock() != null) {
             return visitMetricsBlock(ctx.metricsBlock());
         }
-        if (ctx.slowSqlBlock() != null) {
-            return visitSlowSqlBlock(ctx.slowSqlBlock());
-        }
-        if (ctx.sampledTraceBlock() != null) {
-            return visitSampledTraceBlock(ctx.sampledTraceBlock());
+        if (ctx.outputFieldStatement() != null) {
+            return visitOutputFieldStatement(ctx.outputFieldStatement());
         }
         // ifStatement
         return (ExtractorStatement) visitIfStatement(ctx.ifStatement());
@@ -244,6 +247,25 @@ public final class LALScriptParser {
         final ValueAccess va = visitValueAccess(vaCtx);
         final String cast = tcCtx != null ? extractCastType(tcCtx) : null;
         return new FieldAssignment(type, va, cast, null);
+    }
+
+    private static LALScriptModel.OutputFieldAssignment visitOutputFieldStatement(
+            final LALParser.OutputFieldStatementContext ctx) {
+        final String fieldName = ctx.anyIdentifier().getText();
+        final ValueAccess value = visitValueAccess(ctx.valueAccess());
+        final String castType = ctx.typeCast() != null ? extractCastType(ctx.typeCast()) : null;
+        return new LALScriptModel.OutputFieldAssignment(fieldName, value, castType);
+    }
+
+    // ==================== Def statement ====================
+
+    private static DefStatement visitDefStatement(
+            final LALParser.DefStatementContext ctx) {
+        final String varName = ctx.IDENTIFIER().getText();
+        final ValueAccess initializer = visitValueAccess(ctx.valueAccess());
+        final String castType = ctx.typeCast() != null
+            ? extractCastType(ctx.typeCast()) : null;
+        return new DefStatement(varName, initializer, castType);
     }
 
     // ==================== Tag statement ====================
@@ -304,107 +326,6 @@ public final class LALScriptParser {
         }
 
         return new MetricsBlock(name, timestampValue, timestampCast, labels, value, valueCast);
-    }
-
-    // ==================== Slow SQL block ====================
-
-    private static SlowSqlBlock visitSlowSqlBlock(final LALParser.SlowSqlBlockContext ctx) {
-        ValueAccess id = null;
-        String idCast = null;
-        ValueAccess statement = null;
-        String statementCast = null;
-        ValueAccess latency = null;
-        String latencyCast = null;
-
-        for (final LALParser.SlowSqlStatementContext ssc :
-                ctx.slowSqlContent().slowSqlStatement()) {
-            if (ssc.slowSqlIdStatement() != null) {
-                id = visitValueAccess(ssc.slowSqlIdStatement().valueAccess());
-                idCast = ssc.slowSqlIdStatement().typeCast() != null
-                    ? extractCastType(ssc.slowSqlIdStatement().typeCast()) : null;
-            }
-            if (ssc.slowSqlStatementStatement() != null) {
-                statement = visitValueAccess(ssc.slowSqlStatementStatement().valueAccess());
-                statementCast = ssc.slowSqlStatementStatement().typeCast() != null
-                    ? extractCastType(ssc.slowSqlStatementStatement().typeCast()) : null;
-            }
-            if (ssc.slowSqlLatencyStatement() != null) {
-                latency = visitValueAccess(ssc.slowSqlLatencyStatement().valueAccess());
-                latencyCast = ssc.slowSqlLatencyStatement().typeCast() != null
-                    ? extractCastType(ssc.slowSqlLatencyStatement().typeCast()) : null;
-            }
-        }
-
-        return new SlowSqlBlock(id, idCast, statement, statementCast, latency, latencyCast);
-    }
-
-    // ==================== Sampled trace block ====================
-
-    private static LALScriptModel.SampledTraceBlock visitSampledTraceBlock(
-            final LALParser.SampledTraceBlockContext ctx) {
-        final List<LALScriptModel.SampledTraceStatement> stmts = new ArrayList<>();
-        for (final LALParser.SampledTraceStatementContext stc :
-                ctx.sampledTraceContent().sampledTraceStatement()) {
-            if (stc.ifStatement() != null) {
-                stmts.add((LALScriptModel.SampledTraceStatement) visitIfStatement(
-                    stc.ifStatement()));
-            } else {
-                stmts.add(visitSampledTraceField(stc));
-            }
-        }
-        return new LALScriptModel.SampledTraceBlock(stmts);
-    }
-
-    private static LALScriptModel.SampledTraceField visitSampledTraceField(
-            final LALParser.SampledTraceStatementContext ctx) {
-        if (ctx.sampledTraceLatencyStatement() != null) {
-            return makeSampledField(LALScriptModel.SampledTraceFieldType.LATENCY,
-                ctx.sampledTraceLatencyStatement().valueAccess(),
-                ctx.sampledTraceLatencyStatement().typeCast());
-        }
-        if (ctx.sampledTraceUriStatement() != null) {
-            return makeSampledField(LALScriptModel.SampledTraceFieldType.URI,
-                ctx.sampledTraceUriStatement().valueAccess(),
-                ctx.sampledTraceUriStatement().typeCast());
-        }
-        if (ctx.sampledTraceReasonStatement() != null) {
-            return makeSampledField(LALScriptModel.SampledTraceFieldType.REASON,
-                ctx.sampledTraceReasonStatement().valueAccess(),
-                ctx.sampledTraceReasonStatement().typeCast());
-        }
-        if (ctx.sampledTraceProcessIdStatement() != null) {
-            return makeSampledField(LALScriptModel.SampledTraceFieldType.PROCESS_ID,
-                ctx.sampledTraceProcessIdStatement().valueAccess(),
-                ctx.sampledTraceProcessIdStatement().typeCast());
-        }
-        if (ctx.sampledTraceDestProcessIdStatement() != null) {
-            return makeSampledField(LALScriptModel.SampledTraceFieldType.DEST_PROCESS_ID,
-                ctx.sampledTraceDestProcessIdStatement().valueAccess(),
-                ctx.sampledTraceDestProcessIdStatement().typeCast());
-        }
-        if (ctx.sampledTraceDetectPointStatement() != null) {
-            return makeSampledField(LALScriptModel.SampledTraceFieldType.DETECT_POINT,
-                ctx.sampledTraceDetectPointStatement().valueAccess(),
-                ctx.sampledTraceDetectPointStatement().typeCast());
-        }
-        if (ctx.sampledTraceComponentIdStatement() != null) {
-            return makeSampledField(LALScriptModel.SampledTraceFieldType.COMPONENT_ID,
-                ctx.sampledTraceComponentIdStatement().valueAccess(),
-                ctx.sampledTraceComponentIdStatement().typeCast());
-        }
-        // reportService
-        return makeSampledField(LALScriptModel.SampledTraceFieldType.REPORT_SERVICE,
-            ctx.reportServiceStatement().valueAccess(),
-            ctx.reportServiceStatement().typeCast());
-    }
-
-    private static LALScriptModel.SampledTraceField makeSampledField(
-            final LALScriptModel.SampledTraceFieldType type,
-            final LALParser.ValueAccessContext vaCtx,
-            final LALParser.TypeCastContext tcCtx) {
-        return new LALScriptModel.SampledTraceField(
-            type, visitValueAccess(vaCtx),
-            tcCtx != null ? extractCastType(tcCtx) : null);
     }
 
     // ==================== Sink block ====================
@@ -498,14 +419,6 @@ public final class LALScriptParser {
                 stmts.add((FilterStatement) new EnforcerStatement());
             } else if (ssc.dropperStatement() != null) {
                 stmts.add((FilterStatement) new DropperStatement());
-            }
-        }
-        for (final LALParser.SampledTraceStatementContext stc :
-                ctx.sampledTraceStatement()) {
-            if (stc.ifStatement() != null) {
-                stmts.add((FilterStatement) visitIfStatement(stc.ifStatement()));
-            } else {
-                stmts.add((FilterStatement) visitSampledTraceField(stc));
             }
         }
         // Handle samplerContent alternative (rateLimit blocks inside if within sampler)
@@ -799,7 +712,7 @@ public final class LALScriptParser {
             } else if (fac.STRING() != null) {
                 final String val = stripQuotes(fac.STRING().getText());
                 final ValueAccess va = new ValueAccess(
-                    List.of(val), false, false, true, true, false,
+                    List.of(val), false, false, false, true, false,
                     List.of(), null, null);
                 args.add(new LALScriptModel.FunctionArg(va, null));
             } else if (fac.NUMBER() != null) {
@@ -845,6 +758,9 @@ public final class LALScriptParser {
         }
         if (ctx.BOOLEAN_TYPE() != null) {
             return "Boolean";
+        }
+        if (ctx.qualifiedName() != null) {
+            return ctx.qualifiedName().getText();
         }
         return null;
     }

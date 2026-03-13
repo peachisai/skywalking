@@ -16,6 +16,18 @@
   - v1 (Groovy) and v2 (ANTLR4+Javassist) cross-version checker validates behavioral equivalence across 1,290+ expressions
   - JMH benchmarks confirm v2 runtime speedups: MAL execute ~6.8x, LAL compile ~39x / execute ~2.8x, Hierarchy execute ~2.6x faster than Groovy v1
   - Generated class names follow `{yamlFileName}_L{lineNo}_{ruleName}` pattern for all DSLs (MAL/LAL/Hierarchy) for stack trace traceability
+* **Breaking Change** — LAL: remove `slowSql {}` and `sampledTrace {}` sub-DSLs from the grammar. These are replaced by the configurable `outputType` mechanism:
+  - Set `outputType` at the rule level in YAML config to specify the output entity class. Use the short name registered by `LALOutputBuilder` SPI (e.g., `outputType: SlowSQL`, `outputType: SampledTrace`), or a fully qualified class name as fallback.
+  - `LALOutputBuilder` implementations are discovered via `ServiceLoader` and expose a `name()` method for short name resolution. Built-in types: `SlowSQL` (`DatabaseSlowStatementBuilder`), `SampledTrace` (`SampledTraceBuilder`).
+  - Output fields (e.g., `id`, `statement`, `latency`) are now regular field assignments in the extractor block, no longer wrapped in sub-DSL blocks.
+  - Custom output fields are validated against the output type's setters at compile time.
+  - An explicit `sink {}` block is now **required** for data to be persisted. Without `sink {}`, no data is saved — this applies to all LAL rules including those using `outputType`. In v1, `slowSql {}` and `sampledTrace {}` dispatched data as a side-effect inside the extractor; in v2, persistence is always handled by the sink pipeline.
+  - Output type resolution order: per-rule YAML `outputType` (short name via SPI or FQCN) > `LALSourceTypeProvider` SPI default > `Log.class`.
+  - All bundled LAL scripts (`mysql-slowsql.yaml`, `pgsql-slowsql.yaml`, `redis-slowsql.yaml`, `envoy-als.yaml`, `k8s-service.yaml`, `mesh-dp.yaml`) have been updated.
+  - Users with custom LAL scripts using `slowSql {}` or `sampledTrace {}` must migrate to the new syntax. See [LAL documentation](../concepts-and-designs/lal.md#output-type).
+  - Rename `ExtractorSpec` to `MetricExtractor` — now only handles LAL `metrics {}` blocks. Standard field setters (service, layer, timestamp, etc.) are compiled as direct setter calls on the output builder.
+  - Add `def` local variable support in LAL extractor (and filter level). Supports `toJson()` and `toJsonArray()` built-in functions for converting strings, Maps, and protobuf `Struct` to Gson JSON objects. Variables support null-safe navigation (`?.`), method chaining with compile-time type inference, and explicit type cast via `as` (built-in types or fully qualified class names, e.g., `def resp = parsed?.response as io.envoyproxy.envoy.data.accesslog.v3.HTTPResponseProperties`).
+  - **Breaking Change** — `LALOutputBuilder.init()` signature changed from `init(LogData, NamingControl)` to `init(LogData, Optional<Object> extraLog, NamingControl)`. The `extraLog` parameter carries the typed input object (e.g., `HTTPAccessLogEntry` for envoy access logs) so that output builders can access protocol-specific fields. Custom `LALOutputBuilder` implementations must update their `init()` method signature.
 * Fix E2E test metrics verify: make it failure if the metric values all null.
 * Support building, testing, and publishing with Java 25.
 * Add `CLAUDE.md` as AI assistant guide for the project.
@@ -83,6 +95,7 @@
 #### OAP Server
 
 * KubernetesCoordinator: make self instance return real pod IP address instead of `127.0.0.1`.
+* Fix KubernetesCoordinator self-endpoint race condition: include self in the endpoint list so DynamicEndpointGroup re-fires the listener when the self pod appears in the informer after initial sync.
 * Enhance the alarm kernel with recovered status notification capability
 * Fix BrowserWebVitalsPerfData `clsTime` to `cls` and make it double type.
 * Init `log-mal-rules` at module provider start stage to avoid re-init for every LAL.
@@ -152,6 +165,7 @@
 * Remove `initExp` from MAL configuration. It was an internal Groovy startup validation mechanism, not an end-user feature. The v2 ANTLR4 compiler performs fail-fast validation at startup natively.
 * Update hierarchy rule documentation: `auto-matching-rules` in `hierarchy-definition.yml` no longer use Groovy scripts. Rules now use a dedicated expression grammar supporting property access, String methods, if/else, comparisons, and logical operators. All shipped rules are fully compatible.
 * Activate `otlp-traces` handler in `receiver-otel` by default.
+* Update Istio E2E test versions: remove EOL 1.20.0, add 1.25.0–1.29.0 for ALS/Metrics/Ambient tests. Update Rover with Istio Process test from 1.15.0 to 1.28.0 with Kubernetes 1.28.
 
 #### UI
 * Fix the missing icon in new native trace view.
