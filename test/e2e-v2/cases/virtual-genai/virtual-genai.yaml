@@ -20,5 +20,8 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
     expected: expected/service.yml
 
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-id=b3BlbmFp.0
+    expected: expected/instance.yml
+
 
 
