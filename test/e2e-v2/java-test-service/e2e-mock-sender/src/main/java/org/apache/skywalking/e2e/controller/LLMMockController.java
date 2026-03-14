@@ -15,6 +15,7 @@
  * limitations under the License.
  *
  */
+
 package org.apache.skywalking.e2e.controller;
 
 import com.alibaba.fastjson.JSON;
