@@ -52,12 +52,12 @@ services:
     networks:
       - e2e
     ports:
-      - 9090
+      - 9091
     environment:
-      OPENAI_API_KEY: sk-zuxrezdvwLLU9sGRUEW8mdFKkXuFugK7H9uf2b7iS3qCRU9M
-      SPRING_AI_OPENAI_BASE_URL: http://localhost:9093/llm
+      OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      SPRING_AI_OPENAI_BASE_URL: http://localhost:9090/llm
     depends_on:
-      oap:
+      provider:
         condition: service_healthy
 
 networks:
