@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ARG SW_AGENT_JDK_VERSION
+ARG SW_AGENT_JAVA_COMMIT
+
 FROM eclipse-temurin:17-jdk AS builder
 
 RUN apt-get update && apt-get install -y git maven && rm -rf /var/lib/apt/lists/*
@@ -24,9 +27,6 @@ WORKDIR /source/spring-ai-examples/models/chat/helloworld
 RUN mvn clean package -DskipTests
 
 RUN find target/ -maxdepth 1 -name "*.jar" ! -name "*-plain.jar" -exec cp {} /app.jar \;
-
-ARG SW_AGENT_JDK_VERSION=17
-ARG SW_AGENT_JAVA_COMMIT
 
 FROM ghcr.io/apache/skywalking-java/skywalking-java:${SW_AGENT_JAVA_COMMIT}-java${SW_AGENT_JDK_VERSION}
 
