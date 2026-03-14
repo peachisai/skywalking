@@ -34,7 +34,7 @@ services:
 
   provider:
     extends:
-      file: ../../../script/docker-compose/base-compose.yml
+      file: ../../script/docker-compose/base-compose.yml
       service: provider
     ports:
       - 9090
