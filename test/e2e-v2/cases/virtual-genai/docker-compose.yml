@@ -40,6 +40,8 @@ services:
       - e2e
     ports:
       - 9090
+    environment:
+      OPENAI_API_KEY: sk-zuxrezdvwLLU9sGRUEW8mdFKkXuFugK7H9uf2b7iS3qCRU9M
     depends_on:
       oap:
         condition: service_healthy
