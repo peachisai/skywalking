@@ -28,7 +28,7 @@ RUN find target/ -maxdepth 1 -name "*.jar" ! -name "*-plain.jar" -exec cp {} /ap
 ARG SW_AGENT_JDK_VERSION=17
 ARG SW_AGENT_JAVA_COMMIT
 
-FROM ghcr.io/apache/skywalking-java/skywalking-java:2a61027e5eb74ed1258c764ae2ffeabd499416a6-java17
+FROM ghcr.io/apache/skywalking-java/skywalking-java:${SW_AGENT_JAVA_COMMIT}-java${SW_AGENT_JDK_VERSION}
 
 WORKDIR /skywalking
 

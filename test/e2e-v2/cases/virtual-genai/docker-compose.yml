@@ -32,16 +32,43 @@ services:
     ports:
       - 17912
 
+  sender:
+    image: "eclipse-temurin:8-jre"
+    volumes:
+      - ./../../../java-test-service/e2e-mock-sender/target/e2e-mock-sender-2.0.0.jar:/e2e-mock-sender-2.0.0.jar
+      - ./mock-data:/data/otel-metrics
+    command: [ "java", "-jar", "/e2e-mock-sender-2.0.0.jar" ]
+    environment:
+      OAP_HOST: oap
+      OAP_GRPC_PORT: 11800
+      OTEL_METRICS_DATA_PATH: /data/otel-metrics
+    networks:
+      - e2e
+    ports:
+      - 9093:9093
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 9093"]
+      interval: 5s
+      timeout: 60s
+      retries: 120
+    depends_on:
+      oap:
+        condition: service_healthy
+
   spring-ai-examples:
     build:
       context: .
       dockerfile: Dockerfile.provider
+      args:
+        - SW_AGENT_JDK_VERSION=17
+        - SW_AGENT_JAVA_COMMIT=${SW_AGENT_JAVA_COMMIT}
     networks:
       - e2e
     ports:
       - 9090
     environment:
       OPENAI_API_KEY: sk-zuxrezdvwLLU9sGRUEW8mdFKkXuFugK7H9uf2b7iS3qCRU9M
+      SPRING_AI_OPENAI_BASE_URL: http://localhost:9093/llm
     depends_on:
       oap:
         condition: service_healthy

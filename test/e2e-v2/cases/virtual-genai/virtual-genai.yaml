@@ -20,8 +20,20 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql service ls
     expected: expected/service.yml
 
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_resp_time --service-id=b3BlbmFp.0
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_taskManagers_registered_number --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_taskManagers_slots_total --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=meter_flink_jobManager_taskManagers_slots_available --service-name=flink::flink-cluster
+    expected: expected/metrics-has-value.yml
+
+ # instance cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-id=b3BlbmFp.0
     expected: expected/instance.yml
+
+
 
 
 
