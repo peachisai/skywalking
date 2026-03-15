@@ -31,8 +31,8 @@ setup:
 trigger:
   action: http
   interval: 3s
-  times: -1
-  url: http://${spring-ai-examples_host}:${spring-ai-examples_9260}/metrics
+  times: 3
+  url: http://localhost:9260/ai/generateStream
   method: GET
 
 verify:
