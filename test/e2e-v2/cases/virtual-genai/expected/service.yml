@@ -19,6 +19,6 @@
   group: ""
   shortname: openai
   layers:
-    - FLINK
+    - VIRTUAL-GENAI
   normal: true
 {{- end }}
