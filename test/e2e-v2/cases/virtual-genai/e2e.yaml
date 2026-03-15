@@ -31,7 +31,7 @@ setup:
 trigger:
   action: http
   interval: 3s
-  times: 3
+  times: 5
   url: http://localhost:9260/ai/generateStream
   method: GET
 
