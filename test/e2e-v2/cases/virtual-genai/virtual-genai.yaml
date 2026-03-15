@@ -41,7 +41,24 @@ cases:
  # instance cases
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance ls --service-id=b3BlbmFp.0
     expected: expected/instance.yml
-
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_call_cpm --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_sla --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_latency_avg --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_latency_percentile --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_ttft_avg --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_ttft_percentile --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_input_tokens_sum --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_output_tokens_sum --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec gen_ai_model_total_cost --service-id=b3BlbmFp.0 --instance-name=gpt-4.1-mini
+    expected: expected/metrics-has-value.yml
 
 
 
