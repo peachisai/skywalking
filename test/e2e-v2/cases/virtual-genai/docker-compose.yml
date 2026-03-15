@@ -49,7 +49,7 @@ services:
       dockerfile: Dockerfile.provider
       args:
         - SW_AGENT_JDK_VERSION=17
-        - SW_AGENT_JAVA_COMMIT=2a61027e5eb74ed1258c764ae2ffeabd499416a6
+        - SW_AGENT_JAVA_COMMIT=233effa70f86f3d6d53dfc4b8a4aa4817143e58c
     ports:
       - "9260:8080"
     networks:
