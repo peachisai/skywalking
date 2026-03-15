@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y git maven && rm -rf /var/lib/apt/lists/
 WORKDIR /source
 RUN git clone https://github.com/spring-projects/spring-ai-examples.git
 
-WORKDIR /source/spring-ai-examples/misc/chat/openai-streaming-response
+WORKDIR /source/spring-ai-examples/misc/openai-streaming-response
 RUN mvn clean package -DskipTests
 
 RUN find target/ -maxdepth 1 -name "*.jar" ! -name "*-plain.jar" -exec cp {} /app.jar \;
