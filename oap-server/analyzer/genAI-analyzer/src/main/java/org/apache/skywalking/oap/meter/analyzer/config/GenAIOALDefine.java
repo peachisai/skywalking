@@ -26,7 +26,7 @@ public class GenAIOALDefine extends OALDefine {
 
     private GenAIOALDefine() {
         super(
-                "oal/gen-ai.oal",
+                "oal/virtual-gen-ai.oal",
                 "org.apache.skywalking.oap.server.core.source"
         );
     }
