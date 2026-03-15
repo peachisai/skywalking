@@ -66,24 +66,23 @@ public class LLMMockController {
     }
 
     private void writeStreamChunk(PrintWriter writer, String id, long created, String model, String delta, String finishReason) {
-        String json = """
-                {
-                    "id": "%s",
-                    "object": "chat.completion.chunk",
-                    "created": %d,
-                    "model": "%s",
-                    "choices": [
-                        {
-                            "index": 0,
-                            "delta": %s,
-                            "finish_reason": %s
-                        }
-                    ]
-                }
-                """.formatted(id, created, model, delta, finishReason);
+        String json = "{"
+                + "\"id\": \"%s\","
+                + "\"object\": \"chat.completion.chunk\","
+                + "\"created\": %d,"
+                + "\"model\": \"%s\","
+                + "\"choices\": ["
+                + "{"
+                + "\"index\": 0,"
+                + "\"delta\": %s,"
+                + "\"finish_reason\": %s"
+                + "}"
+                + "]"
+                + "}";
 
-        String cleanJson = json.replace("\n", "").replace("\r", "");
-        writer.write("data: " + cleanJson + "\n\n");
+        String formattedJson = String.format(json, id, created, model, delta, finishReason);
+
+        writer.write("data: " + formattedJson + "\n\n");
         writer.flush();
     }
 }
