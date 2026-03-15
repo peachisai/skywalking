@@ -30,12 +30,6 @@
                     "textAlign": "center",
                     "showUnit": true
                   },
-                  "metricConfig": [
-                    {
-                      "unit": "USD",
-                      "label": "Total Cost"
-                    }
-                  ],
                   "widget": {
                     "name": "TotalCost",
                     "title": "Total Cost",
