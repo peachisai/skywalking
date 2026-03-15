@@ -33,6 +33,7 @@ import java.time.Instant;
 public class LLMMockController {
     @PostMapping("/v1/chat/completions")
     public Object completions(@RequestBody JSONObject request, HttpServletResponse response) throws Exception {
+
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Cache-Control", "no-cache");
@@ -43,6 +44,7 @@ public class LLMMockController {
         String model = "gpt-4.1-mini";
 
         try (PrintWriter writer = response.getWriter()) {
+            Thread.sleep(1000);
             writeStreamChunk(writer, id, created, model, "{\"role\":\"assistant\"}", "null");
 
             String fullContent = "Why did the scarecrow win an award? Because he was outstanding in his field!";
@@ -71,18 +73,35 @@ public class LLMMockController {
                 + "\"object\": \"chat.completion.chunk\","
                 + "\"created\": %d,"
                 + "\"model\": \"%s\","
+                + "\"system_fingerprint\": null,"
                 + "\"choices\": ["
                 + "{"
                 + "\"index\": 0,"
                 + "\"delta\": %s,"
                 + "\"finish_reason\": %s"
                 + "}"
-                + "]"
+                + "],"
+                + "\"usage\": {"
+                + "\"completion_tokens\": 17,"
+                + "\"completion_tokens_details\": {"
+                + "\"accepted_prediction_tokens\": 0,"
+                + "\"audio_tokens\": 0,"
+                + "\"reasoning_tokens\": 0,"
+                + "\"rejected_prediction_tokens\": 0"
+                + "},"
+                + "\"prompt_tokens\": 52,"
+                + "\"prompt_tokens_details\": {"
+                + "\"audio_tokens\": 0,"
+                + "\"cached_tokens\": 0"
+                + "},"
+                + "\"total_tokens\": 69"
+                + "}"
                 + "}";
 
         String formattedJson = String.format(json, id, created, model, delta, finishReason);
 
-        writer.write("data: " + formattedJson + "\n\n");
+        String cleanJson = formattedJson.replace("\n", "").replace("\r", "");
+        writer.write("data: " + cleanJson + "\n\n");
         writer.flush();
     }
 }
