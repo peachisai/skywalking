@@ -14,11 +14,11 @@
 # limitations under the License.
 
 {{- contains . }}
-- id: {{ b64enc "openai" }}.1
+- id: {{ b64enc "openai" }}.0
   name: openai
   group: ""
   shortname: openai
   layers:
-    - VIRTUAL-GENAI
+    - VIRTUAL_GENAI
   normal: false
 {{- end }}
