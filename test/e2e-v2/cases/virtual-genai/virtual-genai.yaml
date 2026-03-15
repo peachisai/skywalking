@@ -29,7 +29,7 @@ cases:
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_latency_avg --service-id=b3BlbmFp.0
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_latency_percentile --service-id=b3BlbmFp.0
-    expected: expected/metrics-has-value.yml
+    expected: expected/metrics-has-value-label.yml.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_input_tokens_sum --service-id=b3BlbmFp.0
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_output_tokens_sum --service-id=b3BlbmFp.0
