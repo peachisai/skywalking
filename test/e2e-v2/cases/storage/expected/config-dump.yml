@@ -202,3 +202,4 @@ ai-pipeline.default.baselineServerPort=18080
 receiver-otel.provider=default
 core.default.activeExtraModelColumns=false
 query.graphql.enableUpdateUITemplate=false
+genAI-analyzer.provider=default
