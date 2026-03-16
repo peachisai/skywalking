@@ -45,22 +45,6 @@
               "unit": "calls / min"
             }
           ]
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "w": 24,
-          "h": 3,
-          "i": "1",
-          "type": "Text",
-          "graph": {
-            "fontColor": "theme",
-            "backgroundColor": "theme",
-            "content": "Provide Generative AI observability by analyzing tracing-derived telemetry data.",
-            "fontSize": 14,
-            "textAlign": "left",
-            "url": "https://skywalking.apache.org/docs/main/next/en/setup/backend/backend-flink-monitoring/"
-          }
         }
       ],
       "id": "Virtual-GenAI-Root",

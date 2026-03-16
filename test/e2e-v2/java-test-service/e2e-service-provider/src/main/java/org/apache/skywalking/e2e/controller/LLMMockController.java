@@ -41,7 +41,7 @@ public class LLMMockController {
 
         String id = "chatcmpl-simple-mock-001";
         long created = Instant.now().getEpochSecond();
-        String model = "gpt-4.1-mini";
+        String model = "gpt-4.1-mini-2025-04-14";
 
         try (PrintWriter writer = response.getWriter()) {
             Thread.sleep(1000);

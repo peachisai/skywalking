@@ -37,10 +37,6 @@ providers:
   - provider: openai
     prefix-match:
       - gpt
-    models:
-      - name: gpt-4.1-mini
-        input-cost-per-m: 100
-        output-cost-per-m: 100
 
   - provider: anthropic
     prefix-match:
