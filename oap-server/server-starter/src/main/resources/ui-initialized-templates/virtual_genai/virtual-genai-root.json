@@ -59,7 +59,7 @@
             "content": "Provide Generative AI observability by analyzing tracing-derived telemetry data.",
             "fontSize": 14,
             "textAlign": "left",
-            "url": "https://skywalking.apache.org/docs/main/next/en/setup/backend/backend-Rocketmq-monitoring/"
+            "url": "https://skywalking.apache.org/docs/main/next/en/setup/backend/backend-flink-monitoring/"
           }
         }
       ],
