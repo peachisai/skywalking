@@ -78,10 +78,10 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         double totalCost = 0.0;
         if (modelConfig != null) {
             if (modelConfig.getInputCostPerM() > 0) {
-                totalCost += (inputTokens / 1_000_000.0) * modelConfig.getInputCostPerM();
+                totalCost += inputTokens * modelConfig.getInputCostPerM();
             }
             if (modelConfig.getOutputCostPerM() > 0) {
-                totalCost += (outputTokens / 1_000_000.0) * modelConfig.getOutputCostPerM();
+                totalCost += outputTokens * modelConfig.getOutputCostPerM();
             }
         }
 

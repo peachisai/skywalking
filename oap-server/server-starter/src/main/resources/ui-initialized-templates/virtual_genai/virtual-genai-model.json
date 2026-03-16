@@ -22,7 +22,7 @@
                   "i": "2",
                   "type": "Widget",
                   "expressions": [
-                    "latest(gen_ai_model_total_cost)"
+                    "latest(gen_ai_model_total_cost)/1000000"
                   ],
                   "graph": {
                     "type": "Card",
