@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanLayer;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
-import org.apache.skywalking.oap.meter.analyzer.service.IGenAIMeterAnalyzerService;
+import org.apache.skywalking.oap.genai.analyzer.service.IGenAIMeterAnalyzerService;
 import org.apache.skywalking.oap.server.core.analysis.Layer;
 import org.apache.skywalking.oap.server.core.config.NamingControl;
 import org.apache.skywalking.oap.server.core.source.GenAIMetrics;

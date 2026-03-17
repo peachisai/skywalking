@@ -16,15 +16,15 @@
  *
  */
 
-package org.apache.skywalking.oap.meter.analyzer;
+package org.apache.skywalking.oap.genai.analyzer;
 
-import org.apache.skywalking.oap.meter.analyzer.config.GenAIConfig;
-import org.apache.skywalking.oap.meter.analyzer.config.GenAIConfigLoader;
-import org.apache.skywalking.oap.meter.analyzer.config.GenAIOALDefine;
-import org.apache.skywalking.oap.meter.analyzer.matcher.GenAIProviderPrefixMatcher;
-import org.apache.skywalking.oap.meter.analyzer.module.GenAIAnalyzerModule;
-import org.apache.skywalking.oap.meter.analyzer.service.GenAIMeterAnalyzer;
-import org.apache.skywalking.oap.meter.analyzer.service.IGenAIMeterAnalyzerService;
+import org.apache.skywalking.oap.genai.analyzer.matcher.GenAIProviderPrefixMatcher;
+import org.apache.skywalking.oap.genai.analyzer.service.GenAIMeterAnalyzer;
+import org.apache.skywalking.oap.genai.analyzer.service.IGenAIMeterAnalyzerService;
+import org.apache.skywalking.oap.genai.analyzer.config.GenAIConfig;
+import org.apache.skywalking.oap.genai.analyzer.config.GenAIConfigLoader;
+import org.apache.skywalking.oap.genai.analyzer.config.GenAIOALDefine;
+import org.apache.skywalking.oap.genai.analyzer.module.GenAIAnalyzerModule;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.oal.rt.OALEngineLoaderService;
 import org.apache.skywalking.oap.server.library.module.ModuleConfig;

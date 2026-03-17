@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.oap.meter.analyzer.service;
+package org.apache.skywalking.oap.genai.analyzer.service;
 
 import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;

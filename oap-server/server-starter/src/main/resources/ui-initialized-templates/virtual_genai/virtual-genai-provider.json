@@ -136,7 +136,7 @@
                 },
                 {
                   "x": 0,
-                  "y": 11,
+                  "y": 22,
                   "w": 12,
                   "h": 11,
                   "i": "0",
@@ -193,13 +193,13 @@
                 },
                 {
                   "x": 0,
-                  "y": 22,
-                  "w": 12,
-                  "h": 12,
+                  "y": 11,
+                  "w": 6,
+                  "h": 11,
                   "i": "14",
                   "type": "Widget",
                   "expressions": [
-                    "gen_ai_provider_latency_avg"
+                    "gen_ai_provider_input_tokens_avg"
                   ],
                   "graph": {
                     "type": "Line",
@@ -207,9 +207,9 @@
                     "showYAxis": true
                   },
                   "widget": {
-                    "name": "AvgLatency",
-                    "title": "Average Latency",
-                    "tips": "The average latency of model access."
+                    "name": "AvgInputTokens",
+                    "title": "Average Input Tokens",
+                    "tips": "he average number of input tokens (prompt) used per model access."
                   },
                   "metricConfig": [
                     {
@@ -218,7 +218,10 @@
                     }
                   ],
                   "id": "0-0-14",
-                  "moved": false
+                  "moved": false,
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ]
                 },
                 {
                   "x": 12,
@@ -241,6 +244,35 @@
                   },
                   "id": "0-0-13",
                   "moved": false
+                },
+                {
+                  "x": 6,
+                  "y": 11,
+                  "w": 6,
+                  "h": 11,
+                  "i": "20",
+                  "type": "Widget",
+                  "widget": {
+                    "name": "AvgOutputTokens",
+                    "title": "Average Output Tokens",
+                    "tips": "The average number of output tokens (completion) used per model access."
+                  },
+                  "graph": {
+                    "type": "Line",
+                    "step": false,
+                    "smooth": false,
+                    "showSymbol": true,
+                    "showXAxis": true,
+                    "showYAxis": true
+                  },
+                  "id": "0-0-20",
+                  "moved": false,
+                  "expressions": [
+                    "gen_ai_provider_output_tokens_avg"
+                  ],
+                  "typesOfMQE": [
+                    "TIME_SERIES_VALUES"
+                  ]
                 }
               ]
             },

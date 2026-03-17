@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.oap.meter.analyzer.config;
+package org.apache.skywalking.oap.genai.analyzer.config;
 
 import org.apache.skywalking.oap.server.library.module.ModuleStartException;
 import org.apache.skywalking.oap.server.library.util.ResourceUtils;

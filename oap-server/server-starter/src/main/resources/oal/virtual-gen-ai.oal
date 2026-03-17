@@ -23,7 +23,10 @@ gen_ai_provider_cpm = from(GenAIProviderAccess.*).cpm();
 gen_ai_provider_latency_percentile = from(GenAIProviderAccess.latency).percentile(10);
 
 gen_ai_provider_input_tokens_sum = from(GenAIProviderAccess.inputTokens).sum();
+gen_ai_provider_input_tokens_avg = from(GenAIProviderAccess.inputTokens).longAvg();
+
 gen_ai_provider_output_tokens_sum = from(GenAIProviderAccess.outputTokens).sum();
+gen_ai_provider_output_tokens_avg = from(GenAIProviderAccess.outputTokens).longAvg();
 
 gen_ai_provider_total_cost = from(GenAIProviderAccess.totalCost).sum();
 

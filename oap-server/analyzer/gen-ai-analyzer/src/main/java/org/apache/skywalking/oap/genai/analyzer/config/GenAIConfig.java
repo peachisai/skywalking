@@ -16,18 +16,35 @@
  *
  */
 
-package org.apache.skywalking.oap.meter.analyzer.config;
+package org.apache.skywalking.oap.genai.analyzer.config;
 
-import org.apache.skywalking.oap.server.core.oal.rt.OALDefine;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 
-public class GenAIOALDefine extends OALDefine {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final GenAIOALDefine INSTANCE = new GenAIOALDefine();
+public class GenAIConfig extends ModuleConfig {
 
-    private GenAIOALDefine() {
-        super(
-                "oal/virtual-gen-ai.oal",
-                "org.apache.skywalking.oap.server.core.source"
-        );
+    @Getter
+    @Setter
+    private List<Provider> providers = new ArrayList<>();
+
+    @Getter
+    @Setter
+    public static class Provider {
+        private String provider;
+        private String baseUrl;
+        private List<String> prefixMatch = new ArrayList<>();
+        private List<Model> models = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    public static class Model {
+        private String name;
+        private double inputCostPerM;
+        private double outputCostPerM;
     }
 }

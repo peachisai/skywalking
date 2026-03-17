@@ -16,9 +16,9 @@
  *
  */
 
-package org.apache.skywalking.oap.meter.analyzer.module;
+package org.apache.skywalking.oap.genai.analyzer.module;
 
-import org.apache.skywalking.oap.meter.analyzer.service.IGenAIMeterAnalyzerService;
+import org.apache.skywalking.oap.genai.analyzer.service.IGenAIMeterAnalyzerService;
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
 public class GenAIAnalyzerModule extends ModuleDefine {
