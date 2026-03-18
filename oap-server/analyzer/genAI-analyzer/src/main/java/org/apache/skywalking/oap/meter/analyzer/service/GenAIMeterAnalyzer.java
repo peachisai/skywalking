@@ -93,7 +93,7 @@ public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
         metrics.setInputTokens(inputTokens);
         metrics.setOutputTokens(outputTokens);
 
-        metrics.setTimeToFirstToken(parseSafeInt(tags.get(GenAITagKey.STREAM_TTFT)));
+        metrics.setTimeToFirstToken(parseSafeInt(tags.get(GenAITagKey.SERVER_TIME_TO_FIRST_TOKEN)));
         metrics.setTotalCost(totalCost);
 
         long latency = span.getEndTime() - span.getStartTime();
