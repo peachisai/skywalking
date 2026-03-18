@@ -26,13 +26,15 @@ cases:
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_cpm --service-id=b3BlbmFp.0
     expected: expected/metrics-has-value.yml
-  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_latency_avg --service-id=b3BlbmFp.0
-    expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_latency_percentile --service-id=b3BlbmFp.0
     expected: expected/metrics-has-value-label.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_input_tokens_sum --service-id=b3BlbmFp.0
     expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_input_tokens_avg --service-id=b3BlbmFp.0
+    expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_output_tokens_sum --service-id=b3BlbmFp.0
+    expected: expected/metrics-has-value.yml
+  - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_output_tokens_avg --service-id=b3BlbmFp.0
     expected: expected/metrics-has-value.yml
   - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql metrics exec --expression=gen_ai_provider_total_cost --service-id=b3BlbmFp.0
     expected: expected/metrics-has-value.yml
