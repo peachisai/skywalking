@@ -88,8 +88,6 @@ public class GenAIAnalyzerModuleProvider extends ModuleProvider {
 
     @Override
     public String[] requiredModules() {
-        return new String[] {
-                CoreModule.NAME
-        };
+        return new String[0];
     }
 }
