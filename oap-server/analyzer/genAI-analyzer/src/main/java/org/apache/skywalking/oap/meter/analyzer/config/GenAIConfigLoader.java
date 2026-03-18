@@ -33,7 +33,7 @@ public class GenAIConfigLoader {
 
     private final GenAIConfig config;
 
-    public GenAIConfigLoader(GenAIConfig config, Yaml yaml) {
+    public GenAIConfigLoader(GenAIConfig config) {
         this.config = config;
     }
 
