@@ -29,6 +29,7 @@ gen_ai_provider_output_tokens_sum = from(GenAIProviderAccess.outputTokens).sum()
 gen_ai_provider_output_tokens_avg = from(GenAIProviderAccess.outputTokens).longAvg();
 
 gen_ai_provider_total_cost = from(GenAIProviderAccess.totalCost).sum();
+gen_ai_provider_avg_cost = from(GenAIProviderAccess.totalCost).doubleAvg();
 
 gen_ai_model_call_cpm = from(GenAIModelAccess.*).cpm();
 
@@ -42,6 +43,9 @@ gen_ai_model_ttft_avg = from(GenAIModelAccess.timeToFirstToken).filter(timeToFir
 gen_ai_model_ttft_percentile = from(GenAIModelAccess.timeToFirstToken).filter(timeToFirstToken > 0).percentile2(10);
 
 gen_ai_model_input_tokens_sum = from(GenAIModelAccess.inputTokens).sum();
+gen_ai_model_input_tokens_avg = from(GenAIModelAccess.inputTokens).longAvg();
 gen_ai_model_output_tokens_sum = from(GenAIModelAccess.outputTokens).sum();
+gen_ai_model_output_tokens_avg = from(GenAIModelAccess.outputTokens).longAvg();
 
 gen_ai_model_total_cost = from(GenAIModelAccess.totalCost).sum();
+gen_ai_model_avg_cost = from(GenAIModelAccess.totalCost).doubleAvg();
