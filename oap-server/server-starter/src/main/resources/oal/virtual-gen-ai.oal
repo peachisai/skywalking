@@ -45,7 +45,7 @@ gen_ai_model_ttft_percentile = from(GenAIModelAccess.timeToFirstToken).filter(ti
 gen_ai_model_input_tokens_sum = from(GenAIModelAccess.inputTokens).sum();
 gen_ai_model_input_tokens_avg = from(GenAIModelAccess.inputTokens).longAvg();
 gen_ai_model_output_tokens_sum = from(GenAIModelAccess.outputTokens).sum();
-gen_ai_model_output_tokens_avg = from(GenAIModelAccess.outputTokens).longAvg();
+c = from(GenAIModelAccess.outputTokens).longAvg();
 
 gen_ai_model_total_cost = from(GenAIModelAccess.totalCost).sum();
 gen_ai_model_avg_cost = from(GenAIModelAccess.totalCost).doubleAvg();
