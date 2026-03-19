@@ -20,7 +20,6 @@ package org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener
 
 import java.util.Arrays;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;

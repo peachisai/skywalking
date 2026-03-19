@@ -23,7 +23,7 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
 public class GenAIAnalyzerModule extends ModuleDefine {
 
-    public static final String NAME = "genAI-analyzer";
+    public static final String NAME = "gen-ai-analyzer";
 
     public GenAIAnalyzerModule() {
         super(NAME);
