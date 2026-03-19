@@ -15,7 +15,7 @@
  *   limitations under the License.
  */
 
-package org.apache.skywalking.oap.meter.analyzer.config;
+package org.apache.skywalking.oap.analyzer.genai.config;
 
 public class GenAITagKey {
 
