@@ -41,7 +41,7 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
 
     private final IGenAIMeterAnalyzerService meterAnalyzerService;
 
-    private List<Source> recordList = new ArrayList<>();
+    private final List<Source> recordList = new ArrayList<>();
 
     @Override
     public void prepareVSIfNecessary(SpanObject span, SegmentObject segmentObject) {
