@@ -47,8 +47,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.python
-      args:
-        - SW_AGENT_PYTHON_COMMIT=${SW_AGENT_PYTHON_COMMIT}
     networks:
       - e2e
     ports:
@@ -61,7 +59,7 @@ services:
       oap:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://127.0.0.1:9091/" ]
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/9091"]
       interval: 5s
       timeout: 60s
       retries: 120
