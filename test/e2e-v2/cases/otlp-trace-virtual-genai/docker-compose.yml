@@ -51,8 +51,8 @@ services:
         - SW_AGENT_PYTHON_COMMIT=${SW_AGENT_PYTHON_COMMIT}
     networks:
       - e2e
-    expose:
-      - 9091
+    ports:
+      - "9091:9091"
     environment:
       OPENAI_BASE_URL: http://provider:9090/llm/otlp/v1
       OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
