@@ -17,14 +17,17 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
     openai \
-    requests \
     opentelemetry-api \
     opentelemetry-sdk \
     opentelemetry-instrumentation-openai \
-    opentelemetry-exporter-otlp
+    opentelemetry-exporter-otlp-proto-grpc
 
 COPY ./openai-call.py /app/openai-call.py
 
