@@ -28,13 +28,6 @@ setup:
     - name: install swctl
       command: bash test/e2e-v2/script/prepare/setup-e2e-shell/install.sh swctl
 
-trigger:
-  action: http
-  interval: 3s
-  times: 5
-  url: http://localhost:9260/ai/generateStream
-  method: GET
-
 verify:
   retry:
     count: 60
