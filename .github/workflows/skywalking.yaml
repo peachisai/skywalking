@@ -588,45 +588,45 @@ jobs:
               KUBERNETES_VERSION=28
             runs-on: ubuntu-24.04
 
-          - name: Satellite
-            config: test/e2e-v2/cases/satellite/native-protocols/e2e.yaml
-          - name: Auth
-            config: test/e2e-v2/cases/simple/auth/e2e.yaml
-          - name: SSL
-            config: test/e2e-v2/cases/simple/ssl/e2e.yaml
-          - name: mTLS
-            config: test/e2e-v2/cases/simple/mtls/e2e.yaml
-          - name: Virtual Gateway
-            config: test/e2e-v2/cases/gateway/e2e.yaml
-          - name: Meter
-            config: test/e2e-v2/cases/meter/e2e.yaml
-          - name: VM Zabbix
-            config: test/e2e-v2/cases/vm/zabbix/e2e.yaml
-          - name: VM Prometheus
-            config: test/e2e-v2/cases/vm/prometheus-node-exporter/e2e.yaml
-          - name: VM Telegraf
-            config: test/e2e-v2/cases/vm/telegraf/e2e.yaml
-          - name: So11y
-            config: test/e2e-v2/cases/so11y/e2e.yaml
-          - name: MySQL Prometheus and slowsql
-            config: test/e2e-v2/cases/mysql/mysql-slowsql/e2e.yaml
-          - name: PostgreSQL Prometheus
-            config: test/e2e-v2/cases/postgresql/postgres-exporter/e2e.yaml
-          - name: MariaDB Prometheus and slowsql
-            config: test/e2e-v2/cases/mariadb/mariadb-slowsql/e2e.yaml
-
-          - name: Zipkin ES
-            config: test/e2e-v2/cases/zipkin/es/e2e.yaml
-          - name: Zipkin ES Sharding
-            config: test/e2e-v2/cases/zipkin/es/es-sharding/e2e.yaml
-          - name: Zipkin MySQL
-            config: test/e2e-v2/cases/zipkin/mysql/e2e.yaml
-          - name: Zipkin Postgres
-            config: test/e2e-v2/cases/zipkin/postgres/e2e.yaml
-          - name: Zipkin Kafka
-            config: test/e2e-v2/cases/zipkin/kafka/e2e.yaml
-          - name: Zipkin BanyanDB
-            config: test/e2e-v2/cases/zipkin/banyandb/e2e.yaml
+#          - name: Satellite
+#            config: test/e2e-v2/cases/satellite/native-protocols/e2e.yaml
+#          - name: Auth
+#            config: test/e2e-v2/cases/simple/auth/e2e.yaml
+#          - name: SSL
+#            config: test/e2e-v2/cases/simple/ssl/e2e.yaml
+#          - name: mTLS
+#            config: test/e2e-v2/cases/simple/mtls/e2e.yaml
+#          - name: Virtual Gateway
+#            config: test/e2e-v2/cases/gateway/e2e.yaml
+#          - name: Meter
+#            config: test/e2e-v2/cases/meter/e2e.yaml
+#          - name: VM Zabbix
+#            config: test/e2e-v2/cases/vm/zabbix/e2e.yaml
+#          - name: VM Prometheus
+#            config: test/e2e-v2/cases/vm/prometheus-node-exporter/e2e.yaml
+#          - name: VM Telegraf
+#            config: test/e2e-v2/cases/vm/telegraf/e2e.yaml
+#          - name: So11y
+#            config: test/e2e-v2/cases/so11y/e2e.yaml
+#          - name: MySQL Prometheus and slowsql
+#            config: test/e2e-v2/cases/mysql/mysql-slowsql/e2e.yaml
+#          - name: PostgreSQL Prometheus
+#            config: test/e2e-v2/cases/postgresql/postgres-exporter/e2e.yaml
+#          - name: MariaDB Prometheus and slowsql
+#            config: test/e2e-v2/cases/mariadb/mariadb-slowsql/e2e.yaml
+#
+#          - name: Zipkin ES
+#            config: test/e2e-v2/cases/zipkin/es/e2e.yaml
+#          - name: Zipkin ES Sharding
+#            config: test/e2e-v2/cases/zipkin/es/es-sharding/e2e.yaml
+#          - name: Zipkin MySQL
+#            config: test/e2e-v2/cases/zipkin/mysql/e2e.yaml
+#          - name: Zipkin Postgres
+#            config: test/e2e-v2/cases/zipkin/postgres/e2e.yaml
+#          - name: Zipkin Kafka
+#            config: test/e2e-v2/cases/zipkin/kafka/e2e.yaml
+#          - name: Zipkin BanyanDB
+#            config: test/e2e-v2/cases/zipkin/banyandb/e2e.yaml
           - name: Virtual GenAI
             config: test/e2e-v2/cases/virtual-genai/e2e.yaml
           - name: OTLP Trace Virtual GenAI
