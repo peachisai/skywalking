@@ -84,7 +84,7 @@ services:
       OPENAI_BASE_URL: http://provider:9090/llm/otlp/v1
       OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
     depends_on:
-      spring-ai-examples:
+      oap:
         condition: service_healthy
     entrypoint: ['python3', '/openai-call.py']
 
