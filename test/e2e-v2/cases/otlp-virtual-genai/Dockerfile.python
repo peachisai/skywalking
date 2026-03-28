@@ -29,5 +29,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
     opentelemetry-instrumentation-openai \
     opentelemetry-exporter-otlp-proto-grpc
 
-COPY ./openai-call.py /app/openai-call.py
+COPY ./openai-call.py /openai-call.py
 
