@@ -20,6 +20,9 @@ services:
     extends:
       file: ../../script/docker-compose/base-compose.yml
       service: oap
+    environment:
+      SW_QUERY_ZIPKIN: default
+      SW_RECEIVER_ZIPKIN: default
     ports:
       - "12800:12800"
       - "11800:11800"
@@ -54,7 +57,7 @@ services:
     environment:
       OPENAI_BASE_URL: http://provider:9090/llm/otlp/v1
       OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
-      OTEL_EXPORTER_OTLP_ENDPOINT: oap:11800
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
     depends_on:
       oap:
         condition: service_healthy
