@@ -41,5 +41,5 @@ verify:
     interval: 3s
   cases:
     - includes:
-        - ./otlp-virtual-genai.yaml
+        - ./virtual-genai.yaml
 

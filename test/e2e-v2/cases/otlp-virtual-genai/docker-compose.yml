@@ -54,15 +54,15 @@ services:
     environment:
       OPENAI_BASE_URL: http://provider:9090/llm/otlp/v1
       OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
+      OTEL_EXPORTER_OTLP_ENDPOINT: oap:11800
     depends_on:
       oap:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/9091"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9091/"]
       interval: 5s
-      timeout: 60s
-      retries: 120
+      timeout: 10s
+      retries: 5
     entrypoint: ['python3', '/openai-call.py']
 
 networks:
