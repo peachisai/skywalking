@@ -44,7 +44,7 @@ class AIRequestHandler(BaseHTTPRequestHandler):
         try:
             response = client.chat.completions.create(
                 model="gpt-4.1-mini",
-                messages=[{"role": "user", "content": "Write a short poem on OpenTelemetry."}]
+                messages=[{"role": "user", "content": "Tell me a joke."}]
             )
             content = response.choices[0].message.content
             self.send_response(200)
