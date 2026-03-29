@@ -50,7 +50,7 @@ public class VirtualGenAIProcessor implements VirtualServiceProcessor {
             return;
         }
 
-        recordList.addAll(meterAnalyzerService.transferToSources(metrics,namingControl));
+        recordList.addAll(meterAnalyzerService.transferToSources(metrics, namingControl));
     }
 
     @Override
