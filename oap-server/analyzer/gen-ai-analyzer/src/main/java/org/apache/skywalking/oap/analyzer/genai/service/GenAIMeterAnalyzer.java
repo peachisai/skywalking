@@ -50,8 +50,7 @@ import static java.util.stream.Collectors.toMap;
 public class GenAIMeterAnalyzer implements IGenAIMeterAnalyzerService {
 
     private final GenAIProviderPrefixMatcher matcher;
-
-
+    
     public GenAIMeterAnalyzer(GenAIProviderPrefixMatcher matcher) {
         this.matcher = matcher;
     }
