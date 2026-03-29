@@ -58,7 +58,7 @@ services:
     environment:
       OPENAI_BASE_URL: http://provider:9090/llm/otlp/v1
       OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
+      OTEL_EXPORTER_ZIPKIN_ENDPOINT: http://oap:9411/api/v2/spans
     depends_on:
       oap:
         condition: service_healthy

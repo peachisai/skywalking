@@ -18,17 +18,16 @@ from http.server import BaseHTTPRequestHandler
 
 from openai import OpenAI
 from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.zipkin.json import ZipkinExporter
 from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 provider = TracerProvider()
 
-otlp_exporter = OTLPSpanExporter(
-    insecure=True
-)
-processor = BatchSpanProcessor(otlp_exporter)
+zipkin_exporter = ZipkinExporter()
+
+processor = BatchSpanProcessor(zipkin_exporter)
 provider.add_span_processor(processor)
 trace.set_tracer_provider(provider)
 
