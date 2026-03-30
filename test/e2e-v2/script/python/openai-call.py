@@ -15,29 +15,11 @@
 
 import socketserver
 from http.server import BaseHTTPRequestHandler
-
 from openai import OpenAI
-from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.instrumentation.openai import OpenAIInstrumentor
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-provider = TracerProvider()
-
-otlp_exporter = OTLPSpanExporter(
-    insecure=True
-)
-processor = BatchSpanProcessor(otlp_exporter)
-provider.add_span_processor(processor)
-trace.set_tracer_provider(provider)
-
-OpenAIInstrumentor().instrument()
 
 client = OpenAI(
     timeout=120.0,
 )
-
 
 class AIRequestHandler(BaseHTTPRequestHandler):
 
@@ -45,7 +27,7 @@ class AIRequestHandler(BaseHTTPRequestHandler):
         try:
             response = client.chat.completions.create(
                 model="gpt-4.1-mini",
-                messages=[{"role": "user", "content": "Write a short poem on OpenTelemetry."}]
+                messages=[{"role": "user", "content": "Tell me a joke."}]
             )
             content = response.choices[0].message.content
             self.send_response(200)
@@ -60,7 +42,6 @@ class AIRequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         self.do_GET()
-
 
 PORT = 9091
 
