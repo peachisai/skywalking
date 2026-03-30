@@ -48,7 +48,7 @@ services:
 
   provider-py:
     build:
-      context: ../../dockerfile/
+      context: ../../script/dockerfile/
       dockerfile: Dockerfile-openai.python
     networks:
       - e2e
