@@ -30,5 +30,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
     opentelemetry-exporter-otlp-proto-grpc \
     opentelemetry-exporter-zipkin
 
-COPY ./openai-call.py /openai-call.py
+COPY python/openai-call.py /openai-call.py
 

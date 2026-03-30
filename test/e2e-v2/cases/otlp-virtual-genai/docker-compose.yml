@@ -48,8 +48,8 @@ services:
 
   provider-py:
     build:
-      context: ../../script/dockerfile/
-      dockerfile: Dockerfile-openai.python
+      context: ../../script/
+      dockerfile: dockerfile/Dockerfile-openai.python
     networks:
       - e2e
     ports:
