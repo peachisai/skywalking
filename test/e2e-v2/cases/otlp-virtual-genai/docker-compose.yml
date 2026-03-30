@@ -59,6 +59,7 @@ services:
       OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
       OTEL_TRACES_EXPORTER: otlp
       OTEL_EXPORTER_OTLP_ENDPOINT: http://oap:11800
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     depends_on:
       oap:
         condition: service_healthy
