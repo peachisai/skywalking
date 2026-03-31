@@ -336,7 +336,7 @@ jobs:
     if: |
       ( always() && ! cancelled() ) &&
       ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
-    name: E2E test
+    name: ${{ matrix.test.name }}
     needs: [docker, dist-tar]
     runs-on: ${{ matrix.test.runs-on || 'ubuntu-latest' }}
     timeout-minutes: 60
@@ -729,7 +729,7 @@ jobs:
       - uses: actions/download-artifact@v4
         name: Download docker images
         with:
-          name: docker-images-11
+          name: docker-images-25
           path: docker-images
       - name: Load docker images
         run: |
@@ -782,7 +782,7 @@ jobs:
     if: |
       ( always() && ! cancelled() ) &&
       ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
-    name: E2E test
+    name: Istio ALS
     needs: [docker]
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -790,6 +790,7 @@ jobs:
       fail-fast: false
       matrix:
         analyzer: [k8s-mesh, mx-mesh]
+        storage: [ES, BanyanDB]
         versions:
           - istio: 1.21.0
             kubernetes: 28
@@ -822,7 +823,7 @@ jobs:
       - uses: actions/download-artifact@v4
         name: Download docker images
         with:
-          name: docker-images-11
+          name: docker-images-25
           path: docker-images
       - name: Load docker images
         run: |
@@ -834,14 +835,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: ${{ matrix.test.name }}
+      - name: ALS ${{ matrix.storage }}, ${{ matrix.analyzer }}, istio-${{ matrix.versions.istio }}, k8s-${{ matrix.versions.kubernetes }}
         uses: apache/skywalking-infra-e2e@e26033e1faaf865899c486ffe17dabdf17b90aae
         env:
           ISTIO_VERSION: ${{ matrix.versions.istio }}
           KUBERNETES_VERSION: ${{ matrix.versions.kubernetes }}
           ALS_ANALYZER: ${{ matrix.analyzer }}
         with:
-          e2e-file: test/e2e-v2/cases/istio/als/e2e.yaml
+          e2e-file: ${{ matrix.storage == 'BanyanDB' && 'test/e2e-v2/cases/istio/als/banyandb/e2e.yaml' || 'test/e2e-v2/cases/istio/als/e2e.yaml' }}
       - if: ${{ failure() }}
         run: |
           df -h
@@ -851,7 +852,7 @@ jobs:
         if: ${{ failure() }}
         name: Upload Logs
         with:
-          name: test-logs-${{ matrix.test.name }}
+          name: test-istio-als-logs-${{ matrix.storage }}-${{ matrix.analyzer }}-istio-${{ matrix.versions.istio }}-k8s-${{ matrix.versions.kubernetes }}
           path: "${{ env.SW_INFRA_E2E_LOG_DIR }}"
           overwrite: true
 
@@ -859,7 +860,7 @@ jobs:
     if: |
       ( always() && ! cancelled() ) &&
       ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
-    name: E2E test
+    name: Istio Ambient ALS
     needs: [docker]
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -894,7 +895,7 @@ jobs:
       - uses: actions/download-artifact@v4
         name: Download docker images
         with:
-          name: docker-images-11
+          name: docker-images-25
           path: docker-images
       - name: Load docker images
         run: |
@@ -931,7 +932,7 @@ jobs:
     if: |
       ( always() && ! cancelled() ) &&
       ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
-    name: E2E test
+    name: Java ${{ matrix.java-version }}
     needs: [docker]
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -981,7 +982,7 @@ jobs:
     if: |
       ( always() && ! cancelled() ) &&
       ((github.event_name == 'schedule' && github.repository == 'apache/skywalking') || needs.changes.outputs.oap == 'true')
-    name: E2E test
+    name: ${{ matrix.test.name }}
     needs: [docker, dist-tar]
     runs-on: ${{ matrix.test.runs-on || 'ubuntu-latest' }}
     timeout-minutes: 60
@@ -1005,7 +1006,7 @@ jobs:
       - uses: actions/download-artifact@v4
         name: Download docker images
         with:
-          name: docker-images-11
+          name: docker-images-25
           path: docker-images
       - name: Load docker images
         run: |
