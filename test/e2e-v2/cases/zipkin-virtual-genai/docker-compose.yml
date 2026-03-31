@@ -60,6 +60,7 @@ services:
       OPENAI_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
       OTEL_TRACES_EXPORTER: zipkin
       OTEL_EXPORTER_ZIPKIN_ENDPOINT: http://oap:9411/api/v2/spans
+      OTEL_LOG_LEVEL: debug
     depends_on:
       oap:
         condition: service_healthy
