@@ -34,10 +34,12 @@ import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.ISegmentP
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.SegmentParserListenerManager;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.SegmentParserServiceImpl;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.EndpointDepFromCrossThreadAnalysisListener;
+import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.GenAIEvalutionAnalysisListener;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.NetworkAddressAliasMappingListener;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.RPCAnalysisListener;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.SegmentAnalysisListener;
 import org.apache.skywalking.oap.server.analyzer.provider.trace.parser.listener.VirtualServiceAnalysisListener;
+import org.apache.skywalking.oap.server.ai.evalution.AIEvalutionModule;
 import org.apache.skywalking.oap.server.configuration.api.ConfigurationModule;
 import org.apache.skywalking.oap.server.configuration.api.DynamicConfigurationService;
 import org.apache.skywalking.oap.server.core.CoreModule;
@@ -161,6 +163,9 @@ public class AnalyzerModuleProvider extends ModuleProvider {
         }
         listenerManager.add(new SegmentAnalysisListener.Factory(getManager(), moduleConfig));
         listenerManager.add(new VirtualServiceAnalysisListener.Factory(getManager()));
+        if (getManager().has(AIEvalutionModule.NAME)) {
+            listenerManager.add(new GenAIEvalutionAnalysisListener.Factory(getManager()));
+        }
 
         return listenerManager;
     }

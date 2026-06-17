@@ -145,7 +145,7 @@ core:
     # The long value of the max direct memory usage. The default max value is -1, representing no limit. The unit is in bytes.
     maxDirectMemoryUsage: ${SW_CORE_MAX_DIRECT_MEMORY_USAGE:-1}
 storage:
-  selector: ${SW_STORAGE:banyandb}
+  selector: ${SW_STORAGE:elasticsearch}
   banyandb:
     # Since 10.2.0, the banyandb configuration is separated to an independent configuration file: `bydb.yaml`.
   elasticsearch:
@@ -247,6 +247,11 @@ event-analyzer:
 gen-ai-analyzer:
   selector: ${SW_GENAI_ANALYZER:default}
   default:
+
+ai-evalution:
+  selector: ${SW_AI_EVALUTION:default}
+  default:
+    sampleRate: ${SW_AI_EVALUTION_SAMPLE_RATE:1000000}
 
 receiver-sharing-server:
   selector: ${SW_RECEIVER_SHARING_SERVER:default}

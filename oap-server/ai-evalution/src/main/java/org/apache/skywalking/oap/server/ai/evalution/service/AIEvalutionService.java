@@ -1,0 +1,112 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+package org.apache.skywalking.oap.server.ai.evalution.service;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.skywalking.oap.server.ai.evalution.AIEvalutionContext;
+import org.apache.skywalking.oap.server.ai.evalution.judge.JudgeModelProvider;
+import org.apache.skywalking.oap.server.ai.evalution.service.sample.AIEvalutionSamplingPolicy;
+import org.apache.skywalking.oap.server.ai.evalution.service.strategy.AIEvalutionStrategy;
+
+@Slf4j
+public class AIEvalutionService implements IAIEvalutionService {
+    private final AIEvalutionSamplingPolicy samplingPolicy;
+    private final JudgeModelProvider judgeModelProvider;
+    private final List<AIEvalutionStrategy> strategies;
+    private final Set<String> pendingTaskIds = ConcurrentHashMap.newKeySet();
+    private final ThreadPoolExecutor evaluationExecutor =
+        new ThreadPoolExecutor(
+            4,
+            4,
+            0,
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(100)
+        );
+
+    public AIEvalutionService(final AIEvalutionSamplingPolicy samplingPolicy,
+                              final JudgeModelProvider judgeModelProvider,
+                              final List<AIEvalutionStrategy> strategies) {
+        this.samplingPolicy = samplingPolicy;
+        this.judgeModelProvider = judgeModelProvider;
+        this.strategies = strategies;
+    }
+
+    @Override
+    public void sample(final AIEvalutionContext context) {
+        if (context == null || isEmpty(context.getTraceId()) || !samplingPolicy.shouldSample(context)) {
+            return;
+        }
+
+        final AIEvalutionStrategy strategy = findStrategy(context);
+        if (strategy == null) {
+            return;
+        }
+
+        final String taskId = strategy.taskId(context);
+        if (!pendingTaskIds.add(taskId)) {
+            return;
+        }
+
+        try {
+            evaluationExecutor.execute(() -> {
+                try {
+                    evaluate(context, strategy, taskId);
+                } finally {
+                    pendingTaskIds.remove(taskId);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            pendingTaskIds.remove(taskId);
+            log.warn("GenAI span evalution task rejected, taskId: {}", taskId, e);
+        }
+    }
+
+    private static boolean isEmpty(final String value) {
+        return value == null || value.isEmpty();
+    }
+
+    private void evaluate(final AIEvalutionContext context,
+                          final AIEvalutionStrategy strategy,
+                          final String taskId) {
+        try {
+            strategy.evaluate(context, judgeModelProvider);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("GenAI evalution interrupted, taskId: {}", taskId, e);
+        } catch (Exception e) {
+            log.error("GenAI evalution failed, taskId: {}", taskId, e);
+        }
+    }
+
+    private AIEvalutionStrategy findStrategy(final AIEvalutionContext context) {
+        for (AIEvalutionStrategy strategy : strategies) {
+            if (strategy.support(context)) {
+                return strategy;
+            }
+        }
+        return null;
+    }
+}
