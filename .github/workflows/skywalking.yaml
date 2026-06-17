@@ -122,7 +122,7 @@ jobs:
           persist-credentials: false
       - name: Filter
         id: filter
-        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         with:
           list-files: 'shell'
           predicate-quantifier: 'every'
@@ -399,8 +399,9 @@ jobs:
             env: ES_VERSION=8.18.8
           - name: Runtime Rule LAL Hot-Update
             config: test/e2e-v2/cases/runtime-rule/lal/e2e.yaml
-          - name: Runtime Rule Cluster Convergence
+          - name: Runtime Rule Cluster (kind)
             config: test/e2e-v2/cases/runtime-rule/cluster/e2e.yaml
+            runs-on: ubuntu-24.04
           - name: DSL Debug API — MAL
             config: test/e2e-v2/cases/dsl-debugging/mal/e2e.yaml
           - name: DSL Debug API — OAL
@@ -713,6 +714,10 @@ jobs:
             config: test/e2e-v2/cases/kong/e2e.yaml
           - name: Flink
             config: test/e2e-v2/cases/flink/e2e.yaml
+          - name: Airflow
+            config: test/e2e-v2/cases/airflow/mock/e2e.yaml
+          - name: Airflow Cluster
+            config: test/e2e-v2/cases/airflow/cluster/e2e.yaml
 
           - name: OTLP Trace
             config: test/e2e-v2/cases/otlp-traces/e2e.yaml
@@ -760,7 +765,7 @@ jobs:
           name: dist
           path: dist
       - name: Login to ghcr
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -849,7 +854,7 @@ jobs:
           find docker-images -name "*.tar" -exec docker load -i {} \;
           find docker-images -name "*.tar" -exec rm {} \;
       - name: Login to ghcr
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -921,7 +926,7 @@ jobs:
           find docker-images -name "*.tar" -exec docker load -i {} \;
           find docker-images -name "*.tar" -exec rm {} \;
       - name: Login to ghcr
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -1037,7 +1042,7 @@ jobs:
           name: dist
           path: dist
       - name: Login to ghcr
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
