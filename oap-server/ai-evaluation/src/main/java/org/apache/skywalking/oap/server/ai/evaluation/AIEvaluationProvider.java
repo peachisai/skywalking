@@ -102,11 +102,12 @@ public class AIEvaluationProvider extends ModuleProvider {
     }
 
     private JudgeModelProvider createJudgeProvider() throws ModuleStartException {
-        final AIEvaluationConfig.Judge judge = buildJudgeConfig(config.getJudge());
-        if ("openai".equalsIgnoreCase(judge.getProvider())) {
+        final Properties judge = config.getJudge();
+        final String provider = getString(judge, "provider");
+        if ("openai".equalsIgnoreCase(provider)) {
             return new OpenAICompatibleProvider(judge);
         }
-        throw new ModuleStartException("Unsupported AI evaluation judge provider: " + judge.getProvider());
+        throw new ModuleStartException("Unsupported AI evaluation judge provider: " + provider);
     }
 
     private List<AIEvaluationStrategy> createStrategies() {
@@ -120,30 +121,16 @@ public class AIEvaluationProvider extends ModuleProvider {
         ));
     }
 
-    private static AIEvaluationConfig.Judge buildJudgeConfig(final Properties properties) {
-        final AIEvaluationConfig.Judge judge = new AIEvaluationConfig.Judge();
-        judge.setProvider(getString(properties, "provider"));
-        judge.setBaseUrl(getString(properties, "base-url"));
-        judge.setModel(getString(properties, "model"));
-        judge.setApiKey(getString(properties, "api-key"));
-        return judge;
-    }
-
     private static void validateConfig(final AIEvaluationConfig config) throws ModuleStartException {
         final Properties judge = config.getJudge();
-        validateJudgeProperty(judge, "provider");
-        validateJudgeProperty(judge, "base-url");
-        validateJudgeProperty(judge, "model");
-        validateJudgeProperty(judge, "api-key");
+        if (judge == null || judge.isEmpty()) {
+            throw new ModuleStartException("AI evaluation judge config is required.");
+        }
+        if (isBlank(getString(judge, "provider"))) {
+            throw new ModuleStartException("AI evaluation judge config [provider] is required.");
+        }
         if (isBlank(config.getSystemPrompt())) {
             throw new ModuleStartException("AI evaluation system-prompt is required.");
-        }
-    }
-
-    private static void validateJudgeProperty(final Properties judge,
-                                              final String key) throws ModuleStartException {
-        if (judge == null || isBlank(getString(judge, key))) {
-            throw new ModuleStartException("AI evaluation judge config [" + key + "] is required.");
         }
     }
 

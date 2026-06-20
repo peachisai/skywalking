@@ -26,7 +26,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.service.sample.AIEvaluationSamplingPolicy;
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluationStrategy;
@@ -55,8 +55,13 @@ public class AIEvaluationService implements IAIEvaluationService {
     }
 
     @Override
+    public boolean shouldSample(final String traceId) {
+        return !isEmpty(traceId) && samplingPolicy.shouldSample(traceId);
+    }
+
+    @Override
     public void sample(final AIEvaluationContext context) {
-        if (context == null || isEmpty(context.getTraceId()) || !samplingPolicy.shouldSample(context)) {
+        if (context == null || isEmpty(context.getTraceId())) {
             return;
         }
 

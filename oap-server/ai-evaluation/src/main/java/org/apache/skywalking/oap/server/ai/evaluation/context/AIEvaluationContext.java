@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.oap.server.ai.evaluation;
+package org.apache.skywalking.oap.server.ai.evaluation.context;
 
 import java.util.Collections;
 import java.util.Map;

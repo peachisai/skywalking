@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.oap.server.ai.evaluation;
+package org.apache.skywalking.oap.server.ai.evaluation.context;
 
 public final class GenAISemanticAttributes {
     public static final String PREFIX = "gen_ai.";

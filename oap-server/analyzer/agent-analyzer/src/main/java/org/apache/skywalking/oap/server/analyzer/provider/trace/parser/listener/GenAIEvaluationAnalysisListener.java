@@ -23,9 +23,9 @@ import org.apache.skywalking.apm.network.common.v3.KeyStringValuePair;
 import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanLayer;
 import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationModule;
-import org.apache.skywalking.oap.server.ai.evaluation.GenAIContextResolver;
+import org.apache.skywalking.oap.server.ai.evaluation.context.GenAIContextResolver;
 import org.apache.skywalking.oap.server.ai.evaluation.service.IAIEvaluationService;
 import org.apache.skywalking.oap.server.analyzer.provider.AnalyzerModuleConfig;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
@@ -63,6 +63,9 @@ public class GenAIEvaluationAnalysisListener implements EntryAnalysisListener, E
 
     private void sample(final SpanObject span, final SegmentObject segmentObject) {
         if (span.getSkipAnalysis() || span.getSpanLayer() != SpanLayer.GenAI) {
+            return;
+        }
+        if (!evaluationService.shouldSample(segmentObject.getTraceId())) {
             return;
         }
 

@@ -21,7 +21,7 @@ package org.apache.skywalking.oap.server.ai.evaluation.plan;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTask;
 import org.apache.skywalking.oap.server.ai.evaluation.value.SpanEvaluationType;
 

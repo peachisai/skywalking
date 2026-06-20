@@ -18,9 +18,7 @@
 
 package org.apache.skywalking.oap.server.ai.evaluation.service.sample;
 
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
-
 public interface AIEvaluationSamplingPolicy {
 
-    boolean shouldSample(AIEvaluationContext context);
+    boolean shouldSample(String traceId);
 }

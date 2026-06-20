@@ -18,9 +18,9 @@
 
 judge:
   provider: openai
-  base-url: https://globalai.vip/v1
+  endpoint: https://globalai.vip/v1/chat/completions
   model: gpt-5.4-mini
-  api-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  api-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 system-prompt: |
   You are an AI observability evaluator.

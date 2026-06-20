@@ -34,13 +34,4 @@ public class AIEvaluationConfig extends ModuleConfig {
     private Properties judge = new Properties();
     private String systemPrompt;
     private List<EvaluationTask> tasks = new ArrayList<>();
-
-    @Getter
-    @Setter
-    public static class Judge {
-        private String provider;
-        private String baseUrl;
-        private String apiKey;
-        private String model;
-    }
 }

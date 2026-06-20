@@ -20,7 +20,6 @@ package org.apache.skywalking.oap.server.ai.evaluation.service.sample;
 
 import com.google.common.hash.Hashing;
 import java.nio.charset.StandardCharsets;
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
 
 public class DefaultAIEvaluationSamplingPolicy implements AIEvaluationSamplingPolicy {
     private static final long HASH_SPACE = 1_000_000L;
@@ -31,9 +30,9 @@ public class DefaultAIEvaluationSamplingPolicy implements AIEvaluationSamplingPo
     }
 
     @Override
-    public boolean shouldSample(final AIEvaluationContext context) {
+    public boolean shouldSample(final String traceId) {
         final long hash = Hashing.murmur3_128()
-                                 .hashString(context.getTraceId(), StandardCharsets.UTF_8)
+                                 .hashString(traceId, StandardCharsets.UTF_8)
                                  .asLong();
         return Math.floorMod(hash, HASH_SPACE) < sampleRate;
     }

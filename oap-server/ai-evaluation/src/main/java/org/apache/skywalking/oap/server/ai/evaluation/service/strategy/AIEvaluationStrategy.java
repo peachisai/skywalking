@@ -20,7 +20,7 @@ package org.apache.skywalking.oap.server.ai.evaluation.service.strategy;
 
 import java.io.IOException;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 
 public interface AIEvaluationStrategy {
     boolean support(AIEvaluationContext context);

@@ -30,10 +30,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationConfig;
+import java.util.Properties;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelRequest;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelResponse;
+import org.apache.skywalking.oap.server.library.module.ModuleStartException;
 
 public class OpenAICompatibleProvider implements JudgeModelProvider {
     private static final Gson GSON = new Gson();
@@ -44,24 +45,21 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
     private final String apiKey;
     private final String model;
 
-    public OpenAICompatibleProvider(final AIEvaluationConfig.Judge config) {
+    public OpenAICompatibleProvider(final Properties config) throws ModuleStartException {
         this(HttpClient.newHttpClient(), config);
     }
 
-    OpenAICompatibleProvider(final HttpClient httpClient, final AIEvaluationConfig.Judge config) {
+    OpenAICompatibleProvider(final HttpClient httpClient, final Properties config) throws ModuleStartException {
+        validate(config);
         this.httpClient = httpClient;
-        this.endpoint = normalizeEndpoint(config.getBaseUrl());
-        this.apiKey = config.getApiKey();
-        this.model = config.getModel();
+        this.endpoint = getString(config, "endpoint");
+        this.apiKey = getString(config, "api-key");
+        this.model = getString(config, "model");
     }
 
     @Override
     public Optional<JudgeModelResponse> judge(final JudgeModelRequest request)
         throws IOException, InterruptedException {
-        if (!isConfigured()) {
-            return Optional.empty();
-        }
-
         final HttpRequest httpRequest = HttpRequest.newBuilder()
                                                    .uri(URI.create(endpoint))
                                                    .timeout(REQUEST_TIMEOUT)
@@ -85,8 +83,16 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         return model;
     }
 
-    private boolean isConfigured() {
-        return !isEmpty(endpoint) && !isEmpty(apiKey) && !isEmpty(model);
+    private static void validate(final Properties config) throws ModuleStartException {
+        if (isEmpty(getString(config, "endpoint"))) {
+            throw new ModuleStartException("AI evaluation judge config [endpoint] is required.");
+        }
+        if (isEmpty(getString(config, "model"))) {
+            throw new ModuleStartException("AI evaluation judge config [model] is required.");
+        }
+        if (isEmpty(getString(config, "api-key"))) {
+            throw new ModuleStartException("AI evaluation judge config [api-key] is required.");
+        }
     }
 
     private String buildRequestBody(final JudgeModelRequest request) {
@@ -132,17 +138,6 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
                                  .build();
     }
 
-    private static String normalizeEndpoint(final String baseUrl) {
-        if (isEmpty(baseUrl)) {
-            return "";
-        }
-        final String trimmed = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
-        if (trimmed.endsWith("/chat/completions")) {
-            return trimmed;
-        }
-        return trimmed + "/chat/completions";
-    }
-
     private static String getAsString(final JsonObject object, final String memberName) {
         if (object == null) {
             return "";
@@ -159,7 +154,15 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         return element == null || element.isJsonNull() ? 0 : element.getAsInt();
     }
 
+    private static String getString(final Properties properties, final String key) {
+        if (properties == null) {
+            return null;
+        }
+        final Object value = properties.get(key);
+        return value == null ? null : String.valueOf(value);
+    }
+
     private static boolean isEmpty(final String value) {
-        return value == null || value.isEmpty();
+        return value == null || value.trim().isEmpty();
     }
 }

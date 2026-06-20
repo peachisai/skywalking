@@ -18,10 +18,12 @@
 
 package org.apache.skywalking.oap.server.ai.evaluation.service;
 
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.library.module.Service;
 
 public interface IAIEvaluationService extends Service {
+
+    boolean shouldSample(String traceId);
 
     void sample(AIEvaluationContext context);
 }

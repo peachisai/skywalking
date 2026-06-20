@@ -22,10 +22,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationModule;
-import org.apache.skywalking.oap.server.ai.evaluation.GenAIContextResolver;
-import org.apache.skywalking.oap.server.ai.evaluation.GenAISemanticAttributes;
+import org.apache.skywalking.oap.server.ai.evaluation.context.GenAIContextResolver;
+import org.apache.skywalking.oap.server.ai.evaluation.context.GenAISemanticAttributes;
 import org.apache.skywalking.oap.server.ai.evaluation.service.IAIEvaluationService;
 import org.apache.skywalking.oap.server.core.trace.OTLPSpanReader;
 import org.apache.skywalking.oap.server.core.trace.SpanListener;
@@ -74,6 +74,9 @@ public class AIEvaluationSpanListener implements SpanListener {
         if (!hasGenAITag(tags)) {
             return SpanListenerResult.CONTINUE;
         }
+        if (!evaluationService.shouldSample(span.traceId())) {
+            return SpanListenerResult.CONTINUE;
+        }
 
         final GenAIContextResolver.Result genAIContext = GenAIContextResolver.resolve(tags);
         evaluationService.sample(AIEvaluationContext.builder()
@@ -95,6 +98,9 @@ public class AIEvaluationSpanListener implements SpanListener {
     public SpanListenerResult onZipkinSpan(final ZipkinSpan span) {
         final Map<String, String> tags = toMap(span.getTags());
         if (!hasGenAITag(tags)) {
+            return SpanListenerResult.CONTINUE;
+        }
+        if (!evaluationService.shouldSample(span.getTraceId())) {
             return SpanListenerResult.CONTINUE;
         }
 

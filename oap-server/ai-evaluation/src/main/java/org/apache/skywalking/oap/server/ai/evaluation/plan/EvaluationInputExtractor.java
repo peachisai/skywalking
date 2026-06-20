@@ -20,8 +20,8 @@ package org.apache.skywalking.oap.server.ai.evaluation.plan;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationContext;
-import org.apache.skywalking.oap.server.ai.evaluation.GenAISemanticAttributes;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
+import org.apache.skywalking.oap.server.ai.evaluation.context.GenAISemanticAttributes;
 import org.apache.skywalking.oap.server.ai.evaluation.value.SpanEvaluationType;
 
 public class EvaluationInputExtractor {
