@@ -18,9 +18,15 @@
 
 package org.apache.skywalking.oap.server.ai.evaluation;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import org.apache.skywalking.oap.meter.analyzer.v2.MetricConvert;
+import org.apache.skywalking.oap.meter.analyzer.v2.dsldebug.MalStaticBindingHook;
+import org.apache.skywalking.oap.meter.analyzer.v2.prometheus.rule.Rule;
+import org.apache.skywalking.oap.meter.analyzer.v2.prometheus.rule.Rules;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationInputExtractor;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationPlanner;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationPromptBuilder;
@@ -28,11 +34,14 @@ import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResultParse
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTaskRegistry;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.provider.OpenAICompatibleProvider;
+import org.apache.skywalking.oap.server.ai.evaluation.service.AIEvaluationMetricReporter;
 import org.apache.skywalking.oap.server.ai.evaluation.service.AIEvaluationService;
 import org.apache.skywalking.oap.server.ai.evaluation.service.sample.DefaultAIEvaluationSamplingPolicy;
 import org.apache.skywalking.oap.server.ai.evaluation.service.IAIEvaluationService;
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluationStrategy;
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.span.SpanAIEvaluationStrategy;
+import org.apache.skywalking.oap.server.core.CoreModule;
+import org.apache.skywalking.oap.server.core.analysis.meter.MeterSystem;
 import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 import org.apache.skywalking.oap.server.library.module.ModuleProvider;
@@ -42,6 +51,8 @@ import org.apache.skywalking.oap.server.library.module.ServiceNotProvidedExcepti
 public class AIEvaluationProvider extends ModuleProvider {
     private static final int MAX_SAMPLE_RATE = 1_000_000;
     private AIEvaluationConfig config = new AIEvaluationConfig();
+    private AIEvaluationService aiEvaluationService;
+    private AIEvaluationMetricReporter metricReporter;
 
     @Override
     public String name() {
@@ -78,18 +89,17 @@ public class AIEvaluationProvider extends ModuleProvider {
             throw new IllegalArgumentException(
                 "sampleRate: " + config.getSampleRate() + ", should be between 0 and " + MAX_SAMPLE_RATE);
         }
-        registerServiceImplementation(
-            IAIEvaluationService.class,
-            new AIEvaluationService(
-                new DefaultAIEvaluationSamplingPolicy(config.getSampleRate()),
-                createJudgeProvider(),
-                createStrategies()
-            )
+        aiEvaluationService = new AIEvaluationService(
+            new DefaultAIEvaluationSamplingPolicy(config.getSampleRate()),
+            createJudgeProvider()
         );
+        registerServiceImplementation(IAIEvaluationService.class, aiEvaluationService);
     }
 
     @Override
     public void start() throws ServiceNotProvidedException, ModuleStartException {
+        metricReporter = createMetricReporter();
+        aiEvaluationService.setStrategies(createStrategies());
     }
 
     @Override
@@ -98,7 +108,9 @@ public class AIEvaluationProvider extends ModuleProvider {
 
     @Override
     public String[] requiredModules() {
-        return new String[0];
+        return new String[] {
+            CoreModule.NAME
+        };
     }
 
     private JudgeModelProvider createJudgeProvider() throws ModuleStartException {
@@ -117,8 +129,35 @@ public class AIEvaluationProvider extends ModuleProvider {
             taskRegistry,
             new EvaluationPlanner(inputExtractor),
             new EvaluationPromptBuilder(config.getSystemPrompt()),
-            new EvaluationResultParser()
+            new EvaluationResultParser(),
+            metricReporter
         ));
+    }
+
+    private AIEvaluationMetricReporter createMetricReporter() throws ModuleStartException {
+        final List<Rule> rules;
+        try {
+            rules = Rules.loadRules(
+                AIEvaluationMetricReporter.RULE_CATALOG,
+                Collections.singletonList(AIEvaluationMetricReporter.RULE_NAME),
+                getManager()
+            );
+        } catch (IOException e) {
+            throw new ModuleStartException("Failed to load AI evaluation MAL rules.", e);
+        }
+        final MeterSystem meterSystem = getManager().find(CoreModule.NAME).provider().getService(MeterSystem.class);
+        final List<MetricConvert> converts = rules.stream()
+                                                  .map(rule -> {
+                                                      final MetricConvert convert = new MetricConvert(rule, meterSystem);
+                                                      MalStaticBindingHook.publish(
+                                                          AIEvaluationMetricReporter.RULE_CATALOG,
+                                                          rule.getName(),
+                                                          convert
+                                                      );
+                                                      return convert;
+                                                  })
+                                                  .collect(Collectors.toList());
+        return new AIEvaluationMetricReporter(converts);
     }
 
     private static void validateConfig(final AIEvaluationConfig config) throws ModuleStartException {

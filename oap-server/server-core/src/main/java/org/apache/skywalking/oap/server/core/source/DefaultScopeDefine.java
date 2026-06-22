@@ -160,6 +160,7 @@ public class DefaultScopeDefine {
     public static final int GEN_AI_MODEL_ACCESS = 97;
     public static final int RUNTIME_RULE = 98;
     public static final int AI_EVALUATION_RESULT = 99;
+    public static final int AI_EVALUATION_SCORE = 100;
 
     /**
      * Catalog of scope, the metrics processor could use this to group all generated metrics by oal rt.

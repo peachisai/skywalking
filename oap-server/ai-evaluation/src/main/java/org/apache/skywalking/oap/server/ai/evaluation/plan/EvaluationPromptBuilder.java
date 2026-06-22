@@ -18,8 +18,6 @@
 
 package org.apache.skywalking.oap.server.ai.evaluation.plan;
 
-import java.util.Map;
-
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelRequest;
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTask;
 
@@ -47,15 +45,6 @@ public class EvaluationPromptBuilder {
 
         prompt.append("Output messages:\n");
         prompt.append(defaultString(plan.getContext().get(OUTPUT_MESSAGES))).append("\n\n");
-
-        prompt.append("Additional context:\n");
-        for (Map.Entry<String, String> entry : plan.getContext().entrySet()) {
-            if (INPUT_MESSAGES.equals(entry.getKey()) || OUTPUT_MESSAGES.equals(entry.getKey())) {
-                continue;
-            }
-            prompt.append(entry.getKey()).append(":\n");
-            prompt.append(defaultString(entry.getValue())).append("\n\n");
-        }
 
         prompt.append("Evaluation tasks:\n");
         int index = 1;

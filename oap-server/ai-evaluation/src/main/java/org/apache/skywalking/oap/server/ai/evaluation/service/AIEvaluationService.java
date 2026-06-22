@@ -35,7 +35,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluat
 public class AIEvaluationService implements IAIEvaluationService {
     private final AIEvaluationSamplingPolicy samplingPolicy;
     private final JudgeModelProvider judgeModelProvider;
-    private final List<AIEvaluationStrategy> strategies;
+    private volatile List<AIEvaluationStrategy> strategies;
     private final Set<String> pendingTaskIds = ConcurrentHashMap.newKeySet();
     private final ThreadPoolExecutor evaluationExecutor =
         new ThreadPoolExecutor(
@@ -47,11 +47,14 @@ public class AIEvaluationService implements IAIEvaluationService {
         );
 
     public AIEvaluationService(final AIEvaluationSamplingPolicy samplingPolicy,
-                              final JudgeModelProvider judgeModelProvider,
-                              final List<AIEvaluationStrategy> strategies) {
+                               final JudgeModelProvider judgeModelProvider) {
         this.samplingPolicy = samplingPolicy;
         this.judgeModelProvider = judgeModelProvider;
-        this.strategies = strategies;
+        this.strategies = List.of();
+    }
+
+    public void setStrategies(final List<AIEvaluationStrategy> strategies) {
+        this.strategies = strategies == null ? List.of() : List.copyOf(strategies);
     }
 
     @Override

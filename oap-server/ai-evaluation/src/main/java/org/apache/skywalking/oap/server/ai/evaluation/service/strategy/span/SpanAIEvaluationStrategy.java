@@ -18,9 +18,6 @@
 
 package org.apache.skywalking.oap.server.ai.evaluation.service.strategy.span;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.context.GenAISemanticAttributes;
@@ -31,11 +28,17 @@ import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationPlanner;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationPromptBuilder;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResult;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResultParser;
-import org.apache.skywalking.oap.server.ai.evaluation.storage.AIEvaluationResultRecord;
+import org.apache.skywalking.oap.server.ai.evaluation.service.AIEvaluationMetricReporter;
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluationStrategy;
+import org.apache.skywalking.oap.server.ai.evaluation.storage.AIEvaluationResultRecord;
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTaskRegistry;
+import org.apache.skywalking.oap.server.ai.evaluation.value.ValueType;
 import org.apache.skywalking.oap.server.core.analysis.TimeBucket;
 import org.apache.skywalking.oap.server.core.analysis.worker.RecordStreamProcessor;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
@@ -45,15 +48,18 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
     private final EvaluationPlanner evaluationPlanner;
     private final EvaluationPromptBuilder promptBuilder;
     private final EvaluationResultParser resultParser;
+    private final AIEvaluationMetricReporter metricReporter;
 
     public SpanAIEvaluationStrategy(final EvaluationTaskRegistry taskRegistry,
-                                   final EvaluationPlanner evaluationPlanner,
-                                   final EvaluationPromptBuilder promptBuilder,
-                                   final EvaluationResultParser resultParser) {
+                                    final EvaluationPlanner evaluationPlanner,
+                                    final EvaluationPromptBuilder promptBuilder,
+                                    final EvaluationResultParser resultParser,
+                                    final AIEvaluationMetricReporter metricReporter) {
         this.taskRegistry = taskRegistry;
         this.evaluationPlanner = evaluationPlanner;
         this.promptBuilder = promptBuilder;
         this.resultParser = resultParser;
+        this.metricReporter = metricReporter;
     }
 
     @Override
@@ -91,27 +97,20 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
         final List<EvaluationPlan> plans = evaluationPlanner.plan(context, taskRegistry.tasks());
         for (EvaluationPlan plan : plans) {
             final Optional<JudgeModelResponse> response = judgeModelProvider.judge(promptBuilder.build(plan));
-            if (!response.isPresent()) {
+            if (response.isEmpty()) {
                 continue;
             }
 
             final JudgeModelResponse judgeResponse = response.get();
             final List<EvaluationResult> results = resultParser.parse(plan, judgeResponse.getContent());
             persistResults(context, plan, results, judgeModel);
-            log.info(
-                    "GenAI LLM call span evaluation result, taskId: {}, spanType: {}, resultCount: {}, results: {}",
-                    taskId(context),
-                    plan.getSpanType(),
-                    results.size(),
-                    results
-            );
         }
     }
 
-    private static void persistResults(final AIEvaluationContext context,
-                                       final EvaluationPlan plan,
-                                       final List<EvaluationResult> results,
-                                       final String judgeModel) {
+    private void persistResults(final AIEvaluationContext context,
+                                final EvaluationPlan plan,
+                                final List<EvaluationResult> results,
+                                final String judgeModel) {
         final long evaluationTime = System.currentTimeMillis();
         final String segmentId = "";
         for (EvaluationResult result : results) {
@@ -128,6 +127,10 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
             record.setEvaluationTime(evaluationTime);
             record.setTimeBucket(TimeBucket.getRecordTimeBucket(evaluationTime));
             RecordStreamProcessor.getInstance().in(record);
+
+            if (result.getValueType() == ValueType.SCORE) {
+                metricReporter.reportScore(context, result, evaluationTime);
+            }
         }
     }
 
@@ -143,3 +146,4 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
         return value == null || value.isEmpty();
     }
 }
+
