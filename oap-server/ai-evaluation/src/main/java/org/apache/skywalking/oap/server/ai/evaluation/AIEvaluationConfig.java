@@ -33,5 +33,7 @@ public class AIEvaluationConfig extends ModuleConfig {
     private int sampleRate;
     private Properties judge = new Properties();
     private String systemPrompt;
+    private Double temperature;
+    private Integer maxTokens;
     private List<EvaluationTask> tasks = new ArrayList<>();
 }

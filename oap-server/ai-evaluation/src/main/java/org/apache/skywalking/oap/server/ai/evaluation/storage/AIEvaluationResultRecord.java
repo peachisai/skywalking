@@ -37,7 +37,7 @@ import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
 @Setter
 @ScopeDeclaration(id = DefaultScopeDefine.AI_EVALUATION_RESULT, name = "AIEvaluationResult")
 @Stream(name = AIEvaluationResultRecord.INDEX_NAME, scopeId = DefaultScopeDefine.AI_EVALUATION_RESULT,
-    builder = AIEvaluationResultRecord.Builder.class, processor = RecordStreamProcessor.class)
+        builder = AIEvaluationResultRecord.Builder.class, processor = RecordStreamProcessor.class)
 @BanyanDB.TimestampColumn(AIEvaluationResultRecord.EVALUATION_TIME)
 @BanyanDB.Group(streamGroup = BanyanDB.StreamGroup.RECORDS)
 public class AIEvaluationResultRecord extends Record {
@@ -58,10 +58,10 @@ public class AIEvaluationResultRecord extends Record {
     @BanyanDB.SeriesID(index = 0)
     private String traceId;
 
-    @Column(name = SEGMENT_ID, length = 150)
+    @Column(name = SEGMENT_ID, length = 150, storageOnly = true)
     private String segmentId;
 
-    @Column(name = SPAN_ID, length = 150)
+    @Column(name = SPAN_ID, length = 150, storageOnly = true)
     private String spanId;
 
     @Column(name = SPAN_TYPE, length = 64)
@@ -89,11 +89,11 @@ public class AIEvaluationResultRecord extends Record {
     @Override
     public StorageID id() {
         return new StorageID()
-            .append(TRACE_ID, traceId)
-            .append(SPAN_ID, spanId)
-            .append(SPAN_TYPE, spanType)
-            .append(TASK_NAME, taskName)
-            .append(EVALUATION_TIME, evaluationTime);
+                .append(TRACE_ID, traceId)
+                .append(SPAN_ID, spanId)
+                .append(SPAN_TYPE, spanType)
+                .append(TASK_NAME, taskName)
+                .append(EVALUATION_TIME, evaluationTime);
     }
 
     public static class Builder implements StorageBuilder<AIEvaluationResultRecord> {

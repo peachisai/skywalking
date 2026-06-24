@@ -19,7 +19,6 @@
 package org.apache.skywalking.oap.server.ai.evaluation.context;
 
 public final class GenAISemanticAttributes {
-    public static final String PREFIX = "gen_ai.";
     public static final String INPUT_MESSAGES = "gen_ai.input.messages";
     public static final String OPERATION_NAME = "gen_ai.operation.name";
     public static final String OUTPUT_MESSAGES = "gen_ai.output.messages";

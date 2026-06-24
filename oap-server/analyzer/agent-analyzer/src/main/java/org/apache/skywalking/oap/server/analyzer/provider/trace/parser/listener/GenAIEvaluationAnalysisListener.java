@@ -26,9 +26,11 @@ import org.apache.skywalking.apm.network.language.agent.v3.SpanObject;
 import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationModule;
 import org.apache.skywalking.oap.server.ai.evaluation.context.GenAIContextResolver;
+import org.apache.skywalking.oap.server.ai.evaluation.context.GenAISemanticAttributes;
 import org.apache.skywalking.oap.server.ai.evaluation.service.IAIEvaluationService;
 import org.apache.skywalking.oap.server.analyzer.provider.AnalyzerModuleConfig;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -75,6 +77,10 @@ public class GenAIEvaluationAnalysisListener implements EntryAnalysisListener, E
                                                  KeyStringValuePair::getValue,
                                                  (left, right) -> left
                                              ));
+
+        if (StringUtil.isBlank(tags.get(GenAISemanticAttributes.RESPONSE_MODEL))) {
+            return;
+        }
 
         final GenAIContextResolver.Result genAIContext = GenAIContextResolver.resolve(tags);
         evaluationService.sample(AIEvaluationContext.builder()

@@ -20,8 +20,10 @@ package org.apache.skywalking.oap.server.ai.evaluation.listener;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationModule;
 import org.apache.skywalking.oap.server.ai.evaluation.context.GenAIContextResolver;
@@ -32,22 +34,28 @@ import org.apache.skywalking.oap.server.core.trace.SpanListener;
 import org.apache.skywalking.oap.server.core.trace.SpanListenerResult;
 import org.apache.skywalking.oap.server.core.zipkin.source.ZipkinSpan;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 public class AIEvaluationSpanListener implements SpanListener {
+    private static final String SERVICE_NAME = "service.name";
+    private static final String ERROR_TAG = "error";
+    private static final long MILLIS_PER_NANO = 1_000_000L;
+    private static final long MILLIS_PER_MICRO = 1_000L;
+
     private IAIEvaluationService evaluationService;
 
     @Override
     public String[] requiredModules() {
-        return new String[] {
-            AIEvaluationModule.NAME
+        return new String[]{
+                AIEvaluationModule.NAME
         };
     }
 
     @Override
     public void init(final ModuleManager moduleManager) {
         evaluationService = moduleManager.find(AIEvaluationModule.NAME)
-                                        .provider()
-                                        .getService(IAIEvaluationService.class);
+                .provider()
+                .getService(IAIEvaluationService.class);
     }
 
     @Override
@@ -56,81 +64,96 @@ public class AIEvaluationSpanListener implements SpanListener {
                                          final String scopeName,
                                          final String scopeVersion) {
         final Map<String, String> tags = new HashMap<>(resourceAttributes);
-        putIfNotEmpty(tags, GenAISemanticAttributes.OPERATION_NAME,
-                      span.getAttribute(GenAISemanticAttributes.OPERATION_NAME));
         putIfNotEmpty(tags, GenAISemanticAttributes.RESPONSE_MODEL,
-                      span.getAttribute(GenAISemanticAttributes.RESPONSE_MODEL));
+                span.getAttribute(GenAISemanticAttributes.RESPONSE_MODEL));
+        if (!isGenAISpan(tags)) {
+            return SpanListenerResult.CONTINUE;
+        }
+        if (!shouldSample(span.traceId())) {
+            return SpanListenerResult.CONTINUE;
+        }
+        putIfNotEmpty(tags, GenAISemanticAttributes.OPERATION_NAME,
+                span.getAttribute(GenAISemanticAttributes.OPERATION_NAME));
         putIfNotEmpty(tags, GenAISemanticAttributes.PROVIDER_NAME,
-                      span.getAttribute(GenAISemanticAttributes.PROVIDER_NAME));
+                span.getAttribute(GenAISemanticAttributes.PROVIDER_NAME));
         putIfNotEmpty(tags, GenAISemanticAttributes.SYSTEM,
-                      span.getAttribute(GenAISemanticAttributes.SYSTEM));
+                span.getAttribute(GenAISemanticAttributes.SYSTEM));
         putIfNotEmpty(tags, GenAISemanticAttributes.USAGE_INPUT_TOKENS,
-                      span.getAttribute(GenAISemanticAttributes.USAGE_INPUT_TOKENS));
+                span.getAttribute(GenAISemanticAttributes.USAGE_INPUT_TOKENS));
         putIfNotEmpty(tags, GenAISemanticAttributes.USAGE_OUTPUT_TOKENS,
-                      span.getAttribute(GenAISemanticAttributes.USAGE_OUTPUT_TOKENS));
+                span.getAttribute(GenAISemanticAttributes.USAGE_OUTPUT_TOKENS));
         putIfNotEmpty(tags, GenAISemanticAttributes.SERVER_TIME_TO_FIRST_TOKEN,
-                      span.getAttribute(GenAISemanticAttributes.SERVER_TIME_TO_FIRST_TOKEN));
-
-        if (!hasGenAITag(tags)) {
-            return SpanListenerResult.CONTINUE;
-        }
-        if (!evaluationService.shouldSample(span.traceId())) {
-            return SpanListenerResult.CONTINUE;
-        }
-
-        final GenAIContextResolver.Result genAIContext = GenAIContextResolver.resolve(tags);
-        evaluationService.sample(AIEvaluationContext.builder()
-                                                     .source(AIEvaluationContext.SpanSource.OTLP)
-                                                     .traceId(span.traceId())
-                                                     .spanId(span.spanId())
-                                                     .serviceName(resourceAttributes.get("service.name"))
-                                                     .operationName(span.spanName())
-                                                     .providerName(genAIContext.getProviderName())
-                                                     .modelName(genAIContext.getModelName())
-                                                     .startTimeMillis(span.startTimeNanos() / 1_000_000L)
-                                                     .endTimeMillis(span.endTimeNanos() / 1_000_000L)
-                                                     .tags(tags)
-                                                     .build());
+                span.getAttribute(GenAISemanticAttributes.SERVER_TIME_TO_FIRST_TOKEN));
+        sample(AIEvaluationContext.SpanSource.OTLP,
+                span.traceId(),
+                span.spanId(),
+                resourceAttributes.get(SERVICE_NAME),
+                span.spanName(),
+                span.startTimeNanos() / MILLIS_PER_NANO,
+                span.endTimeNanos() / MILLIS_PER_NANO,
+                tags,
+                false);
         return SpanListenerResult.CONTINUE;
     }
 
     @Override
     public SpanListenerResult onZipkinSpan(final ZipkinSpan span) {
         final Map<String, String> tags = toMap(span.getTags());
-        if (!hasGenAITag(tags)) {
+        if (!isGenAISpan(tags)) {
             return SpanListenerResult.CONTINUE;
         }
-        if (!evaluationService.shouldSample(span.getTraceId())) {
+        if (!shouldSample(span.getTraceId())) {
             return SpanListenerResult.CONTINUE;
         }
+        sample(AIEvaluationContext.SpanSource.ZIPKIN,
+                span.getTraceId(),
+                span.getSpanId(),
+                span.getLocalEndpointServiceName(),
+                span.getName(),
+                span.getTimestampMillis(),
+                span.getTimestampMillis() + span.getDuration() / MILLIS_PER_MICRO,
+                tags,
+                "true".equalsIgnoreCase(tags.get(ERROR_TAG)));
+        return SpanListenerResult.CONTINUE;
+    }
 
+    private void sample(final AIEvaluationContext.SpanSource source,
+                        final String traceId,
+                        final String spanId,
+                        final String serviceName,
+                        final String operationName,
+                        final long startTimeMillis,
+                        final long endTimeMillis,
+                        final Map<String, String> tags,
+                        final boolean error) {
         final GenAIContextResolver.Result genAIContext = GenAIContextResolver.resolve(tags);
         evaluationService.sample(AIEvaluationContext.builder()
-                                                     .source(AIEvaluationContext.SpanSource.ZIPKIN)
-                                                     .traceId(span.getTraceId())
-                                                     .spanId(span.getSpanId())
-                                                     .serviceName(span.getLocalEndpointServiceName())
-                                                     .operationName(span.getName())
-                                                     .providerName(genAIContext.getProviderName())
-                                                     .modelName(genAIContext.getModelName())
-                                                     .startTimeMillis(span.getTimestampMillis())
-                                                     .endTimeMillis(
-                                                         span.getTimestampMillis() + span.getDuration() / 1000
-                                                     )
-                                                     .error("true".equalsIgnoreCase(tags.get("error")))
-                                                     .tags(tags)
-                                                     .build());
-        return SpanListenerResult.CONTINUE;
+                .source(source)
+                .traceId(traceId)
+                .spanId(spanId)
+                .serviceName(serviceName)
+                .operationName(operationName)
+                .providerName(genAIContext.getProviderName())
+                .modelName(genAIContext.getModelName())
+                .startTimeMillis(startTimeMillis)
+                .endTimeMillis(endTimeMillis)
+                .error(error)
+                .tags(tags)
+                .build());
+    }
+
+    private boolean shouldSample(final String traceId) {
+        return evaluationService.shouldSample(traceId);
+    }
+
+    private static boolean isGenAISpan(final Map<String, String> tags) {
+        return StringUtil.isNotBlank(tags.get(GenAISemanticAttributes.RESPONSE_MODEL));
     }
 
     private static void putIfNotEmpty(final Map<String, String> tags, final String key, final String value) {
         if (value != null && !value.isEmpty()) {
             tags.put(key, value);
         }
-    }
-
-    private static boolean hasGenAITag(final Map<String, String> tags) {
-        return tags.keySet().stream().anyMatch(key -> key.startsWith(GenAISemanticAttributes.PREFIX));
     }
 
     private static Map<String, String> toMap(final JsonObject tags) {

@@ -38,12 +38,17 @@ import org.apache.skywalking.oap.server.library.module.ModuleStartException;
 
 public class OpenAICompatibleProvider implements JudgeModelProvider {
     private static final Gson GSON = new Gson();
-    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(30);
+    private static final long DEFAULT_REQUEST_TIMEOUT_SECONDS = 30L;
+    private static final double MIN_TEMPERATURE = 0.0;
+    private static final double MAX_TEMPERATURE = 1.0;
 
     private final HttpClient httpClient;
     private final String endpoint;
     private final String apiKey;
     private final String model;
+    private final Duration requestTimeout;
+    private final Double temperature;
+    private final Integer maxTokens;
 
     public OpenAICompatibleProvider(final Properties config) throws ModuleStartException {
         this(HttpClient.newHttpClient(), config);
@@ -55,6 +60,9 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         this.endpoint = getString(config, "endpoint");
         this.apiKey = getString(config, "api-key");
         this.model = getString(config, "model");
+        this.requestTimeout = Duration.ofSeconds(getRequestTimeoutSeconds(config));
+        this.temperature = getDouble(config, "temperature");
+        this.maxTokens = getInteger(config, "max_tokens");
     }
 
     @Override
@@ -62,7 +70,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         throws IOException, InterruptedException {
         final HttpRequest httpRequest = HttpRequest.newBuilder()
                                                    .uri(URI.create(endpoint))
-                                                   .timeout(REQUEST_TIMEOUT)
+                                                   .timeout(requestTimeout)
                                                    .header("Authorization", "Bearer " + apiKey)
                                                    .header("Content-Type", "application/json")
                                                    .POST(HttpRequest.BodyPublishers.ofString(buildRequestBody(request)))
@@ -93,12 +101,21 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         if (isEmpty(getString(config, "api-key"))) {
             throw new ModuleStartException("AI evaluation judge config [api-key] is required.");
         }
+        validateRequestTimeoutSeconds(getString(config, "request-timeout-seconds"));
+        validateTemperature(getString(config, "temperature"));
+        validateMaxTokens(getString(config, "max_tokens"));
     }
 
     private String buildRequestBody(final JudgeModelRequest request) {
         final JsonObject body = new JsonObject();
         body.addProperty("model", model);
         body.addProperty("stream", false);
+        if (temperature != null) {
+            body.addProperty("temperature", temperature);
+        }
+        if (maxTokens != null) {
+            body.addProperty("max_tokens", maxTokens);
+        }
 
         final JsonArray messages = new JsonArray();
         addMessage(messages, "system", request.getSystemPrompt());
@@ -160,6 +177,98 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         }
         final Object value = properties.get(key);
         return value == null ? null : String.valueOf(value);
+    }
+
+    private static Double getDouble(final Properties properties, final String key) throws ModuleStartException {
+        final String value = getString(properties, key);
+        if (isEmpty(value)) {
+            return null;
+        }
+        try {
+            return Double.valueOf(value);
+        } catch (NumberFormatException e) {
+            throw new ModuleStartException("AI evaluation judge config [" + key + "] must be a number.", e);
+        }
+    }
+
+    private static Integer getInteger(final Properties properties, final String key) throws ModuleStartException {
+        final String value = getString(properties, key);
+        if (isEmpty(value)) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            throw new ModuleStartException("AI evaluation judge config [" + key + "] must be an integer.", e);
+        }
+    }
+
+    private static long getRequestTimeoutSeconds(final Properties properties) throws ModuleStartException {
+        final String value = getString(properties, "request-timeout-seconds");
+        if (isEmpty(value)) {
+            return DEFAULT_REQUEST_TIMEOUT_SECONDS;
+        }
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            throw new ModuleStartException(
+                "AI evaluation judge config [request-timeout-seconds] must be an integer.",
+                e
+            );
+        }
+    }
+
+    private static void validateRequestTimeoutSeconds(final String value) throws ModuleStartException {
+        if (isEmpty(value)) {
+            return;
+        }
+        final long parsed;
+        try {
+            parsed = Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            throw new ModuleStartException(
+                "AI evaluation judge config [request-timeout-seconds] must be an integer.",
+                e
+            );
+        }
+        if (parsed <= 0) {
+            throw new ModuleStartException(
+                "AI evaluation judge config [request-timeout-seconds] must be greater than 0."
+            );
+        }
+    }
+
+    private static void validateTemperature(final String value) throws ModuleStartException {
+        if (isEmpty(value)) {
+            return;
+        }
+        final double parsed;
+        try {
+            parsed = Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            throw new ModuleStartException("AI evaluation judge config [temperature] must be a number.", e);
+        }
+        if (parsed <= MIN_TEMPERATURE || parsed > MAX_TEMPERATURE) {
+            throw new ModuleStartException(
+                "AI evaluation judge config [temperature] must be greater than 0 and less than or equal to "
+                    + MAX_TEMPERATURE + '.'
+            );
+        }
+    }
+
+    private static void validateMaxTokens(final String value) throws ModuleStartException {
+        if (isEmpty(value)) {
+            return;
+        }
+        final int parsed;
+        try {
+            parsed = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new ModuleStartException("AI evaluation judge config [max_tokens] must be an integer.", e);
+        }
+        if (parsed <= 0) {
+            throw new ModuleStartException("AI evaluation judge config [max_tokens] must be greater than 0.");
+        }
     }
 
     private static boolean isEmpty(final String value) {
