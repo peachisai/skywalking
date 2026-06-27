@@ -35,18 +35,20 @@ import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
 
 @Getter
 @Setter
-@ScopeDeclaration(id = DefaultScopeDefine.AI_EVALUATION_RESULT, name = "AIEvaluationResult")
-@Stream(name = AIEvaluationResultRecord.INDEX_NAME, scopeId = DefaultScopeDefine.AI_EVALUATION_RESULT,
+@ScopeDeclaration(id = DefaultScopeDefine.GEN_AI_EVALUATION_RECORD, name = "GenAIEvaluationRecord")
+@Stream(name = AIEvaluationResultRecord.INDEX_NAME, scopeId = DefaultScopeDefine.GEN_AI_EVALUATION_RECORD,
         builder = AIEvaluationResultRecord.Builder.class, processor = RecordStreamProcessor.class)
 @BanyanDB.TimestampColumn(AIEvaluationResultRecord.EVALUATION_TIME)
 @BanyanDB.Group(streamGroup = BanyanDB.StreamGroup.RECORDS)
 public class AIEvaluationResultRecord extends Record {
 
-    public static final String INDEX_NAME = "ai_evaluation_result";
+    public static final String INDEX_NAME = "gen_ai_evaluation_result";
     public static final String TRACE_ID = "trace_id";
     public static final String SEGMENT_ID = "segment_id";
     public static final String SPAN_ID = "span_id";
     public static final String SPAN_TYPE = "span_type";
+    public static final String PROVIDER_NAME = "provider_name";
+    public static final String MODEL_NAME = "model_name";
     public static final String TASK_NAME = "task_name";
     public static final String VALUE_TYPE = "value_type";
     public static final String VALUE = "value";
@@ -66,6 +68,14 @@ public class AIEvaluationResultRecord extends Record {
 
     @Column(name = SPAN_TYPE, length = 64)
     private String spanType;
+
+    @ElasticSearch.EnableDocValues
+    @Column(name = PROVIDER_NAME, length = 256)
+    private String providerName;
+
+    @ElasticSearch.EnableDocValues
+    @Column(name = MODEL_NAME, length = 256)
+    private String modelName;
 
     @Column(name = TASK_NAME, length = 512)
     private String taskName;
@@ -92,6 +102,8 @@ public class AIEvaluationResultRecord extends Record {
                 .append(TRACE_ID, traceId)
                 .append(SPAN_ID, spanId)
                 .append(SPAN_TYPE, spanType)
+                .append(PROVIDER_NAME, providerName)
+                .append(MODEL_NAME, modelName)
                 .append(TASK_NAME, taskName)
                 .append(EVALUATION_TIME, evaluationTime);
     }
@@ -104,6 +116,8 @@ public class AIEvaluationResultRecord extends Record {
             record.setSegmentId((String) converter.get(SEGMENT_ID));
             record.setSpanId((String) converter.get(SPAN_ID));
             record.setSpanType((String) converter.get(SPAN_TYPE));
+            record.setProviderName((String) converter.get(PROVIDER_NAME));
+            record.setModelName((String) converter.get(MODEL_NAME));
             record.setTaskName((String) converter.get(TASK_NAME));
             record.setValueType((String) converter.get(VALUE_TYPE));
             record.setValue((String) converter.get(VALUE));
@@ -120,6 +134,8 @@ public class AIEvaluationResultRecord extends Record {
             converter.accept(SEGMENT_ID, storageData.getSegmentId());
             converter.accept(SPAN_ID, storageData.getSpanId());
             converter.accept(SPAN_TYPE, storageData.getSpanType());
+            converter.accept(PROVIDER_NAME, storageData.getProviderName());
+            converter.accept(MODEL_NAME, storageData.getModelName());
             converter.accept(TASK_NAME, storageData.getTaskName());
             converter.accept(VALUE_TYPE, storageData.getValueType());
             converter.accept(VALUE, storageData.getValue());

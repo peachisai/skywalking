@@ -42,6 +42,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluat
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.span.SpanAIEvaluationStrategy;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.analysis.meter.MeterSystem;
+import org.apache.skywalking.oap.server.core.config.NamingControl;
 import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 import org.apache.skywalking.oap.server.library.module.ModuleProvider;
@@ -125,12 +126,14 @@ public class AIEvaluationProvider extends ModuleProvider {
     private List<AIEvaluationStrategy> createStrategies() {
         final EvaluationTaskRegistry taskRegistry = new EvaluationTaskRegistry(config.getTasks());
         final EvaluationInputExtractor inputExtractor = new EvaluationInputExtractor();
+        final NamingControl namingControl = getManager().find(CoreModule.NAME).provider().getService(NamingControl.class);
         return Collections.singletonList(new SpanAIEvaluationStrategy(
             taskRegistry,
             new EvaluationPlanner(inputExtractor),
             new EvaluationPromptBuilder(config.getSystemPrompt()),
             new EvaluationResultParser(),
-            metricReporter
+            metricReporter,
+            namingControl
         ));
     }
 
@@ -146,6 +149,7 @@ public class AIEvaluationProvider extends ModuleProvider {
             throw new ModuleStartException("Failed to load AI evaluation MAL rules.", e);
         }
         final MeterSystem meterSystem = getManager().find(CoreModule.NAME).provider().getService(MeterSystem.class);
+        final NamingControl namingControl = getManager().find(CoreModule.NAME).provider().getService(NamingControl.class);
         final List<MetricConvert> converts = rules.stream()
                                                   .map(rule -> {
                                                       final MetricConvert convert = new MetricConvert(rule, meterSystem);
@@ -157,7 +161,7 @@ public class AIEvaluationProvider extends ModuleProvider {
                                                       return convert;
                                                   })
                                                   .collect(Collectors.toList());
-        return new AIEvaluationMetricReporter(converts);
+        return new AIEvaluationMetricReporter(converts, namingControl);
     }
 
     private static void validateConfig(final AIEvaluationConfig config) throws ModuleStartException {

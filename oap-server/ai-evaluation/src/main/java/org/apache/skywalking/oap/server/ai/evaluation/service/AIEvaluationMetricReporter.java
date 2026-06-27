@@ -30,23 +30,27 @@ import org.apache.skywalking.oap.meter.analyzer.v2.dsl.SampleFamily;
 import org.apache.skywalking.oap.meter.analyzer.v2.dsl.SampleFamilyBuilder;
 import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResult;
+import org.apache.skywalking.oap.server.core.config.NamingControl;
 
 @Slf4j
 public class AIEvaluationMetricReporter {
     public static final String RULE_CATALOG = "ai-evaluation-rules";
     public static final String RULE_NAME = "default";
-    public static final String SAMPLE_SCORE_NAME = "gen_ai_evaluation_score_ppm";
+    public static final String SAMPLE_SCORE_NAME = "gen_ai_model_evaluation_score_ppm";
     private static final double SCORE_SCALE = 1_000_000D;
 
     private final List<MetricConvert> metricConverts;
+    private final NamingControl namingControl;
 
-    public AIEvaluationMetricReporter(final List<MetricConvert> metricConverts) {
+    public AIEvaluationMetricReporter(final List<MetricConvert> metricConverts,
+                                      final NamingControl namingControl) {
         this.metricConverts = metricConverts;
+        this.namingControl = namingControl;
     }
 
     public void reportScore(final AIEvaluationContext context,
                             final EvaluationResult result,
-                            final long evaluationTime) {
+                            final long sampleTime) {
         final double score;
         try {
             score = Double.parseDouble(result.getValue());
@@ -57,9 +61,9 @@ public class AIEvaluationMetricReporter {
 
         final Sample sample = Sample.builder()
                 .name(SAMPLE_SCORE_NAME)
-                .timestamp(evaluationTime)
+                .timestamp(sampleTime)
                 .value(score * SCORE_SCALE)
-                .labels(ImmutableMap.copyOf(labels(context, result)))
+                .labels(ImmutableMap.copyOf(labels(context, result, namingControl)))
                 .build();
         final ImmutableMap<String, SampleFamily> sampleFamilies = ImmutableMap.of(
                 SAMPLE_SCORE_NAME,
@@ -69,10 +73,11 @@ public class AIEvaluationMetricReporter {
     }
 
     private static Map<String, String> labels(final AIEvaluationContext context,
-                                              final EvaluationResult result) {
+                                              final EvaluationResult result,
+                                              final NamingControl namingControl) {
         return ImmutableMap.of(
-                "provider_name", defaultString(context.getProviderName()),
-                "model_name", defaultString(context.getModelName()),
+                "provider_name", defaultString(namingControl.formatServiceName(context.getProviderName())),
+                "model_name", defaultString(namingControl.formatInstanceName(context.getModelName())),
                 "task_name", defaultString(result.getName())
         );
     }

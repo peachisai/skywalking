@@ -35,6 +35,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTaskRegistr
 import org.apache.skywalking.oap.server.ai.evaluation.value.ValueType;
 import org.apache.skywalking.oap.server.core.analysis.TimeBucket;
 import org.apache.skywalking.oap.server.core.analysis.worker.RecordStreamProcessor;
+import org.apache.skywalking.oap.server.core.config.NamingControl;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,17 +50,20 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
     private final EvaluationPromptBuilder promptBuilder;
     private final EvaluationResultParser resultParser;
     private final AIEvaluationMetricReporter metricReporter;
+    private final NamingControl namingControl;
 
     public SpanAIEvaluationStrategy(final EvaluationTaskRegistry taskRegistry,
                                     final EvaluationPlanner evaluationPlanner,
                                     final EvaluationPromptBuilder promptBuilder,
                                     final EvaluationResultParser resultParser,
-                                    final AIEvaluationMetricReporter metricReporter) {
+                                    final AIEvaluationMetricReporter metricReporter,
+                                    final NamingControl namingControl) {
         this.taskRegistry = taskRegistry;
         this.evaluationPlanner = evaluationPlanner;
         this.promptBuilder = promptBuilder;
         this.resultParser = resultParser;
         this.metricReporter = metricReporter;
+        this.namingControl = namingControl;
     }
 
     @Override
@@ -119,6 +123,8 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
             record.setSegmentId(segmentId);
             record.setSpanId(context.getSpanId());
             record.setSpanType(plan.getSpanType() == null ? "" : plan.getSpanType().name());
+            record.setProviderName(defaultString(namingControl.formatServiceName(context.getProviderName())));
+            record.setModelName(defaultString(namingControl.formatInstanceName(context.getModelName())));
             record.setTaskName(result.getName());
             record.setValueType(result.getValueType() == null ? "" : result.getValueType().name());
             record.setValue(result.getValue());
@@ -142,8 +148,11 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
         return context.getTags().get(GenAISemanticAttributes.OPERATION_NAME);
     }
 
+    private static String defaultString(final String value) {
+        return value == null ? "" : value;
+    }
+
     private static boolean isEmpty(final String value) {
         return value == null || value.isEmpty();
     }
 }
-
