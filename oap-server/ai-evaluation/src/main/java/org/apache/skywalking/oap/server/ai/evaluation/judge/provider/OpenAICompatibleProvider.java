@@ -23,6 +23,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -31,6 +32,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
+
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelRequest;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelResponse;
@@ -67,14 +69,14 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
 
     @Override
     public Optional<JudgeModelResponse> judge(final JudgeModelRequest request)
-        throws IOException, InterruptedException {
+            throws IOException, InterruptedException {
         final HttpRequest httpRequest = HttpRequest.newBuilder()
-                                                   .uri(URI.create(endpoint))
-                                                   .timeout(requestTimeout)
-                                                   .header("Authorization", "Bearer " + apiKey)
-                                                   .header("Content-Type", "application/json")
-                                                   .POST(HttpRequest.BodyPublishers.ofString(buildRequestBody(request)))
-                                                   .build();
+                .uri(URI.create(endpoint))
+                .timeout(requestTimeout)
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(buildRequestBody(request)))
+                .build();
         final HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
             throw new IOException("OpenAI compatible judge API request failed, status: " + response.statusCode());
@@ -148,11 +150,11 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
 
         final JsonObject usage = root.getAsJsonObject("usage");
         return JudgeModelResponse.builder()
-                                 .content(content)
-                                 .promptTokens(getAsInt(usage, "prompt_tokens"))
-                                 .completionTokens(getAsInt(usage, "completion_tokens"))
-                                 .totalTokens(getAsInt(usage, "total_tokens"))
-                                 .build();
+                .content(content)
+                .promptTokens(getAsInt(usage, "prompt_tokens"))
+                .completionTokens(getAsInt(usage, "completion_tokens"))
+                .totalTokens(getAsInt(usage, "total_tokens"))
+                .build();
     }
 
     private static String getAsString(final JsonObject object, final String memberName) {
@@ -212,8 +214,8 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
             throw new ModuleStartException(
-                "AI evaluation judge config [request-timeout-seconds] must be an integer.",
-                e
+                    "AI evaluation judge config [request-timeout-seconds] must be an integer.",
+                    e
             );
         }
     }
@@ -227,13 +229,13 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
             parsed = Long.parseLong(value);
         } catch (NumberFormatException e) {
             throw new ModuleStartException(
-                "AI evaluation judge config [request-timeout-seconds] must be an integer.",
-                e
+                    "AI evaluation judge config [request-timeout-seconds] must be an integer.",
+                    e
             );
         }
         if (parsed <= 0) {
             throw new ModuleStartException(
-                "AI evaluation judge config [request-timeout-seconds] must be greater than 0."
+                    "AI evaluation judge config [request-timeout-seconds] must be greater than 0."
             );
         }
     }
@@ -248,10 +250,10 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         } catch (NumberFormatException e) {
             throw new ModuleStartException("AI evaluation judge config [temperature] must be a number.", e);
         }
-        if (parsed <= MIN_TEMPERATURE || parsed > MAX_TEMPERATURE) {
+        if (parsed < MIN_TEMPERATURE || parsed > MAX_TEMPERATURE) {
             throw new ModuleStartException(
-                "AI evaluation judge config [temperature] must be greater than 0 and less than or equal to "
-                    + MAX_TEMPERATURE + '.'
+                    "AI evaluation judge config [temperature] must be greater than 0 and less than or equal to "
+                            + MAX_TEMPERATURE + '.'
             );
         }
     }
