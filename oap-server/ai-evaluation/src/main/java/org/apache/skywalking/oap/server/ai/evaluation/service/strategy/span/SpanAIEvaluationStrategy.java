@@ -30,7 +30,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResult;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResultParser;
 import org.apache.skywalking.oap.server.ai.evaluation.service.AIEvaluationMetricReporter;
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluationStrategy;
-import org.apache.skywalking.oap.server.ai.evaluation.storage.AIEvaluationResultRecord;
+import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationResultRecord;
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTaskRegistry;
 import org.apache.skywalking.oap.server.ai.evaluation.value.ValueType;
 import org.apache.skywalking.oap.server.core.analysis.TimeBucket;
@@ -73,7 +73,7 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
 
     @Override
     public String taskId(final AIEvaluationContext context) {
-        return context.getTraceId() + "/" + context.getSpanId();
+        return context.getTraceId() + "-" + context.getSpanId();
     }
 
     @Override
@@ -84,14 +84,15 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
             return;
         }
 
-        if (isLLMCallSpan(context)) {
+        if (!validLLMCallSpan(context)) {
             log.debug(
                     "Skip GenAI span evaluation, unsupported operation: {}, taskId: {}",
                     operationName(context),
                     taskId(context)
             );
-            evaluateLLMCallSpan(context, judgeModelProvider);
+            return;
         }
+        evaluateLLMCallSpan(context, judgeModelProvider);
     }
 
     private void evaluateLLMCallSpan(final AIEvaluationContext context,
@@ -118,7 +119,7 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
         final long evaluationTime = System.currentTimeMillis();
         final String segmentId = "";
         for (EvaluationResult result : results) {
-            final AIEvaluationResultRecord record = new AIEvaluationResultRecord();
+            final GenAIEvaluationResultRecord record = new GenAIEvaluationResultRecord();
             record.setTraceId(context.getTraceId());
             record.setSegmentId(segmentId);
             record.setSpanId(context.getSpanId());
@@ -140,8 +141,21 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
         }
     }
 
-    private static boolean isLLMCallSpan(final AIEvaluationContext context) {
-        return CHAT_OPERATION.equalsIgnoreCase(operationName(context));
+    private static boolean validLLMCallSpan(final AIEvaluationContext context) {
+        if (!CHAT_OPERATION.equalsIgnoreCase(operationName(context))) {
+            return false;
+        }
+
+        final String inputMessages = context.getTags().get(GenAISemanticAttributes.INPUT_MESSAGES);
+        final String outputMessages = context.getTags().get(GenAISemanticAttributes.OUTPUT_MESSAGES);
+        if (isEmpty(inputMessages) || isEmpty(outputMessages)) {
+            log.warn(
+                    "Skip GenAI span evaluation, missing input or output messages,trace id :{}",
+                    context.getTraceId()
+            );
+            return false;
+        }
+        return true;
     }
 
     private static String operationName(final AIEvaluationContext context) {

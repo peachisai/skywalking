@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.oap.server.ai.evaluation.storage;
+package org.apache.skywalking.oap.server.core.analysis.manual.genai;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,13 +36,13 @@ import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
 @Getter
 @Setter
 @ScopeDeclaration(id = DefaultScopeDefine.GEN_AI_EVALUATION_RECORD, name = "GenAIEvaluationRecord")
-@Stream(name = AIEvaluationResultRecord.INDEX_NAME, scopeId = DefaultScopeDefine.GEN_AI_EVALUATION_RECORD,
-        builder = AIEvaluationResultRecord.Builder.class, processor = RecordStreamProcessor.class)
-@BanyanDB.TimestampColumn(AIEvaluationResultRecord.EVALUATION_TIME)
+@Stream(name = GenAIEvaluationResultRecord.INDEX_NAME, scopeId = DefaultScopeDefine.GEN_AI_EVALUATION_RECORD,
+        builder = GenAIEvaluationResultRecord.Builder.class, processor = RecordStreamProcessor.class)
+@BanyanDB.TimestampColumn(GenAIEvaluationResultRecord.EVALUATION_TIME)
 @BanyanDB.Group(streamGroup = BanyanDB.StreamGroup.RECORDS)
-public class AIEvaluationResultRecord extends Record {
+public class GenAIEvaluationResultRecord extends Record {
 
-    public static final String INDEX_NAME = "gen_ai_evaluation_result";
+    public static final String INDEX_NAME = "gen_ai_evaluation_record";
     public static final String TRACE_ID = "trace_id";
     public static final String SEGMENT_ID = "segment_id";
     public static final String SPAN_ID = "span_id";
@@ -108,10 +108,10 @@ public class AIEvaluationResultRecord extends Record {
                 .append(EVALUATION_TIME, evaluationTime);
     }
 
-    public static class Builder implements StorageBuilder<AIEvaluationResultRecord> {
+    public static class Builder implements StorageBuilder<GenAIEvaluationResultRecord> {
         @Override
-        public AIEvaluationResultRecord storage2Entity(final Convert2Entity converter) {
-            final AIEvaluationResultRecord record = new AIEvaluationResultRecord();
+        public GenAIEvaluationResultRecord storage2Entity(final Convert2Entity converter) {
+            final GenAIEvaluationResultRecord record = new GenAIEvaluationResultRecord();
             record.setTraceId((String) converter.get(TRACE_ID));
             record.setSegmentId((String) converter.get(SEGMENT_ID));
             record.setSpanId((String) converter.get(SPAN_ID));
@@ -129,7 +129,7 @@ public class AIEvaluationResultRecord extends Record {
         }
 
         @Override
-        public void entity2Storage(final AIEvaluationResultRecord storageData, final Convert2Storage converter) {
+        public void entity2Storage(final GenAIEvaluationResultRecord storageData, final Convert2Storage converter) {
             converter.accept(TRACE_ID, storageData.getTraceId());
             converter.accept(SEGMENT_ID, storageData.getSegmentId());
             converter.accept(SPAN_ID, storageData.getSpanId());

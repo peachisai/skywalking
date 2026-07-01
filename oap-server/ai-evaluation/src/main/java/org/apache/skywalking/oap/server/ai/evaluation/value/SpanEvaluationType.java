@@ -19,6 +19,5 @@
 package org.apache.skywalking.oap.server.ai.evaluation.value;
 
 public enum SpanEvaluationType {
-    LLM_CALL,
-    RAG_CALL
+    LLM_CALL
 }

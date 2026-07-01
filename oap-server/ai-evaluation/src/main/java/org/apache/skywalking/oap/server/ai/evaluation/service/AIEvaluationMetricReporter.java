@@ -34,8 +34,8 @@ import org.apache.skywalking.oap.server.core.config.NamingControl;
 
 @Slf4j
 public class AIEvaluationMetricReporter {
-    public static final String RULE_CATALOG = "ai-evaluation-rules";
-    public static final String RULE_NAME = "default";
+    public static final String RULE_CATALOG = "gen-ai-evaluation-rules";
+    public static final String RULE_NAME = "gen-ai-model";
     public static final String SAMPLE_SCORE_NAME = "gen_ai_model_evaluation_score_ppm";
     private static final double SCORE_SCALE = 1_000_000D;
 

@@ -20,27 +20,31 @@ package org.apache.skywalking.oap.server.ai.evaluation.listener;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.AIEvaluationModule;
+import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContext;
 import org.apache.skywalking.oap.server.ai.evaluation.context.GenAIContextResolver;
 import org.apache.skywalking.oap.server.ai.evaluation.context.GenAISemanticAttributes;
 import org.apache.skywalking.oap.server.ai.evaluation.service.IAIEvaluationService;
-import org.apache.skywalking.oap.server.core.trace.OTLPSpanReader;
 import org.apache.skywalking.oap.server.core.trace.SpanListener;
 import org.apache.skywalking.oap.server.core.trace.SpanListenerResult;
 import org.apache.skywalking.oap.server.core.zipkin.source.ZipkinSpan;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.StringUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AIEvaluationSpanListener implements SpanListener {
-    private static final String SERVICE_NAME = "service.name";
     private static final String ERROR_TAG = "error";
-    private static final long MILLIS_PER_NANO = 1_000_000L;
     private static final long MILLIS_PER_MICRO = 1_000L;
+    private static final String[] REQUIRED_TAG_KEYS = new String[]{
+            GenAISemanticAttributes.RESPONSE_MODEL,
+            GenAISemanticAttributes.PROVIDER_NAME,
+            GenAISemanticAttributes.OPERATION_NAME,
+            GenAISemanticAttributes.INPUT_MESSAGES,
+            GenAISemanticAttributes.OUTPUT_MESSAGES,
+            ERROR_TAG
+    };
 
     private IAIEvaluationService evaluationService;
 
@@ -59,46 +63,8 @@ public class AIEvaluationSpanListener implements SpanListener {
     }
 
     @Override
-    public SpanListenerResult onOTLPSpan(final OTLPSpanReader span,
-                                         final Map<String, String> resourceAttributes,
-                                         final String scopeName,
-                                         final String scopeVersion) {
-        final Map<String, String> tags = new HashMap<>(resourceAttributes);
-        putIfNotEmpty(tags, GenAISemanticAttributes.RESPONSE_MODEL,
-                span.getAttribute(GenAISemanticAttributes.RESPONSE_MODEL));
-        if (!isGenAISpan(tags)) {
-            return SpanListenerResult.CONTINUE;
-        }
-        if (!shouldSample(span.traceId())) {
-            return SpanListenerResult.CONTINUE;
-        }
-        putIfNotEmpty(tags, GenAISemanticAttributes.OPERATION_NAME,
-                span.getAttribute(GenAISemanticAttributes.OPERATION_NAME));
-        putIfNotEmpty(tags, GenAISemanticAttributes.PROVIDER_NAME,
-                span.getAttribute(GenAISemanticAttributes.PROVIDER_NAME));
-        putIfNotEmpty(tags, GenAISemanticAttributes.SYSTEM,
-                span.getAttribute(GenAISemanticAttributes.SYSTEM));
-        putIfNotEmpty(tags, GenAISemanticAttributes.USAGE_INPUT_TOKENS,
-                span.getAttribute(GenAISemanticAttributes.USAGE_INPUT_TOKENS));
-        putIfNotEmpty(tags, GenAISemanticAttributes.USAGE_OUTPUT_TOKENS,
-                span.getAttribute(GenAISemanticAttributes.USAGE_OUTPUT_TOKENS));
-        putIfNotEmpty(tags, GenAISemanticAttributes.SERVER_TIME_TO_FIRST_TOKEN,
-                span.getAttribute(GenAISemanticAttributes.SERVER_TIME_TO_FIRST_TOKEN));
-        sample(AIEvaluationContext.SpanSource.OTLP,
-                span.traceId(),
-                span.spanId(),
-                resourceAttributes.get(SERVICE_NAME),
-                span.spanName(),
-                span.startTimeNanos() / MILLIS_PER_NANO,
-                span.endTimeNanos() / MILLIS_PER_NANO,
-                tags,
-                false);
-        return SpanListenerResult.CONTINUE;
-    }
-
-    @Override
     public SpanListenerResult onZipkinSpan(final ZipkinSpan span) {
-        final Map<String, String> tags = toMap(span.getTags());
+        final Map<String, String> tags = toRequiredTagMap(span.getTags());
         if (!isGenAISpan(tags)) {
             return SpanListenerResult.CONTINUE;
         }
@@ -150,19 +116,19 @@ public class AIEvaluationSpanListener implements SpanListener {
         return StringUtil.isNotBlank(tags.get(GenAISemanticAttributes.RESPONSE_MODEL));
     }
 
-    private static void putIfNotEmpty(final Map<String, String> tags, final String key, final String value) {
-        if (value != null && !value.isEmpty()) {
-            tags.put(key, value);
-        }
-    }
-
-    private static Map<String, String> toMap(final JsonObject tags) {
+    private static Map<String, String> toRequiredTagMap(final JsonObject tags) {
         final Map<String, String> result = new HashMap<>();
         if (tags == null) {
             return result;
         }
-        for (Map.Entry<String, JsonElement> entry : tags.entrySet()) {
-            result.put(entry.getKey(), entry.getValue().getAsString());
+        for (String requiredKey : REQUIRED_TAG_KEYS) {
+            final JsonElement value = tags.get(requiredKey);
+            if (value != null && !value.isJsonNull()) {
+                final String tagValue = value.getAsString();
+                if (!tagValue.isEmpty()) {
+                    result.put(requiredKey, tagValue);
+                }
+            }
         }
         return result;
     }

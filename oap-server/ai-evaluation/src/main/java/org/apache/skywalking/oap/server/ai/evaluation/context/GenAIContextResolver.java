@@ -32,6 +32,10 @@ public final class GenAIContextResolver {
         String modelName = tags.get(GenAISemanticAttributes.RESPONSE_MODEL);
         String providerName = tags.get(GenAISemanticAttributes.PROVIDER_NAME);
 
+        if (StringUtil.isBlank(providerName)) {
+            providerName = tags.get(GenAISemanticAttributes.SYSTEM);
+        }
+
         if (StringUtil.isBlank(providerName) && StringUtil.isNotBlank(modelName)) {
             providerName = GenAIModelMatcher.getInstance().match(modelName).getProvider();
         }
