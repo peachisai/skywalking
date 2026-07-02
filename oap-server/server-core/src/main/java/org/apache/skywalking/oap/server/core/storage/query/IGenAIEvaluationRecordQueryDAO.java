@@ -38,26 +38,26 @@ import static org.apache.skywalking.oap.server.core.query.type.debugging.Debuggi
 
 public interface IGenAIEvaluationRecordQueryDAO extends Service {
 
-    default boolean supportQueryLogsByKeywords() {
+    default boolean supportQueryGenAIEvaluationRecordByKeywords() {
         return false;
     }
 
-    default Logs queryLogsDebuggable(String serviceId,
-                                     String serviceInstanceId,
-                                     String endpointId,
-                                     TraceScopeCondition relatedTrace,
-                                     Order queryOrder,
-                                     int from,
-                                     int limit,
-                                     final Duration duration,
-                                     final List<Tag> tags,
-                                     final List<String> keywordsOfContent,
-                                     final List<String> excludingKeywordsOfContent) throws IOException {
+    default Logs queryGenAIEvaluationRecordDebuggable(String serviceId,
+                                                      String serviceInstanceId,
+                                                      String endpointId,
+                                                      TraceScopeCondition relatedTrace,
+                                                      Order queryOrder,
+                                                      int from,
+                                                      int limit,
+                                                      final Duration duration,
+                                                      final List<Tag> tags,
+                                                      final List<String> keywordsOfContent,
+                                                      final List<String> excludingKeywordsOfContent) throws IOException {
         DebuggingTraceContext traceContext = TRACE_CONTEXT.get();
         DebuggingSpan span = null;
         try {
             if (traceContext != null) {
-                span = traceContext.createSpan("Query Dao: queryLogs");
+                span = traceContext.createSpan("Query Dao: queryGenAIEvaluationRecord");
                 StringBuilder msg = new StringBuilder();
                 msg.append("ServiceId: ").append(serviceId)
                    .append(", ServiceInstanceId: ").append(serviceInstanceId)
@@ -72,7 +72,7 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
                    .append(", ExcludingKeywordsOfContent: ").append(excludingKeywordsOfContent);
                 span.setMsg(msg.toString());
             }
-            return queryLogs(
+            return queryGenAIEvaluationRecord(
                 serviceId, serviceInstanceId, endpointId, relatedTrace, queryOrder, from, limit, duration, tags,
                 keywordsOfContent, excludingKeywordsOfContent
             );
@@ -83,17 +83,17 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
         }
     }
 
-    Logs queryLogs(String serviceId,
-                   String serviceInstanceId,
-                   String endpointId,
-                   TraceScopeCondition relatedTrace,
-                   Order queryOrder,
-                   int from,
-                   int limit,
-                   final Duration duration,
-                   final List<Tag> tags,
-                   final List<String> keywordsOfContent,
-                   final List<String> excludingKeywordsOfContent) throws IOException;
+    Logs queryGenAIEvaluationRecord(String serviceId,
+                                    String serviceInstanceId,
+                                    String endpointId,
+                                    TraceScopeCondition relatedTrace,
+                                    Order queryOrder,
+                                    int from,
+                                    int limit,
+                                    final Duration duration,
+                                    final List<Tag> tags,
+                                    final List<String> keywordsOfContent,
+                                    final List<String> excludingKeywordsOfContent) throws IOException;
 
     /**
      * Parse the raw tags with base64 representation of data binary

@@ -23,15 +23,14 @@ import org.apache.skywalking.library.banyandb.v1.client.AbstractQuery;
 import org.apache.skywalking.library.banyandb.v1.client.RowEntity;
 import org.apache.skywalking.library.banyandb.v1.client.StreamQuery;
 import org.apache.skywalking.library.banyandb.v1.client.StreamQueryResponse;
-import org.apache.skywalking.oap.server.core.analysis.IDManager;
 import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationResultRecord;
-import org.apache.skywalking.oap.server.core.analysis.manual.log.AbstractLogRecord;
 import org.apache.skywalking.oap.server.core.analysis.manual.log.LogRecord;
 import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.Tag;
 import org.apache.skywalking.oap.server.core.query.enumeration.Order;
 import org.apache.skywalking.oap.server.core.query.input.Duration;
 import org.apache.skywalking.oap.server.core.query.input.TraceScopeCondition;
 import org.apache.skywalking.oap.server.core.query.type.ContentType;
+import org.apache.skywalking.oap.server.core.query.type.KeyValue;
 import org.apache.skywalking.oap.server.core.query.type.Log;
 import org.apache.skywalking.oap.server.core.query.type.Logs;
 import org.apache.skywalking.oap.server.core.storage.query.IGenAIEvaluationRecordQueryDAO;
@@ -47,17 +46,30 @@ import java.util.Set;
  * {@link org.apache.skywalking.oap.server.core.analysis.manual.log.LogRecord} is a gen-ai evaluation result
  */
 public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDBDAO implements IGenAIEvaluationRecordQueryDAO {
-    private static final Set<String> TAGS = ImmutableSet.of(AbstractLogRecord.TRACE_ID);
+    private static final Set<String> TAGS = ImmutableSet.of(
+        GenAIEvaluationResultRecord.TRACE_ID,
+        GenAIEvaluationResultRecord.SEGMENT_ID,
+        GenAIEvaluationResultRecord.SPAN_ID,
+        GenAIEvaluationResultRecord.SPAN_TYPE,
+        GenAIEvaluationResultRecord.PROVIDER_NAME,
+        GenAIEvaluationResultRecord.MODEL_NAME,
+        GenAIEvaluationResultRecord.TASK_NAME,
+        GenAIEvaluationResultRecord.VALUE_TYPE,
+        GenAIEvaluationResultRecord.VALUE,
+        GenAIEvaluationResultRecord.REASON,
+        GenAIEvaluationResultRecord.JUDGE_MODEL,
+        GenAIEvaluationResultRecord.EVALUATION_TIME
+    );
 
     public BanyanDBGenAIGenAIEvaluationRecordQueryDAO(BanyanDBStorageClient client) {
         super(client);
     }
 
     @Override
-    public Logs queryLogs(String serviceId, String serviceInstanceId, String endpointId,
-                          TraceScopeCondition relatedTrace, Order queryOrder, int from, int limit,
-                          Duration duration, List<Tag> tags, List<String> keywordsOfContent,
-                          List<String> excludingKeywordsOfContent) throws IOException {
+    public Logs queryGenAIEvaluationRecord(String serviceId, String serviceInstanceId, String endpointId,
+                                           TraceScopeCondition relatedTrace, Order queryOrder, int from, int limit,
+                                           Duration duration, List<Tag> tags, List<String> keywordsOfContent,
+                                           List<String> excludingKeywordsOfContent) throws IOException {
         final boolean isColdStage = duration != null && duration.isColdStage();
         final QueryBuilder<StreamQuery> query = new QueryBuilder<StreamQuery>() {
             @Override
@@ -119,26 +131,27 @@ public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDB
 
         for (final RowEntity rowEntity : resp.getElements()) {
             Log log = new Log();
-            log.setServiceId(rowEntity.getTagValue(AbstractLogRecord.SERVICE_ID));
-            log.setServiceInstanceId(
-                    rowEntity.getTagValue(AbstractLogRecord.SERVICE_INSTANCE_ID));
-            log.setEndpointId(
-                    rowEntity.getTagValue(AbstractLogRecord.ENDPOINT_ID));
-            if (log.getEndpointId() != null) {
-                log.setEndpointName(
-                        IDManager.EndpointID.analysisId(log.getEndpointId()).getEndpointName());
-            }
-            log.setTraceId(rowEntity.getTagValue(AbstractLogRecord.TRACE_ID));
-            log.setTimestamp(((Number) rowEntity.getTagValue(AbstractLogRecord.TIMESTAMP)).longValue());
-            log.setContentType(ContentType.instanceOf(
-                    ((Number) rowEntity.getTagValue(AbstractLogRecord.CONTENT_TYPE)).intValue()));
-            log.setContent(rowEntity.getTagValue(AbstractLogRecord.CONTENT));
-            byte[] dataBinary = rowEntity.getTagValue(AbstractLogRecord.TAGS_RAW_DATA);
-            if (dataBinary != null && dataBinary.length > 0) {
-                parserDataBinary(dataBinary, log.getTags());
-            }
+            log.setTraceId(rowEntity.getTagValue(GenAIEvaluationResultRecord.TRACE_ID));
+            log.setTimestamp(((Number) rowEntity.getTagValue(GenAIEvaluationResultRecord.EVALUATION_TIME)).longValue());
+            log.setContentType(ContentType.TEXT);
+            log.setContent(rowEntity.getTagValue(GenAIEvaluationResultRecord.VALUE));
+            appendTag(log, GenAIEvaluationResultRecord.SEGMENT_ID, rowEntity.getTagValue(GenAIEvaluationResultRecord.SEGMENT_ID));
+            appendTag(log, GenAIEvaluationResultRecord.SPAN_ID, rowEntity.getTagValue(GenAIEvaluationResultRecord.SPAN_ID));
+            appendTag(log, GenAIEvaluationResultRecord.SPAN_TYPE, rowEntity.getTagValue(GenAIEvaluationResultRecord.SPAN_TYPE));
+            appendTag(log, GenAIEvaluationResultRecord.PROVIDER_NAME, rowEntity.getTagValue(GenAIEvaluationResultRecord.PROVIDER_NAME));
+            appendTag(log, GenAIEvaluationResultRecord.MODEL_NAME, rowEntity.getTagValue(GenAIEvaluationResultRecord.MODEL_NAME));
+            appendTag(log, GenAIEvaluationResultRecord.TASK_NAME, rowEntity.getTagValue(GenAIEvaluationResultRecord.TASK_NAME));
+            appendTag(log, GenAIEvaluationResultRecord.VALUE_TYPE, rowEntity.getTagValue(GenAIEvaluationResultRecord.VALUE_TYPE));
+            appendTag(log, GenAIEvaluationResultRecord.REASON, rowEntity.getTagValue(GenAIEvaluationResultRecord.REASON));
+            appendTag(log, GenAIEvaluationResultRecord.JUDGE_MODEL, rowEntity.getTagValue(GenAIEvaluationResultRecord.JUDGE_MODEL));
             logs.getLogs().add(log);
         }
         return logs;
+    }
+
+    private void appendTag(final Log log, final String key, final Object value) {
+        if (value != null) {
+            log.getTags().add(new KeyValue(key, String.valueOf(value)));
+        }
     }
 }
