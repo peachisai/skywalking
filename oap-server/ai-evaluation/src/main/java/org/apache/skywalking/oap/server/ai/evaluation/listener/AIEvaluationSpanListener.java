@@ -71,8 +71,7 @@ public class AIEvaluationSpanListener implements SpanListener {
         if (!shouldSample(span.getTraceId())) {
             return SpanListenerResult.CONTINUE;
         }
-        sample(AIEvaluationContext.SpanSource.ZIPKIN,
-                span.getTraceId(),
+        sample(span.getTraceId(),
                 span.getSpanId(),
                 span.getLocalEndpointServiceName(),
                 span.getName(),
@@ -83,8 +82,7 @@ public class AIEvaluationSpanListener implements SpanListener {
         return SpanListenerResult.CONTINUE;
     }
 
-    private void sample(final AIEvaluationContext.SpanSource source,
-                        final String traceId,
+    private void sample(final String traceId,
                         final String spanId,
                         final String serviceName,
                         final String operationName,
@@ -94,7 +92,6 @@ public class AIEvaluationSpanListener implements SpanListener {
                         final boolean error) {
         final GenAIContextResolver.Result genAIContext = GenAIContextResolver.resolve(tags);
         evaluationService.sample(AIEvaluationContext.builder()
-                .source(source)
                 .traceId(traceId)
                 .spanId(spanId)
                 .serviceName(serviceName)

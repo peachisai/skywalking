@@ -18,17 +18,18 @@
 
 package org.apache.skywalking.oap.server.ai.evaluation.context;
 
-import java.util.Collections;
-import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.Collections;
+import java.util.Map;
 
 @Getter
 @Builder
 public class AIEvaluationContext {
-    private final SpanSource source;
     private final String traceId;
     private final String spanId;
+    private final String segmentId;
     private final String serviceName;
     private final String serviceInstanceName;
     private final String operationName;
@@ -40,9 +41,4 @@ public class AIEvaluationContext {
     @Builder.Default
     private final Map<String, String> tags = Collections.emptyMap();
 
-    public enum SpanSource {
-        SW,
-        OTLP,
-        ZIPKIN
-    }
 }

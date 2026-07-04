@@ -30,10 +30,12 @@ import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResult;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResultParser;
 import org.apache.skywalking.oap.server.ai.evaluation.service.AIEvaluationMetricReporter;
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluationStrategy;
-import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationResultRecord;
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTaskRegistry;
 import org.apache.skywalking.oap.server.ai.evaluation.value.ValueType;
+import org.apache.skywalking.oap.server.core.analysis.IDManager;
+import org.apache.skywalking.oap.server.core.analysis.Layer;
 import org.apache.skywalking.oap.server.core.analysis.TimeBucket;
+import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationRecord;
 import org.apache.skywalking.oap.server.core.analysis.worker.RecordStreamProcessor;
 import org.apache.skywalking.oap.server.core.config.NamingControl;
 
@@ -117,15 +119,21 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
                                 final List<EvaluationResult> results,
                                 final String judgeModel) {
         final long evaluationTime = System.currentTimeMillis();
-        final String segmentId = "";
         for (EvaluationResult result : results) {
-            final GenAIEvaluationResultRecord record = new GenAIEvaluationResultRecord();
+            final String serviceId = IDManager.ServiceID.buildId(
+                    namingControl.formatServiceName(context.getProviderName()),
+                    Layer.VIRTUAL_GENAI.isNormal()
+            );
+            final GenAIEvaluationRecord record = new GenAIEvaluationRecord();
             record.setTraceId(context.getTraceId());
-            record.setSegmentId(segmentId);
+            record.setServiceId(serviceId);
+            record.setServiceInstanceId(IDManager.ServiceInstanceID.buildId(
+                    serviceId,
+                    namingControl.formatServiceName(context.getModelName())
+            ));
+            record.setSegmentId(context.getSegmentId());
             record.setSpanId(context.getSpanId());
             record.setSpanType(plan.getSpanType() == null ? "" : plan.getSpanType().name());
-            record.setProviderName(defaultString(namingControl.formatServiceName(context.getProviderName())));
-            record.setModelName(defaultString(namingControl.formatInstanceName(context.getModelName())));
             record.setTaskName(result.getName());
             record.setValueType(result.getValueType() == null ? "" : result.getValueType().name());
             record.setValue(result.getValue());

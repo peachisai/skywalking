@@ -84,8 +84,8 @@ public class GenAIEvaluationAnalysisListener implements EntryAnalysisListener, E
 
         final GenAIContextResolver.Result genAIContext = GenAIContextResolver.resolve(tags);
         evaluationService.sample(AIEvaluationContext.builder()
-                                                     .source(AIEvaluationContext.SpanSource.SW)
                                                      .traceId(segmentObject.getTraceId())
+                                                     .segmentId(segmentObject.getTraceSegmentId())
                                                      .spanId(String.valueOf(span.getSpanId()))
                                                      .serviceName(segmentObject.getService())
                                                      .serviceInstanceName(segmentObject.getServiceInstance())

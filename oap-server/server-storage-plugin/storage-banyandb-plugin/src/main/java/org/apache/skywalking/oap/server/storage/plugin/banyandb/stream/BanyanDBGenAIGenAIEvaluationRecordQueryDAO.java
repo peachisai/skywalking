@@ -23,8 +23,7 @@ import org.apache.skywalking.library.banyandb.v1.client.AbstractQuery;
 import org.apache.skywalking.library.banyandb.v1.client.RowEntity;
 import org.apache.skywalking.library.banyandb.v1.client.StreamQuery;
 import org.apache.skywalking.library.banyandb.v1.client.StreamQueryResponse;
-import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationResultRecord;
-import org.apache.skywalking.oap.server.core.analysis.manual.log.LogRecord;
+import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationRecord;
 import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.Tag;
 import org.apache.skywalking.oap.server.core.query.enumeration.Order;
 import org.apache.skywalking.oap.server.core.query.input.Duration;
@@ -35,11 +34,12 @@ import org.apache.skywalking.oap.server.core.query.type.Log;
 import org.apache.skywalking.oap.server.core.query.type.Logs;
 import org.apache.skywalking.oap.server.core.storage.query.IGenAIEvaluationRecordQueryDAO;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 import org.apache.skywalking.oap.server.storage.plugin.banyandb.BanyanDBStorageClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -47,18 +47,18 @@ import java.util.Set;
  */
 public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDBDAO implements IGenAIEvaluationRecordQueryDAO {
     private static final Set<String> TAGS = ImmutableSet.of(
-        GenAIEvaluationResultRecord.TRACE_ID,
-        GenAIEvaluationResultRecord.SEGMENT_ID,
-        GenAIEvaluationResultRecord.SPAN_ID,
-        GenAIEvaluationResultRecord.SPAN_TYPE,
-        GenAIEvaluationResultRecord.PROVIDER_NAME,
-        GenAIEvaluationResultRecord.MODEL_NAME,
-        GenAIEvaluationResultRecord.TASK_NAME,
-        GenAIEvaluationResultRecord.VALUE_TYPE,
-        GenAIEvaluationResultRecord.VALUE,
-        GenAIEvaluationResultRecord.REASON,
-        GenAIEvaluationResultRecord.JUDGE_MODEL,
-        GenAIEvaluationResultRecord.EVALUATION_TIME
+            GenAIEvaluationRecord.TRACE_ID,
+            GenAIEvaluationRecord.SERVICE_ID,
+            GenAIEvaluationRecord.SERVICE_INSTANCE_ID,
+            GenAIEvaluationRecord.SEGMENT_ID,
+            GenAIEvaluationRecord.SPAN_ID,
+            GenAIEvaluationRecord.SPAN_TYPE,
+            GenAIEvaluationRecord.TASK_NAME,
+            GenAIEvaluationRecord.VALUE_TYPE,
+            GenAIEvaluationRecord.VALUE,
+            GenAIEvaluationRecord.REASON,
+            GenAIEvaluationRecord.JUDGE_MODEL,
+            GenAIEvaluationRecord.EVALUATION_TIME
     );
 
     public BanyanDBGenAIGenAIEvaluationRecordQueryDAO(BanyanDBStorageClient client) {
@@ -71,79 +71,66 @@ public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDB
                                            Duration duration, List<Tag> tags, List<String> keywordsOfContent,
                                            List<String> excludingKeywordsOfContent) throws IOException {
         final boolean isColdStage = duration != null && duration.isColdStage();
-        final QueryBuilder<StreamQuery> query = new QueryBuilder<StreamQuery>() {
+        final QueryBuilder<StreamQuery> query = new QueryBuilder<>() {
             @Override
             public void apply(StreamQuery query) {
-//                if (StringUtil.isNotEmpty(serviceId)) {
-//                    query.and(eq(AbstractLogRecord.SERVICE_ID, serviceId));
-//                }
-//
-//                if (StringUtil.isNotEmpty(serviceInstanceId)) {
-//                    if (StringUtil.isEmpty(serviceId)) {
-//                        IDManager.ServiceInstanceID.InstanceIDDefinition instanceIDDefinition = IDManager.ServiceInstanceID.analysisId(
-//                            serviceInstanceId);
-//                        query.and(eq(AbstractLogRecord.SERVICE_ID, instanceIDDefinition.getServiceId()));
-//                    }
-//                    query.and(eq(AbstractLogRecord.SERVICE_INSTANCE_ID, serviceInstanceId));
-//                }
-//                if (StringUtil.isNotEmpty(endpointId)) {
-//                    if (StringUtil.isEmpty(serviceId)) {
-//                        IDManager.EndpointID.EndpointIDDefinition endpointIDDefinition = IDManager.EndpointID.analysisId(
-//                            endpointId);
-//                        query.and(eq(AbstractLogRecord.SERVICE_ID, endpointIDDefinition.getServiceId()));
-//                    }
-//                    query.and(eq(AbstractLogRecord.ENDPOINT_ID, endpointId));
-//                }
-//                if (Objects.nonNull(relatedTrace)) {
-//                    if (StringUtil.isNotEmpty(relatedTrace.getTraceId())) {
-//                        query.and(eq(AbstractLogRecord.TRACE_ID, relatedTrace.getTraceId()));
-//                    }
-//                    if (StringUtil.isNotEmpty(relatedTrace.getSegmentId())) {
-//                        query.and(eq(AbstractLogRecord.TRACE_SEGMENT_ID, relatedTrace.getSegmentId()));
-//                    }
-//                    if (Objects.nonNull(relatedTrace.getSpanId())) {
-//                        query.and(eq(AbstractLogRecord.SPAN_ID, (long) relatedTrace.getSpanId()));
-//                    }
-//                }
+                if (StringUtil.isNotEmpty(serviceId)) {
+                    query.and(eq(GenAIEvaluationRecord.SERVICE_ID, serviceId));
+                }
+                if (StringUtil.isNotEmpty(serviceInstanceId)) {
+                    query.and(eq(GenAIEvaluationRecord.SERVICE_INSTANCE_ID, serviceInstanceId));
+                }
+
+                if (Objects.nonNull(relatedTrace)) {
+                    if (StringUtil.isNotEmpty(relatedTrace.getTraceId())) {
+                        query.and(eq(GenAIEvaluationRecord.TRACE_ID, relatedTrace.getTraceId()));
+                    }
+                    if (StringUtil.isNotEmpty(relatedTrace.getSegmentId())) {
+                        query.and(eq(GenAIEvaluationRecord.SEGMENT_ID, relatedTrace.getSegmentId()));
+                    }
+                    if (Objects.nonNull(relatedTrace.getSpanId())) {
+                        query.and(eq(GenAIEvaluationRecord.SPAN_ID, (long) relatedTrace.getSpanId()));
+                    }
+                }
 
                 if (CollectionUtils.isNotEmpty(tags)) {
-                    List<String> tagsConditions = new ArrayList<>(tags.size());
                     for (final Tag tag : tags) {
-                        tagsConditions.add(tag.toString());
+                        if (StringUtil.isNotEmpty(tag.getKey()) && StringUtil.isNotEmpty(tag.getValue())) {
+                            query.and(eq(tag.getKey(), tag.getValue()));
+                        }
                     }
-                    query.and(having(LogRecord.TAGS, tagsConditions));
                 }
                 if (queryOrder == Order.ASC) {
                     query.setOrderBy(
-                        new AbstractQuery.OrderBy(AbstractQuery.Sort.ASC));
+                            new AbstractQuery.OrderBy(AbstractQuery.Sort.ASC));
                 } else {
                     query.setOrderBy(
-                        new AbstractQuery.OrderBy(AbstractQuery.Sort.DESC));
+                            new AbstractQuery.OrderBy(AbstractQuery.Sort.DESC));
                 }
                 query.setLimit(limit);
                 query.setOffset(from);
             }
         };
 
-        StreamQueryResponse resp = queryDebuggable(isColdStage, GenAIEvaluationResultRecord.INDEX_NAME, TAGS, getTimestampRange(duration), query);
+        StreamQueryResponse resp = queryDebuggable(isColdStage, GenAIEvaluationRecord.INDEX_NAME, TAGS, getTimestampRange(duration), query);
 
         Logs logs = new Logs();
 
         for (final RowEntity rowEntity : resp.getElements()) {
             Log log = new Log();
-            log.setTraceId(rowEntity.getTagValue(GenAIEvaluationResultRecord.TRACE_ID));
-            log.setTimestamp(((Number) rowEntity.getTagValue(GenAIEvaluationResultRecord.EVALUATION_TIME)).longValue());
+            log.setTraceId(rowEntity.getTagValue(GenAIEvaluationRecord.TRACE_ID));
+            log.setTimestamp(((Number) rowEntity.getTagValue(GenAIEvaluationRecord.EVALUATION_TIME)).longValue());
             log.setContentType(ContentType.TEXT);
-            log.setContent(rowEntity.getTagValue(GenAIEvaluationResultRecord.VALUE));
-            appendTag(log, GenAIEvaluationResultRecord.SEGMENT_ID, rowEntity.getTagValue(GenAIEvaluationResultRecord.SEGMENT_ID));
-            appendTag(log, GenAIEvaluationResultRecord.SPAN_ID, rowEntity.getTagValue(GenAIEvaluationResultRecord.SPAN_ID));
-            appendTag(log, GenAIEvaluationResultRecord.SPAN_TYPE, rowEntity.getTagValue(GenAIEvaluationResultRecord.SPAN_TYPE));
-            appendTag(log, GenAIEvaluationResultRecord.PROVIDER_NAME, rowEntity.getTagValue(GenAIEvaluationResultRecord.PROVIDER_NAME));
-            appendTag(log, GenAIEvaluationResultRecord.MODEL_NAME, rowEntity.getTagValue(GenAIEvaluationResultRecord.MODEL_NAME));
-            appendTag(log, GenAIEvaluationResultRecord.TASK_NAME, rowEntity.getTagValue(GenAIEvaluationResultRecord.TASK_NAME));
-            appendTag(log, GenAIEvaluationResultRecord.VALUE_TYPE, rowEntity.getTagValue(GenAIEvaluationResultRecord.VALUE_TYPE));
-            appendTag(log, GenAIEvaluationResultRecord.REASON, rowEntity.getTagValue(GenAIEvaluationResultRecord.REASON));
-            appendTag(log, GenAIEvaluationResultRecord.JUDGE_MODEL, rowEntity.getTagValue(GenAIEvaluationResultRecord.JUDGE_MODEL));
+            log.setContent(rowEntity.getTagValue(GenAIEvaluationRecord.VALUE));
+            appendTag(log, GenAIEvaluationRecord.SERVICE_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SERVICE_ID));
+            appendTag(log, GenAIEvaluationRecord.SERVICE_INSTANCE_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SERVICE_INSTANCE_ID));
+            appendTag(log, GenAIEvaluationRecord.SEGMENT_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SEGMENT_ID));
+            appendTag(log, GenAIEvaluationRecord.SPAN_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SPAN_ID));
+            appendTag(log, GenAIEvaluationRecord.SPAN_TYPE, rowEntity.getTagValue(GenAIEvaluationRecord.SPAN_TYPE));
+            appendTag(log, GenAIEvaluationRecord.TASK_NAME, rowEntity.getTagValue(GenAIEvaluationRecord.TASK_NAME));
+            appendTag(log, GenAIEvaluationRecord.VALUE_TYPE, rowEntity.getTagValue(GenAIEvaluationRecord.VALUE_TYPE));
+            appendTag(log, GenAIEvaluationRecord.REASON, rowEntity.getTagValue(GenAIEvaluationRecord.REASON));
+            appendTag(log, GenAIEvaluationRecord.JUDGE_MODEL, rowEntity.getTagValue(GenAIEvaluationRecord.JUDGE_MODEL));
             logs.getLogs().add(log);
         }
         return logs;
