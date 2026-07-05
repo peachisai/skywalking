@@ -30,6 +30,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContex
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.service.sample.AIEvaluationSamplingPolicy;
 import org.apache.skywalking.oap.server.ai.evaluation.service.strategy.AIEvaluationStrategy;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 @Slf4j
 public class AIEvaluationService implements IAIEvaluationService {
@@ -59,12 +60,12 @@ public class AIEvaluationService implements IAIEvaluationService {
 
     @Override
     public boolean shouldSample(final String traceId) {
-        return !isEmpty(traceId) && samplingPolicy.shouldSample(traceId);
+        return StringUtil.isNotEmpty(traceId) && samplingPolicy.shouldSample(traceId);
     }
 
     @Override
     public void sample(final AIEvaluationContext context) {
-        if (context == null || isEmpty(context.getTraceId())) {
+        if (context == null || StringUtil.isEmpty(context.getTraceId())) {
             return;
         }
 
@@ -90,10 +91,6 @@ public class AIEvaluationService implements IAIEvaluationService {
             pendingTaskIds.remove(taskId);
             log.warn("GenAI span evaluation task rejected, taskId: {}", taskId, e);
         }
-    }
-
-    private static boolean isEmpty(final String value) {
-        return value == null || value.isEmpty();
     }
 
     private void evaluate(final AIEvaluationContext context,

@@ -16,26 +16,19 @@
  *
  */
 
-package org.apache.skywalking.oap.server.ai.evaluation;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+package org.apache.skywalking.oap.server.ai.evaluation.level;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.skywalking.oap.server.ai.evaluation.level.EvaluationLevelConfig;
-import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTask;
-import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 
 @Getter
 @Setter
-public class AIEvaluationConfig extends ModuleConfig {
-    private int sampleRate;
-    private Properties judge = new Properties();
-    private String systemPrompt;
-    private Double temperature;
-    private Integer maxTokens;
-    private List<EvaluationTask> tasks = new ArrayList<>();
-    private EvaluationLevelConfig level = new EvaluationLevelConfig();
+public class ScoreLevelRule {
+    private double min;
+    private double max;
+    private String level;
+
+    boolean matches(final double score) {
+        return (score >= min && score < max) || (score == max && max == 1.0D);
+    }
 }

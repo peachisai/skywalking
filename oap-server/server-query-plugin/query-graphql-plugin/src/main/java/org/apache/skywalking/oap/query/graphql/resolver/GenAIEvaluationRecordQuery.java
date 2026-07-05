@@ -28,7 +28,7 @@ import org.apache.skywalking.oap.server.core.query.enumeration.Order;
 import org.apache.skywalking.oap.server.core.query.input.Duration;
 import org.apache.skywalking.oap.server.core.query.input.LogQueryCondition;
 import org.apache.skywalking.oap.server.core.query.input.LogQueryConditionByName;
-import org.apache.skywalking.oap.server.core.query.type.Logs;
+import org.apache.skywalking.oap.server.core.query.type.GenAIEvaluationRecords;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingSpan;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingTraceContext;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
@@ -70,14 +70,14 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
         return tagQueryService;
     }
 
-    public CompletableFuture<Logs> queryGenAIEvaluationRecord(LogQueryCondition condition, boolean debug) {
+    public CompletableFuture<GenAIEvaluationRecords> queryGenAIEvaluationRecord(LogQueryCondition condition, boolean debug) {
         return queryAsync(() -> {
             DebuggingTraceContext traceContext = new DebuggingTraceContext(
                     "GenAIEvaluationRecordCondition: " + condition, debug, false);
             DebuggingTraceContext.TRACE_CONTEXT.set(traceContext);
             DebuggingSpan span = traceContext.createSpan("Query gen AI evaluation records");
             try {
-                Logs evaluationRecords = queryGenAIEvaluationRecord(condition);
+                GenAIEvaluationRecords evaluationRecords = queryGenAIEvaluationRecord(condition);
                 if (debug) {
                     evaluationRecords.setDebuggingTrace(traceContext.getExecTrace());
                 }
@@ -90,7 +90,7 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
         });
     }
 
-    public CompletableFuture<Logs> queryGenAIEvaluationRecordByName(LogQueryConditionByName condition, boolean debug) {
+    public CompletableFuture<GenAIEvaluationRecords> queryGenAIEvaluationRecordByName(LogQueryConditionByName condition, boolean debug) {
         return queryAsync(() -> {
             DebuggingTraceContext traceContext = new DebuggingTraceContext(
                     "GenAIEvaluationRecordConditionByName: " + condition, debug, false);
@@ -105,11 +105,9 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
                 evaluationRecordCondition.setQueryDuration(condition.getQueryDuration());
                 evaluationRecordCondition.setPaging(condition.getPaging());
                 evaluationRecordCondition.setTags(condition.getTags());
-                evaluationRecordCondition.setKeywordsOfContent(condition.getKeywordsOfContent());
-                evaluationRecordCondition.setExcludingKeywordsOfContent(condition.getExcludingKeywordsOfContent());
                 evaluationRecordCondition.setQueryOrder(condition.getQueryOrder());
 
-                Logs evaluationRecords = queryGenAIEvaluationRecord(evaluationRecordCondition);
+                GenAIEvaluationRecords evaluationRecords = queryGenAIEvaluationRecord(evaluationRecordCondition);
                 if (debug) {
                     evaluationRecords.setDebuggingTrace(traceContext.getExecTrace());
                 }
@@ -122,7 +120,7 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
         });
     }
 
-    private Logs queryGenAIEvaluationRecord(LogQueryCondition condition) throws IOException {
+    private GenAIEvaluationRecords queryGenAIEvaluationRecord(LogQueryCondition condition) throws IOException {
         if (isNull(condition.getQueryDuration()) && isNull(condition.getRelatedTrace())) {
             throw new UnexpectedException("The condition must contains either queryDuration or relatedTrace.");
         }
@@ -148,9 +146,7 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
                 condition.getPaging(),
                 queryOrder,
                 condition.getQueryDuration(),
-                condition.getTags(),
-                condition.getKeywordsOfContent(),
-                condition.getExcludingKeywordsOfContent()
+                condition.getTags()
         );
     }
 

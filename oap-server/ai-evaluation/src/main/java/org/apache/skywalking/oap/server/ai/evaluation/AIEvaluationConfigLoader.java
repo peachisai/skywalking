@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
+import org.apache.skywalking.oap.server.ai.evaluation.level.EvaluationLevelConfig;
+import org.apache.skywalking.oap.server.ai.evaluation.level.ScoreLevelRule;
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTask;
 import org.apache.skywalking.oap.server.ai.evaluation.value.ValueType;
 import org.apache.skywalking.oap.server.library.module.ModuleStartException;
@@ -62,6 +64,11 @@ public class AIEvaluationConfigLoader {
             config.setSystemPrompt(String.valueOf(systemPrompt));
         }
 
+        final Object level = loaded.get("level");
+        if (level instanceof Map) {
+            config.setLevel(buildLevelConfig((Map<String, ?>) level));
+        }
+
         final Object tasks = loaded.get("tasks");
         if (tasks instanceof List) {
             for (Map<String, ?> taskConfig : (List<Map<String, ?>>) tasks) {
@@ -69,6 +76,40 @@ public class AIEvaluationConfigLoader {
             }
         }
         return config;
+    }
+
+    private EvaluationLevelConfig buildLevelConfig(final Map<String, ?> levelConfig) {
+        final EvaluationLevelConfig level = new EvaluationLevelConfig();
+        setString(levelConfig, "undefined", level::setUndefined);
+
+        final Object score = levelConfig.get("score");
+        if (score instanceof List) {
+            for (Map<String, ?> ruleConfig : (List<Map<String, ?>>) score) {
+                level.getScore().add(buildScoreLevelRule(ruleConfig));
+            }
+        }
+
+        final Object bool = levelConfig.get("boolean");
+        if (bool instanceof Map) {
+            final Map<String, ?> booleanConfig = (Map<String, ?>) bool;
+            setString(booleanConfig, "true", level::setBooleanTrue);
+            setString(booleanConfig, "false", level::setBooleanFalse);
+        }
+        return level;
+    }
+
+    private ScoreLevelRule buildScoreLevelRule(final Map<String, ?> ruleConfig) {
+        final ScoreLevelRule rule = new ScoreLevelRule();
+        final Object min = ruleConfig.get("min");
+        if (min != null) {
+            rule.setMin(Double.parseDouble(String.valueOf(min)));
+        }
+        final Object max = ruleConfig.get("max");
+        if (max != null) {
+            rule.setMax(Double.parseDouble(String.valueOf(max)));
+        }
+        setString(ruleConfig, "level", rule::setLevel);
+        return rule;
     }
 
     private Properties buildProperties(final Map<String, ?> config) {

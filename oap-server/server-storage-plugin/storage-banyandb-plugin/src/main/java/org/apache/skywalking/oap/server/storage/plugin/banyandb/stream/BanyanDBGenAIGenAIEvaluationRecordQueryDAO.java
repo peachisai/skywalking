@@ -28,10 +28,7 @@ import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.Tag;
 import org.apache.skywalking.oap.server.core.query.enumeration.Order;
 import org.apache.skywalking.oap.server.core.query.input.Duration;
 import org.apache.skywalking.oap.server.core.query.input.TraceScopeCondition;
-import org.apache.skywalking.oap.server.core.query.type.ContentType;
-import org.apache.skywalking.oap.server.core.query.type.KeyValue;
-import org.apache.skywalking.oap.server.core.query.type.Log;
-import org.apache.skywalking.oap.server.core.query.type.Logs;
+import org.apache.skywalking.oap.server.core.query.type.GenAIEvaluationRecords;
 import org.apache.skywalking.oap.server.core.storage.query.IGenAIEvaluationRecordQueryDAO;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 import org.apache.skywalking.oap.server.library.util.StringUtil;
@@ -56,6 +53,7 @@ public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDB
             GenAIEvaluationRecord.TASK_NAME,
             GenAIEvaluationRecord.VALUE_TYPE,
             GenAIEvaluationRecord.VALUE,
+            GenAIEvaluationRecord.EVALUATION_LEVEL,
             GenAIEvaluationRecord.REASON,
             GenAIEvaluationRecord.JUDGE_MODEL,
             GenAIEvaluationRecord.EVALUATION_TIME
@@ -66,10 +64,9 @@ public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDB
     }
 
     @Override
-    public Logs queryGenAIEvaluationRecord(String serviceId, String serviceInstanceId, String endpointId,
-                                           TraceScopeCondition relatedTrace, Order queryOrder, int from, int limit,
-                                           Duration duration, List<Tag> tags, List<String> keywordsOfContent,
-                                           List<String> excludingKeywordsOfContent) throws IOException {
+    public GenAIEvaluationRecords queryGenAIEvaluationRecord(String serviceId, String serviceInstanceId, String endpointId,
+                                                             TraceScopeCondition relatedTrace, Order queryOrder, int from, int limit,
+                                                             Duration duration, List<Tag> tags) throws IOException {
         final boolean isColdStage = duration != null && duration.isColdStage();
         final QueryBuilder<StreamQuery> query = new QueryBuilder<>() {
             @Override
@@ -114,31 +111,25 @@ public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDB
 
         StreamQueryResponse resp = queryDebuggable(isColdStage, GenAIEvaluationRecord.INDEX_NAME, TAGS, getTimestampRange(duration), query);
 
-        Logs logs = new Logs();
+        GenAIEvaluationRecords genAIEvaluationRecords = new GenAIEvaluationRecords();
 
         for (final RowEntity rowEntity : resp.getElements()) {
-            Log log = new Log();
-            log.setTraceId(rowEntity.getTagValue(GenAIEvaluationRecord.TRACE_ID));
-            log.setTimestamp(((Number) rowEntity.getTagValue(GenAIEvaluationRecord.EVALUATION_TIME)).longValue());
-            log.setContentType(ContentType.TEXT);
-            log.setContent(rowEntity.getTagValue(GenAIEvaluationRecord.VALUE));
-            appendTag(log, GenAIEvaluationRecord.SERVICE_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SERVICE_ID));
-            appendTag(log, GenAIEvaluationRecord.SERVICE_INSTANCE_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SERVICE_INSTANCE_ID));
-            appendTag(log, GenAIEvaluationRecord.SEGMENT_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SEGMENT_ID));
-            appendTag(log, GenAIEvaluationRecord.SPAN_ID, rowEntity.getTagValue(GenAIEvaluationRecord.SPAN_ID));
-            appendTag(log, GenAIEvaluationRecord.SPAN_TYPE, rowEntity.getTagValue(GenAIEvaluationRecord.SPAN_TYPE));
-            appendTag(log, GenAIEvaluationRecord.TASK_NAME, rowEntity.getTagValue(GenAIEvaluationRecord.TASK_NAME));
-            appendTag(log, GenAIEvaluationRecord.VALUE_TYPE, rowEntity.getTagValue(GenAIEvaluationRecord.VALUE_TYPE));
-            appendTag(log, GenAIEvaluationRecord.REASON, rowEntity.getTagValue(GenAIEvaluationRecord.REASON));
-            appendTag(log, GenAIEvaluationRecord.JUDGE_MODEL, rowEntity.getTagValue(GenAIEvaluationRecord.JUDGE_MODEL));
-            logs.getLogs().add(log);
+            GenAIEvaluationRecord evaluationRecord = new GenAIEvaluationRecord();
+            evaluationRecord.setTraceId(rowEntity.getTagValue(GenAIEvaluationRecord.TRACE_ID));
+            evaluationRecord.setServiceId(rowEntity.getTagValue(GenAIEvaluationRecord.SERVICE_ID));
+            evaluationRecord.setServiceInstanceId(rowEntity.getTagValue(GenAIEvaluationRecord.SERVICE_INSTANCE_ID));
+            evaluationRecord.setSegmentId(rowEntity.getTagValue(GenAIEvaluationRecord.SEGMENT_ID));
+            evaluationRecord.setSpanId(rowEntity.getTagValue(GenAIEvaluationRecord.SPAN_ID));
+            evaluationRecord.setSpanType(rowEntity.getTagValue(GenAIEvaluationRecord.SPAN_TYPE));
+            evaluationRecord.setTaskName(rowEntity.getTagValue(GenAIEvaluationRecord.TASK_NAME));
+            evaluationRecord.setEvaluationTime(((Number) rowEntity.getTagValue(GenAIEvaluationRecord.EVALUATION_TIME)).longValue());
+            evaluationRecord.setValueType(rowEntity.getTagValue(GenAIEvaluationRecord.VALUE_TYPE));
+            evaluationRecord.setValue(rowEntity.getTagValue(GenAIEvaluationRecord.VALUE));
+            evaluationRecord.setEvaluationLevel(rowEntity.getTagValue(GenAIEvaluationRecord.EVALUATION_LEVEL));
+            evaluationRecord.setReason(rowEntity.getTagValue(GenAIEvaluationRecord.REASON));
+            evaluationRecord.setJudgeModel(rowEntity.getTagValue(GenAIEvaluationRecord.JUDGE_MODEL));
+            genAIEvaluationRecords.getGenAIEvaluationRecordList().add(evaluationRecord);
         }
-        return logs;
-    }
-
-    private void appendTag(final Log log, final String key, final Object value) {
-        if (value != null) {
-            log.getTags().add(new KeyValue(key, String.valueOf(value)));
-        }
+        return genAIEvaluationRecords;
     }
 }

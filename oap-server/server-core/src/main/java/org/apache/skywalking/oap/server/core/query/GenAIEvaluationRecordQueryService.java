@@ -18,12 +18,11 @@
 
 package org.apache.skywalking.oap.server.core.query;
 
-import org.apache.skywalking.oap.server.core.analysis.IDManager;
 import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.Tag;
 import org.apache.skywalking.oap.server.core.query.enumeration.Order;
 import org.apache.skywalking.oap.server.core.query.input.Duration;
 import org.apache.skywalking.oap.server.core.query.input.TraceScopeCondition;
-import org.apache.skywalking.oap.server.core.query.type.Logs;
+import org.apache.skywalking.oap.server.core.query.type.GenAIEvaluationRecords;
 import org.apache.skywalking.oap.server.core.query.type.Pagination;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingSpan;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingTraceContext;
@@ -31,13 +30,9 @@ import org.apache.skywalking.oap.server.core.storage.StorageModule;
 import org.apache.skywalking.oap.server.core.storage.query.IGenAIEvaluationRecordQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
-import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
 import static org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingTraceContext.TRACE_CONTEXT;
 
 public class GenAIEvaluationRecordQueryService implements Service {
@@ -60,16 +55,14 @@ public class GenAIEvaluationRecordQueryService implements Service {
         return getGenAIEvaluationRecordQueryDAO().supportQueryGenAIEvaluationRecordByKeywords();
     }
 
-    public Logs queryGenAIEvaluationRecord(String serviceId,
-                                           String serviceInstanceId,
-                                           String endpointId,
-                                           TraceScopeCondition relatedTrace,
-                                           Pagination paging,
-                                           Order queryOrder,
-                                           final Duration duration,
-                                           final List<Tag> tags,
-                                           List<String> keywordsOfContent,
-                                           List<String> excludingKeywordsOfContent) throws IOException {
+    public GenAIEvaluationRecords queryGenAIEvaluationRecord(String serviceId,
+                                                             String serviceInstanceId,
+                                                             String endpointId,
+                                                             TraceScopeCondition relatedTrace,
+                                                             Pagination paging,
+                                                             Order queryOrder,
+                                                             final Duration duration,
+                                                             final List<Tag> tags) throws IOException {
         DebuggingTraceContext traceContext = TRACE_CONTEXT.get();
         DebuggingSpan span = null;
         try {
@@ -83,14 +76,11 @@ public class GenAIEvaluationRecordQueryService implements Service {
                 msg.append("Pagination: ").append(paging).append(", ");
                 msg.append("QueryOrder: ").append(queryOrder).append(", ");
                 msg.append("Duration: ").append(duration).append(", ");
-                msg.append("Tags: ").append(tags).append(", ");
-                msg.append("KeywordsOfContent: ").append(keywordsOfContent).append(", ");
-                msg.append("ExcludingKeywordsOfContent: ").append(excludingKeywordsOfContent);
+                msg.append("Tags: ").append(tags);
                 span.setMsg(msg.toString());
             }
             return queryGenAIEvaluationRecordInternal(
-                serviceId, serviceInstanceId, endpointId, relatedTrace, paging, queryOrder, duration, tags,
-                keywordsOfContent, excludingKeywordsOfContent
+                serviceId, serviceInstanceId, endpointId, relatedTrace, paging, queryOrder, duration, tags
             );
         } finally {
             if (traceContext != null) {
@@ -99,50 +89,23 @@ public class GenAIEvaluationRecordQueryService implements Service {
         }
     }
 
-    private Logs queryGenAIEvaluationRecordInternal(String serviceId,
-                                                    String serviceInstanceId,
-                                                    String endpointId,
-                                                    TraceScopeCondition relatedTrace,
-                                                    Pagination paging,
-                                                    Order queryOrder,
-                                                    final Duration duration,
-                                                    final List<Tag> tags,
-                                                    List<String> keywordsOfContent,
-                                                    List<String> excludingKeywordsOfContent) throws IOException {
+    private GenAIEvaluationRecords queryGenAIEvaluationRecordInternal(String serviceId,
+                                                                      String serviceInstanceId,
+                                                                      String endpointId,
+                                                                      TraceScopeCondition relatedTrace,
+                                                                      Pagination paging,
+                                                                      Order queryOrder,
+                                                                      final Duration duration,
+                                                                      final List<Tag> tags) throws IOException {
         PaginationUtils.Page page = PaginationUtils.INSTANCE.exchange(paging);
 
-        if (nonNull(keywordsOfContent)) {
-            keywordsOfContent = keywordsOfContent.stream()
-                                                 .filter(StringUtil::isNotEmpty)
-                                                 .collect(Collectors.toList());
-        }
-        if (nonNull(excludingKeywordsOfContent)) {
-            excludingKeywordsOfContent = excludingKeywordsOfContent.stream()
-                                                                   .filter(StringUtil::isNotEmpty)
-                                                                   .collect(Collectors.toList());
-        }
-
-        Logs logs = getGenAIEvaluationRecordQueryDAO().queryGenAIEvaluationRecordDebuggable(serviceId,
-                                                                                            serviceInstanceId,
-                                                                                            endpointId,
-                                                                                            relatedTrace,
-                                                                                            queryOrder,
-                                                                                            page.getFrom(), page.getLimit(),
-                                                                                            duration, tags,
-                                                                                            keywordsOfContent, excludingKeywordsOfContent
+        return getGenAIEvaluationRecordQueryDAO().queryGenAIEvaluationRecordDebuggable(serviceId,
+                                                                                       serviceInstanceId,
+                                                                                       endpointId,
+                                                                                       relatedTrace,
+                                                                                       queryOrder,
+                                                                                       page.getFrom(), page.getLimit(),
+                                                                                       duration, tags
         );
-        logs.getLogs().forEach(log -> {
-            if (StringUtil.isNotEmpty(log.getServiceId())) {
-                final IDManager.ServiceID.ServiceIDDefinition serviceIDDefinition = IDManager.ServiceID.analysisId(
-                    log.getServiceId());
-                log.setServiceName(serviceIDDefinition.getName());
-            }
-            if (StringUtil.isNotEmpty(log.getServiceInstanceId())) {
-                final IDManager.ServiceInstanceID.InstanceIDDefinition instanceIDDefinition = IDManager.ServiceInstanceID
-                    .analysisId(log.getServiceInstanceId());
-                log.setServiceInstanceName(instanceIDDefinition.getName());
-            }
-        });
-        return logs;
     }
 }

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 public class EvaluationTaskRegistry {
     private final List<EvaluationTask> tasks;
@@ -34,7 +35,7 @@ public class EvaluationTaskRegistry {
 
         final Map<String, EvaluationTask> registeredTasks = new LinkedHashMap<>();
         for (EvaluationTask task : tasks) {
-            if (task == null || isEmpty(task.getName())) {
+            if (task == null || StringUtil.isEmpty(task.getName())) {
                 continue;
             }
             registeredTasks.put(task.getName(), task);
@@ -50,7 +51,4 @@ public class EvaluationTaskRegistry {
         return tasks.isEmpty();
     }
 
-    private static boolean isEmpty(final String value) {
-        return value == null || value.isEmpty();
-    }
 }

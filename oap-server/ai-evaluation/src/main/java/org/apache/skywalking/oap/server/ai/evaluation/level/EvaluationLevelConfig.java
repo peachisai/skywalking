@@ -16,26 +16,18 @@
  *
  */
 
-package org.apache.skywalking.oap.server.ai.evaluation;
+package org.apache.skywalking.oap.server.ai.evaluation.level;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.skywalking.oap.server.ai.evaluation.level.EvaluationLevelConfig;
-import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTask;
-import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 
 @Getter
 @Setter
-public class AIEvaluationConfig extends ModuleConfig {
-    private int sampleRate;
-    private Properties judge = new Properties();
-    private String systemPrompt;
-    private Double temperature;
-    private Integer maxTokens;
-    private List<EvaluationTask> tasks = new ArrayList<>();
-    private EvaluationLevelConfig level = new EvaluationLevelConfig();
+public class EvaluationLevelConfig {
+    private String undefined = EvaluationLevelResolver.UNDEFINED;
+    private List<ScoreLevelRule> score = new ArrayList<>();
+    private String booleanTrue = EvaluationLevelResolver.EXCELLENT;
+    private String booleanFalse = EvaluationLevelResolver.FAIL;
 }

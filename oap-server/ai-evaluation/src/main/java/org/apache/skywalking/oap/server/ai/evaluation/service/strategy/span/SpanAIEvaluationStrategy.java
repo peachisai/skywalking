@@ -23,6 +23,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.context.AIEvaluationContex
 import org.apache.skywalking.oap.server.ai.evaluation.context.GenAISemanticAttributes;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelResponse;
+import org.apache.skywalking.oap.server.ai.evaluation.level.EvaluationLevelResolver;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationPlan;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationPlanner;
 import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationPromptBuilder;
@@ -38,6 +39,7 @@ import org.apache.skywalking.oap.server.core.analysis.TimeBucket;
 import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationRecord;
 import org.apache.skywalking.oap.server.core.analysis.worker.RecordStreamProcessor;
 import org.apache.skywalking.oap.server.core.config.NamingControl;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,24 +55,28 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
     private final EvaluationResultParser resultParser;
     private final AIEvaluationMetricReporter metricReporter;
     private final NamingControl namingControl;
+    private final EvaluationLevelResolver levelResolver;
 
     public SpanAIEvaluationStrategy(final EvaluationTaskRegistry taskRegistry,
                                     final EvaluationPlanner evaluationPlanner,
                                     final EvaluationPromptBuilder promptBuilder,
                                     final EvaluationResultParser resultParser,
                                     final AIEvaluationMetricReporter metricReporter,
-                                    final NamingControl namingControl) {
+                                    final NamingControl namingControl,
+                                    final EvaluationLevelResolver levelResolver) {
         this.taskRegistry = taskRegistry;
         this.evaluationPlanner = evaluationPlanner;
         this.promptBuilder = promptBuilder;
         this.resultParser = resultParser;
         this.metricReporter = metricReporter;
         this.namingControl = namingControl;
+        this.levelResolver = levelResolver;
     }
 
     @Override
     public boolean support(final AIEvaluationContext context) {
-        return context != null && !isEmpty(context.getTraceId()) && !isEmpty(context.getSpanId());
+        return context != null && StringUtil.isNotEmpty(context.getTraceId())
+                && StringUtil.isNotEmpty(context.getSpanId());
     }
 
     @Override
@@ -137,6 +143,7 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
             record.setTaskName(result.getName());
             record.setValueType(result.getValueType() == null ? "" : result.getValueType().name());
             record.setValue(result.getValue());
+            record.setEvaluationLevel(levelResolver.resolve(result.getValueType(), result.getValue()));
             record.setReason(result.getReason());
             record.setJudgeModel(judgeModel);
             record.setEvaluationTime(evaluationTime);
@@ -156,7 +163,7 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
 
         final String inputMessages = context.getTags().get(GenAISemanticAttributes.INPUT_MESSAGES);
         final String outputMessages = context.getTags().get(GenAISemanticAttributes.OUTPUT_MESSAGES);
-        if (isEmpty(inputMessages) || isEmpty(outputMessages)) {
+        if (StringUtil.isEmpty(inputMessages) || StringUtil.isEmpty(outputMessages)) {
             log.warn(
                     "Skip GenAI span evaluation, missing input or output messages,trace id :{}",
                     context.getTraceId()
@@ -170,11 +177,4 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
         return context.getTags().get(GenAISemanticAttributes.OPERATION_NAME);
     }
 
-    private static String defaultString(final String value) {
-        return value == null ? "" : value;
-    }
-
-    private static boolean isEmpty(final String value) {
-        return value == null || value.isEmpty();
-    }
 }

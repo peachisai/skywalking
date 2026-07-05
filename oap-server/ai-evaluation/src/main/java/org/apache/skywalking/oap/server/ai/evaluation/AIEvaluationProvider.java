@@ -34,6 +34,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.plan.EvaluationResultParse
 import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTaskRegistry;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.provider.OpenAICompatibleProvider;
+import org.apache.skywalking.oap.server.ai.evaluation.level.EvaluationLevelResolver;
 import org.apache.skywalking.oap.server.ai.evaluation.service.AIEvaluationMetricReporter;
 import org.apache.skywalking.oap.server.ai.evaluation.service.AIEvaluationService;
 import org.apache.skywalking.oap.server.ai.evaluation.service.sample.DefaultAIEvaluationSamplingPolicy;
@@ -48,6 +49,7 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 import org.apache.skywalking.oap.server.library.module.ModuleProvider;
 import org.apache.skywalking.oap.server.library.module.ModuleStartException;
 import org.apache.skywalking.oap.server.library.module.ServiceNotProvidedException;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 public class AIEvaluationProvider extends ModuleProvider {
     private static final int MAX_SAMPLE_RATE = 1_000_000;
@@ -133,7 +135,8 @@ public class AIEvaluationProvider extends ModuleProvider {
             new EvaluationPromptBuilder(config.getSystemPrompt()),
             new EvaluationResultParser(),
             metricReporter,
-            namingControl
+            namingControl,
+            new EvaluationLevelResolver(config.getLevel())
         ));
     }
 
@@ -169,10 +172,10 @@ public class AIEvaluationProvider extends ModuleProvider {
         if (judge == null || judge.isEmpty()) {
             throw new ModuleStartException("AI evaluation judge config is required.");
         }
-        if (isBlank(getString(judge, "provider"))) {
+        if (StringUtil.isBlank(getString(judge, "provider"))) {
             throw new ModuleStartException("AI evaluation judge config [provider] is required.");
         }
-        if (isBlank(config.getSystemPrompt())) {
+        if (StringUtil.isBlank(config.getSystemPrompt())) {
             throw new ModuleStartException("AI evaluation system-prompt is required.");
         }
     }
@@ -185,7 +188,4 @@ public class AIEvaluationProvider extends ModuleProvider {
         return value == null ? null : String.valueOf(value);
     }
 
-    private static boolean isBlank(final String value) {
-        return value == null || value.trim().isEmpty();
-    }
 }

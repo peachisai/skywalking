@@ -37,6 +37,7 @@ import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelProvider;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelRequest;
 import org.apache.skywalking.oap.server.ai.evaluation.judge.JudgeModelResponse;
 import org.apache.skywalking.oap.server.library.module.ModuleStartException;
+import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 public class OpenAICompatibleProvider implements JudgeModelProvider {
     private static final Gson GSON = new Gson();
@@ -82,7 +83,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
             throw new IOException("OpenAI compatible judge API request failed, status: " + response.statusCode());
         }
         final JudgeModelResponse judgeResponse = parseResponse(response.body());
-        if (isEmpty(judgeResponse.getContent())) {
+        if (StringUtil.isBlank(judgeResponse.getContent())) {
             throw new IOException("OpenAI compatible judge API response has no completion content.");
         }
         return Optional.of(judgeResponse);
@@ -94,13 +95,13 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
     }
 
     private static void validate(final Properties config) throws ModuleStartException {
-        if (isEmpty(getString(config, "endpoint"))) {
+        if (StringUtil.isBlank(getString(config, "endpoint"))) {
             throw new ModuleStartException("AI evaluation judge config [endpoint] is required.");
         }
-        if (isEmpty(getString(config, "model"))) {
+        if (StringUtil.isBlank(getString(config, "model"))) {
             throw new ModuleStartException("AI evaluation judge config [model] is required.");
         }
-        if (isEmpty(getString(config, "api-key"))) {
+        if (StringUtil.isBlank(getString(config, "api-key"))) {
             throw new ModuleStartException("AI evaluation judge config [api-key] is required.");
         }
         validateRequestTimeoutSeconds(getString(config, "request-timeout-seconds"));
@@ -127,7 +128,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
     }
 
     private static void addMessage(final JsonArray messages, final String role, final String content) {
-        if (isEmpty(content)) {
+        if (StringUtil.isBlank(content)) {
             return;
         }
         final JsonObject message = new JsonObject();
@@ -183,7 +184,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
 
     private static Double getDouble(final Properties properties, final String key) throws ModuleStartException {
         final String value = getString(properties, key);
-        if (isEmpty(value)) {
+        if (StringUtil.isBlank(value)) {
             return null;
         }
         try {
@@ -195,7 +196,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
 
     private static Integer getInteger(final Properties properties, final String key) throws ModuleStartException {
         final String value = getString(properties, key);
-        if (isEmpty(value)) {
+        if (StringUtil.isBlank(value)) {
             return null;
         }
         try {
@@ -207,7 +208,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
 
     private static long getRequestTimeoutSeconds(final Properties properties) throws ModuleStartException {
         final String value = getString(properties, "request-timeout-seconds");
-        if (isEmpty(value)) {
+        if (StringUtil.isBlank(value)) {
             return DEFAULT_REQUEST_TIMEOUT_SECONDS;
         }
         try {
@@ -221,7 +222,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
     }
 
     private static void validateRequestTimeoutSeconds(final String value) throws ModuleStartException {
-        if (isEmpty(value)) {
+        if (StringUtil.isBlank(value)) {
             return;
         }
         final long parsed;
@@ -241,7 +242,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
     }
 
     private static void validateTemperature(final String value) throws ModuleStartException {
-        if (isEmpty(value)) {
+        if (StringUtil.isBlank(value)) {
             return;
         }
         final double parsed;
@@ -259,7 +260,7 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
     }
 
     private static void validateMaxTokens(final String value) throws ModuleStartException {
-        if (isEmpty(value)) {
+        if (StringUtil.isBlank(value)) {
             return;
         }
         final int parsed;
@@ -271,9 +272,5 @@ public class OpenAICompatibleProvider implements JudgeModelProvider {
         if (parsed <= 0) {
             throw new ModuleStartException("AI evaluation judge config [max_tokens] must be greater than 0.");
         }
-    }
-
-    private static boolean isEmpty(final String value) {
-        return value == null || value.trim().isEmpty();
     }
 }

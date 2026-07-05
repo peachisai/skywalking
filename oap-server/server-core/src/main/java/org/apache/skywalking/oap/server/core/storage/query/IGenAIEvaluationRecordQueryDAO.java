@@ -24,8 +24,8 @@ import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.Tag;
 import org.apache.skywalking.oap.server.core.query.enumeration.Order;
 import org.apache.skywalking.oap.server.core.query.input.Duration;
 import org.apache.skywalking.oap.server.core.query.input.TraceScopeCondition;
+import org.apache.skywalking.oap.server.core.query.type.GenAIEvaluationRecords;
 import org.apache.skywalking.oap.server.core.query.type.KeyValue;
-import org.apache.skywalking.oap.server.core.query.type.Logs;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingSpan;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingTraceContext;
 import org.apache.skywalking.oap.server.library.module.Service;
@@ -42,7 +42,7 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
         return false;
     }
 
-    default Logs queryGenAIEvaluationRecordDebuggable(String serviceId,
+    default GenAIEvaluationRecords queryGenAIEvaluationRecordDebuggable(String serviceId,
                                                       String serviceInstanceId,
                                                       String endpointId,
                                                       TraceScopeCondition relatedTrace,
@@ -50,9 +50,7 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
                                                       int from,
                                                       int limit,
                                                       final Duration duration,
-                                                      final List<Tag> tags,
-                                                      final List<String> keywordsOfContent,
-                                                      final List<String> excludingKeywordsOfContent) throws IOException {
+                                                      final List<Tag> tags) throws IOException {
         DebuggingTraceContext traceContext = TRACE_CONTEXT.get();
         DebuggingSpan span = null;
         try {
@@ -67,14 +65,11 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
                    .append(", From: ").append(from)
                    .append(", Limit: ").append(limit)
                    .append(", Duration: ").append(duration)
-                   .append(", Tags: ").append(tags)
-                   .append(", KeywordsOfContent: ").append(keywordsOfContent)
-                   .append(", ExcludingKeywordsOfContent: ").append(excludingKeywordsOfContent);
+                   .append(", Tags: ").append(tags);
                 span.setMsg(msg.toString());
             }
             return queryGenAIEvaluationRecord(
-                serviceId, serviceInstanceId, endpointId, relatedTrace, queryOrder, from, limit, duration, tags,
-                keywordsOfContent, excludingKeywordsOfContent
+                serviceId, serviceInstanceId, endpointId, relatedTrace, queryOrder, from, limit, duration, tags
             );
         } finally {
             if (traceContext != null && span != null) {
@@ -83,17 +78,15 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
         }
     }
 
-    Logs queryGenAIEvaluationRecord(String serviceId,
-                                    String serviceInstanceId,
-                                    String endpointId,
-                                    TraceScopeCondition relatedTrace,
-                                    Order queryOrder,
-                                    int from,
-                                    int limit,
-                                    final Duration duration,
-                                    final List<Tag> tags,
-                                    final List<String> keywordsOfContent,
-                                    final List<String> excludingKeywordsOfContent) throws IOException;
+    GenAIEvaluationRecords queryGenAIEvaluationRecord(String serviceId,
+                                                      String serviceInstanceId,
+                                                      String endpointId,
+                                                      TraceScopeCondition relatedTrace,
+                                                      Order queryOrder,
+                                                      int from,
+                                                      int limit,
+                                                      final Duration duration,
+                                                      final List<Tag> tags) throws IOException;
 
     /**
      * Parse the raw tags with base64 representation of data binary

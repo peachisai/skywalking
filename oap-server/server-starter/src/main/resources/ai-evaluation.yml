@@ -20,10 +20,29 @@ judge:
   provider: openai
   endpoint: https://globalai.vip/v1/chat/completions
   model: gpt-5.4-mini
-  api-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  api-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   request-timeout-seconds: 30
   temperature: 0.2
   max_tokens: 2048
+
+level:
+  undefined: undefined
+  score:
+    - min: 0.0
+      max: 0.3
+      level: fail
+    - min: 0.3
+      max: 0.6
+      level: warning
+    - min: 0.6
+      max: 0.85
+      level: good
+    - min: 0.85
+      max: 1.0
+      level: excellent
+  boolean:
+    true: excellent
+    false: fail
 
 system-prompt: |
   You are an AI observability evaluator.

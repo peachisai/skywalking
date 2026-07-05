@@ -16,26 +16,30 @@
  *
  */
 
-package org.apache.skywalking.oap.server.ai.evaluation;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+package org.apache.skywalking.oap.server.core.query.type;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.skywalking.oap.server.ai.evaluation.level.EvaluationLevelConfig;
-import org.apache.skywalking.oap.server.ai.evaluation.task.EvaluationTask;
-import org.apache.skywalking.oap.server.library.module.ModuleConfig;
+import lombok.experimental.Accessors;
+import org.apache.skywalking.oap.server.core.analysis.manual.genai.GenAIEvaluationRecord;
+import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingTrace;
 
-@Getter
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
-public class AIEvaluationConfig extends ModuleConfig {
-    private int sampleRate;
-    private Properties judge = new Properties();
-    private String systemPrompt;
-    private Double temperature;
-    private Integer maxTokens;
-    private List<EvaluationTask> tasks = new ArrayList<>();
-    private EvaluationLevelConfig level = new EvaluationLevelConfig();
+@Getter
+@Accessors(chain = true)
+public class GenAIEvaluationRecords {
+    private final List<GenAIEvaluationRecord> genAIEvaluationRecordList;
+    private String errorReason;
+    private DebuggingTrace debuggingTrace;
+
+    public GenAIEvaluationRecords() {
+        this.genAIEvaluationRecordList = new ArrayList<>();
+    }
+
+    public GenAIEvaluationRecords(final List<GenAIEvaluationRecord> genAIEvaluationRecords) {
+        this.genAIEvaluationRecordList = genAIEvaluationRecords;
+    }
 }
