@@ -92,15 +92,9 @@ public class SpanAIEvaluationStrategy implements AIEvaluationStrategy {
             return;
         }
 
-        if (!validLLMCallSpan(context)) {
-            log.debug(
-                    "Skip GenAI span evaluation, unsupported operation: {}, taskId: {}",
-                    operationName(context),
-                    taskId(context)
-            );
-            return;
+        if (validLLMCallSpan(context)) {
+            evaluateLLMCallSpan(context, judgeModelProvider);
         }
-        evaluateLLMCallSpan(context, judgeModelProvider);
     }
 
     private void evaluateLLMCallSpan(final AIEvaluationContext context,

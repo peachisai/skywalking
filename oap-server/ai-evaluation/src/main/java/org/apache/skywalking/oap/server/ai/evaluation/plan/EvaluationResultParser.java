@@ -57,8 +57,8 @@ public class EvaluationResultParser {
             case BOOLEAN:
                 validateBoolean(task, value);
                 break;
-            case LABEL:
-                validateLabel(task, value);
+            case STRING:
+                validateString(task, value);
                 break;
             case JSON:
                 validateJson(task, value);
@@ -85,7 +85,7 @@ public class EvaluationResultParser {
         }
     }
 
-    private static void validateLabel(final EvaluationTask task, final String value) {
+    private static void validateString(final EvaluationTask task, final String value) {
         if (task.getAllowedValues() == null || task.getAllowedValues().isEmpty()) {
             return;
         }
@@ -94,7 +94,7 @@ public class EvaluationResultParser {
                 return;
             }
         }
-        throw new IllegalArgumentException("Invalid label value of " + task.getName() + ": " + value);
+        throw new IllegalArgumentException("Invalid string value of " + task.getName() + ": " + value);
     }
 
     private static void validateJson(final EvaluationTask task, final String value) {

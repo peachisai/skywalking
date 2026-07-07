@@ -21,13 +21,9 @@ package org.apache.skywalking.oap.query.graphql.resolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.UnexpectedException;
-import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.TagType;
 import org.apache.skywalking.oap.server.core.query.GenAIEvaluationRecordQueryService;
-import org.apache.skywalking.oap.server.core.query.TagAutoCompleteQueryService;
 import org.apache.skywalking.oap.server.core.query.enumeration.Order;
-import org.apache.skywalking.oap.server.core.query.input.Duration;
-import org.apache.skywalking.oap.server.core.query.input.LogQueryCondition;
-import org.apache.skywalking.oap.server.core.query.input.LogQueryConditionByName;
+import org.apache.skywalking.oap.server.core.query.input.GenAIEvaluationRecordQueryCondition;
 import org.apache.skywalking.oap.server.core.query.type.GenAIEvaluationRecords;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingSpan;
 import org.apache.skywalking.oap.server.core.query.type.debugging.DebuggingTraceContext;
@@ -36,7 +32,6 @@ import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 import org.apache.skywalking.oap.server.library.util.StringUtil;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.Objects.isNull;
@@ -46,7 +41,6 @@ import static org.apache.skywalking.oap.server.core.query.type.debugging.Debuggi
 public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
     private final ModuleManager moduleManager;
     private GenAIEvaluationRecordQueryService genAIEvaluationRecordQueryService;
-    private TagAutoCompleteQueryService tagQueryService;
 
     public GenAIEvaluationRecordQuery(ModuleManager moduleManager) {
         this.moduleManager = moduleManager;
@@ -63,14 +57,8 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
         return genAIEvaluationRecordQueryService;
     }
 
-    private TagAutoCompleteQueryService getTagQueryService() {
-        if (tagQueryService == null) {
-            this.tagQueryService = moduleManager.find(CoreModule.NAME).provider().getService(TagAutoCompleteQueryService.class);
-        }
-        return tagQueryService;
-    }
-
-    public CompletableFuture<GenAIEvaluationRecords> queryGenAIEvaluationRecord(LogQueryCondition condition, boolean debug) {
+    public CompletableFuture<GenAIEvaluationRecords> queryGenAIEvaluationRecord(
+            GenAIEvaluationRecordQueryCondition condition, boolean debug) {
         return queryAsync(() -> {
             DebuggingTraceContext traceContext = new DebuggingTraceContext(
                     "GenAIEvaluationRecordCondition: " + condition, debug, false);
@@ -90,37 +78,8 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
         });
     }
 
-    public CompletableFuture<GenAIEvaluationRecords> queryGenAIEvaluationRecordByName(LogQueryConditionByName condition, boolean debug) {
-        return queryAsync(() -> {
-            DebuggingTraceContext traceContext = new DebuggingTraceContext(
-                    "GenAIEvaluationRecordConditionByName: " + condition, debug, false);
-            DebuggingTraceContext.TRACE_CONTEXT.set(traceContext);
-            DebuggingSpan span = traceContext.createSpan("Query gen AI evaluation records");
-            try {
-                LogQueryCondition evaluationRecordCondition = new LogQueryCondition();
-                evaluationRecordCondition.setServiceId(condition.getServiceId());
-                evaluationRecordCondition.setServiceInstanceId(condition.getServiceInstanceId());
-                evaluationRecordCondition.setEndpointId(condition.getEndpointId());
-                evaluationRecordCondition.setRelatedTrace(condition.getRelatedTrace());
-                evaluationRecordCondition.setQueryDuration(condition.getQueryDuration());
-                evaluationRecordCondition.setPaging(condition.getPaging());
-                evaluationRecordCondition.setTags(condition.getTags());
-                evaluationRecordCondition.setQueryOrder(condition.getQueryOrder());
-
-                GenAIEvaluationRecords evaluationRecords = queryGenAIEvaluationRecord(evaluationRecordCondition);
-                if (debug) {
-                    evaluationRecords.setDebuggingTrace(traceContext.getExecTrace());
-                }
-                return evaluationRecords;
-            } finally {
-                traceContext.stopSpan(span);
-                traceContext.stopTrace();
-                TRACE_CONTEXT.remove();
-            }
-        });
-    }
-
-    private GenAIEvaluationRecords queryGenAIEvaluationRecord(LogQueryCondition condition) throws IOException {
+    private GenAIEvaluationRecords queryGenAIEvaluationRecord(
+            GenAIEvaluationRecordQueryCondition condition) throws IOException {
         if (isNull(condition.getQueryDuration()) && isNull(condition.getRelatedTrace())) {
             throw new UnexpectedException("The condition must contains either queryDuration or relatedTrace.");
         }
@@ -141,20 +100,11 @@ public class GenAIEvaluationRecordQuery implements GraphQLQueryResolver {
         return getQueryService().queryGenAIEvaluationRecord(
                 condition.getServiceId(),
                 condition.getServiceInstanceId(),
-                condition.getEndpointId(),
                 condition.getRelatedTrace(),
                 condition.getPaging(),
                 queryOrder,
                 condition.getQueryDuration(),
                 condition.getTags()
         );
-    }
-
-    public CompletableFuture<Set<String>> queryGenAIEvaluationRecordTagAutocompleteKeys(final Duration queryDuration) {
-        return queryAsync(() -> getTagQueryService().queryTagAutocompleteKeys(TagType.LOG, queryDuration));
-    }
-
-    public CompletableFuture<Set<String>> queryGenAIEvaluationRecordTagAutocompleteValues(final String tagKey, final Duration queryDuration) {
-        return queryAsync(() -> getTagQueryService().queryTagAutocompleteValues(TagType.LOG, tagKey, queryDuration));
     }
 }

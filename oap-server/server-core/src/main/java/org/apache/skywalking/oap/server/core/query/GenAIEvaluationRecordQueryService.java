@@ -57,7 +57,6 @@ public class GenAIEvaluationRecordQueryService implements Service {
 
     public GenAIEvaluationRecords queryGenAIEvaluationRecord(String serviceId,
                                                              String serviceInstanceId,
-                                                             String endpointId,
                                                              TraceScopeCondition relatedTrace,
                                                              Pagination paging,
                                                              Order queryOrder,
@@ -71,7 +70,6 @@ public class GenAIEvaluationRecordQueryService implements Service {
                 span = traceContext.createSpan("Query Service: queryGenAIEvaluationRecord");
                 msg.append("ServiceId: ").append(serviceId).append(", ");
                 msg.append("ServiceInstanceId: ").append(serviceInstanceId).append(", ");
-                msg.append("EndpointId: ").append(endpointId).append(", ");
                 msg.append("RelatedTrace: ").append(relatedTrace).append(", ");
                 msg.append("Pagination: ").append(paging).append(", ");
                 msg.append("QueryOrder: ").append(queryOrder).append(", ");
@@ -80,7 +78,7 @@ public class GenAIEvaluationRecordQueryService implements Service {
                 span.setMsg(msg.toString());
             }
             return queryGenAIEvaluationRecordInternal(
-                serviceId, serviceInstanceId, endpointId, relatedTrace, paging, queryOrder, duration, tags
+                serviceId, serviceInstanceId, relatedTrace, paging, queryOrder, duration, tags
             );
         } finally {
             if (traceContext != null) {
@@ -91,7 +89,6 @@ public class GenAIEvaluationRecordQueryService implements Service {
 
     private GenAIEvaluationRecords queryGenAIEvaluationRecordInternal(String serviceId,
                                                                       String serviceInstanceId,
-                                                                      String endpointId,
                                                                       TraceScopeCondition relatedTrace,
                                                                       Pagination paging,
                                                                       Order queryOrder,
@@ -101,7 +98,6 @@ public class GenAIEvaluationRecordQueryService implements Service {
 
         return getGenAIEvaluationRecordQueryDAO().queryGenAIEvaluationRecordDebuggable(serviceId,
                                                                                        serviceInstanceId,
-                                                                                       endpointId,
                                                                                        relatedTrace,
                                                                                        queryOrder,
                                                                                        page.getFrom(), page.getLimit(),

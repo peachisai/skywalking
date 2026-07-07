@@ -29,12 +29,14 @@ import org.apache.skywalking.oap.server.core.storage.StorageID;
 import org.apache.skywalking.oap.server.core.storage.annotation.BanyanDB;
 import org.apache.skywalking.oap.server.core.storage.annotation.Column;
 import org.apache.skywalking.oap.server.core.storage.annotation.ElasticSearch;
+import org.apache.skywalking.oap.server.core.storage.annotation.SuperDataset;
 import org.apache.skywalking.oap.server.core.storage.type.Convert2Entity;
 import org.apache.skywalking.oap.server.core.storage.type.Convert2Storage;
 import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
 
 @Getter
 @Setter
+@SuperDataset
 @ScopeDeclaration(id = DefaultScopeDefine.GEN_AI_EVALUATION_RECORD, name = "GenAIEvaluationRecord")
 @Stream(name = GenAIEvaluationRecord.INDEX_NAME, scopeId = DefaultScopeDefine.GEN_AI_EVALUATION_RECORD,
         builder = GenAIEvaluationRecord.Builder.class, processor = RecordStreamProcessor.class)
@@ -61,10 +63,12 @@ public class GenAIEvaluationRecord extends Record {
     @BanyanDB.IndexRule(indexType = BanyanDB.IndexRule.IndexType.SKIPPING)
     private String traceId;
 
+    @ElasticSearch.EnableDocValues
     @Column(name = SERVICE_ID, length = 150, storageOnly = true)
     @BanyanDB.SeriesID(index = 0)
     private String serviceId;
 
+    @ElasticSearch.EnableDocValues
     @Column(name = SERVICE_INSTANCE_ID, length = 150, storageOnly = true)
     @BanyanDB.SeriesID(index = 1)
     private String serviceInstanceId;

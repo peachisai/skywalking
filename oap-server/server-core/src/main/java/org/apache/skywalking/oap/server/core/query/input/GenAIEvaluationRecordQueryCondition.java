@@ -16,11 +16,25 @@
  *
  */
 
-package org.apache.skywalking.oap.server.ai.evaluation.value;
+package org.apache.skywalking.oap.server.core.query.input;
 
-public enum ValueType {
-    SCORE,
-    BOOLEAN,
-    STRING,
-    JSON
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.Tag;
+import org.apache.skywalking.oap.server.core.query.enumeration.Order;
+import org.apache.skywalking.oap.server.core.query.type.Pagination;
+
+@Getter
+@Setter
+@ToString
+public class GenAIEvaluationRecordQueryCondition {
+    private String serviceId;
+    private String serviceInstanceId;
+    private TraceScopeCondition relatedTrace;
+    private Duration queryDuration;
+    private Pagination paging;
+    private List<Tag> tags;
+    private Order queryOrder;
 }

@@ -44,7 +44,6 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
 
     default GenAIEvaluationRecords queryGenAIEvaluationRecordDebuggable(String serviceId,
                                                       String serviceInstanceId,
-                                                      String endpointId,
                                                       TraceScopeCondition relatedTrace,
                                                       Order queryOrder,
                                                       int from,
@@ -59,7 +58,6 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
                 StringBuilder msg = new StringBuilder();
                 msg.append("ServiceId: ").append(serviceId)
                    .append(", ServiceInstanceId: ").append(serviceInstanceId)
-                   .append(", EndpointId: ").append(endpointId)
                    .append(", RelatedTrace: ").append(relatedTrace)
                    .append(", QueryOrder: ").append(queryOrder)
                    .append(", From: ").append(from)
@@ -69,7 +67,7 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
                 span.setMsg(msg.toString());
             }
             return queryGenAIEvaluationRecord(
-                serviceId, serviceInstanceId, endpointId, relatedTrace, queryOrder, from, limit, duration, tags
+                serviceId, serviceInstanceId, relatedTrace, queryOrder, from, limit, duration, tags
             );
         } finally {
             if (traceContext != null && span != null) {
@@ -80,7 +78,6 @@ public interface IGenAIEvaluationRecordQueryDAO extends Service {
 
     GenAIEvaluationRecords queryGenAIEvaluationRecord(String serviceId,
                                                       String serviceInstanceId,
-                                                      String endpointId,
                                                       TraceScopeCondition relatedTrace,
                                                       Order queryOrder,
                                                       int from,

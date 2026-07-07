@@ -74,8 +74,8 @@ system-prompt: |
   BOOLEAN
   - value must be either true or false.
 
-  LABEL
-  - value must be a string label.
+  STRING
+  - value must be a string.
 
   JSON
   - value must be a valid JSON object.

@@ -64,7 +64,7 @@ public class BanyanDBGenAIGenAIEvaluationRecordQueryDAO extends AbstractBanyanDB
     }
 
     @Override
-    public GenAIEvaluationRecords queryGenAIEvaluationRecord(String serviceId, String serviceInstanceId, String endpointId,
+    public GenAIEvaluationRecords queryGenAIEvaluationRecord(String serviceId, String serviceInstanceId,
                                                              TraceScopeCondition relatedTrace, Order queryOrder, int from, int limit,
                                                              Duration duration, List<Tag> tags) throws IOException {
         final boolean isColdStage = duration != null && duration.isColdStage();
