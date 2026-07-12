@@ -174,12 +174,13 @@ The record includes the following core fields:
 - `task_name`
 - `value_type`
 - `value`
+- `evaluation_level`
 - `reason`
 - `judge_model`
 - `evaluation_time`
 - `time_bucket`
 
-This lets each evaluation result directly link back to existing trace and span data. In merged record storage mode, the data is written into the logical record table `ai_evaluation_result`.
+This lets each evaluation result directly link back to existing trace and span data. OAP also derives a normalized `evaluation_level` from the returned result when the value type supports level resolution, so later query and UI layers can filter and group records by coarse quality level in addition to raw value. In merged record storage mode, the data is written into the logical record table `ai_evaluation_result`.
 
 ### 8. Generate MAL labeled metrics from SCORE-type evaluation results
 
@@ -223,11 +224,12 @@ The page displays at least the following fields:
 - `taskName`
 - `valueType`
 - `value`
+- `evaluationLevel`
 - `reason`
 - `judgeModel`
 - `evaluationTime`
 
-Users can filter the page by service, task name, evaluation result type, and time range, making it easier to investigate low scores, anomalies, or suspicious results.
+Users can filter the page by service, task name, evaluation level, time range, and other tag-based conditions, making it easier to investigate low scores, anomalies, or suspicious results.
 
 Most importantly, each evaluation result keeps its association with the original trace. Users can click `traceId` or a jump button in the evaluation result page to open the related trace detail page directly and continue investigating the full call chain, contextual spans, and related GenAI tags.
 
@@ -237,7 +239,7 @@ This allows SkyWalking not only to show an evaluation result, but also to connec
 
 This SWIP introduces a new OAP capability and a new record data model. The main compatibility impacts include:
 
-- A new structured record type `ai_evaluation_result`
+- A new structured record type `ai_evaluation_result`, including the normalized `evaluation_level` field
 - `SCORE`-type evaluation results additionally generate a MAL labeled metric for dashboard display
 - The `gen_ai_evaluation_score_ppm` metric stores scores scaled by `1,000,000`; query and UI layers need to divide by `1,000,000` to display the original `[0.0, 1.0]` score
 - The capability depends on the existing GenAI observability pipeline being able to recognize GenAI spans from SkyWalking native traces, OTLP, and Zipkin

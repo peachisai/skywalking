@@ -137,7 +137,7 @@ public class GraphQLQueryProvider extends ModuleProvider {
                          new LogQuery(getManager()),
                          new LogTestQuery(getManager(), config)
                      )
-                     .file("query-protocol/gen-ai-evaluation-record-log.graphqls")
+                     .file("query-protocol/gen-ai-evaluation-record.graphqls")
                      .resolvers(new GenAIEvaluationRecordQuery(getManager()))
                      .file("query-protocol/profile.graphqls")
                      .resolvers(new ProfileQuery(getManager()), new ProfileMutation(getManager()))

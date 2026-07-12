@@ -31,6 +31,8 @@ import org.apache.skywalking.oap.server.core.query.enumeration.Order;
 import org.apache.skywalking.oap.server.core.query.input.Duration;
 import org.apache.skywalking.oap.server.core.query.input.TraceScopeCondition;
 import org.apache.skywalking.oap.server.core.query.type.GenAIEvaluationRecords;
+import org.apache.skywalking.oap.server.core.storage.model.ColumnName;
+import org.apache.skywalking.oap.server.core.storage.model.ModelColumn;
 import org.apache.skywalking.oap.server.core.storage.query.IGenAIEvaluationRecordQueryDAO;
 import org.apache.skywalking.oap.server.library.client.jdbc.hikaricp.JDBCClient;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
@@ -38,6 +40,7 @@ import org.apache.skywalking.oap.server.library.util.StringUtil;
 import org.apache.skywalking.oap.server.storage.plugin.jdbc.common.JDBCTableInstaller;
 import org.apache.skywalking.oap.server.storage.plugin.jdbc.common.SQLAndParameters;
 import org.apache.skywalking.oap.server.storage.plugin.jdbc.common.TableHelper;
+import org.apache.skywalking.oap.server.storage.plugin.jdbc.TableMetaInfo;
 
 import static java.util.Comparator.comparing;
 import static java.util.Objects.nonNull;
@@ -58,6 +61,22 @@ public class JDBCGenAIEvaluationRecordQueryDAO implements IGenAIEvaluationRecord
         GenAIEvaluationRecord.EVALUATION_LEVEL,
         GenAIEvaluationRecord.REASON,
         GenAIEvaluationRecord.JUDGE_MODEL
+    );
+
+    private static final List<String> SELECTED_COLUMNS = List.of(
+        GenAIEvaluationRecord.TRACE_ID,
+        GenAIEvaluationRecord.SERVICE_ID,
+        GenAIEvaluationRecord.SERVICE_INSTANCE_ID,
+        GenAIEvaluationRecord.SEGMENT_ID,
+        GenAIEvaluationRecord.SPAN_ID,
+        GenAIEvaluationRecord.SPAN_TYPE,
+        GenAIEvaluationRecord.TASK_NAME,
+        GenAIEvaluationRecord.VALUE_TYPE,
+        GenAIEvaluationRecord.VALUE,
+        GenAIEvaluationRecord.EVALUATION_LEVEL,
+        GenAIEvaluationRecord.REASON,
+        GenAIEvaluationRecord.JUDGE_MODEL,
+        GenAIEvaluationRecord.EVALUATION_TIME
     );
 
     private final JDBCClient jdbcClient;
@@ -153,39 +172,41 @@ public class JDBCGenAIEvaluationRecordQueryDAO implements IGenAIEvaluationRecord
             endSecondTB = duration.getEndTimeBucketInSec();
         }
 
-        final StringBuilder sql = new StringBuilder("select * from ");
+        final StringBuilder sql = new StringBuilder("select ");
         final List<Object> parameters = new ArrayList<>(10);
-        sql.append(table)
+        sql.append(selectColumns())
+           .append(" from ")
+           .append(table)
            .append(" where ")
            .append(JDBCTableInstaller.TABLE_COLUMN)
            .append(" = ?");
         parameters.add(GenAIEvaluationRecord.INDEX_NAME);
 
         if (startSecondTB != 0 && endSecondTB != 0) {
-            sql.append(" and ").append(GenAIEvaluationRecord.TIME_BUCKET).append(" >= ?");
+            sql.append(" and ").append(storageColumn(GenAIEvaluationRecord.TIME_BUCKET)).append(" >= ?");
             parameters.add(startSecondTB);
-            sql.append(" and ").append(GenAIEvaluationRecord.TIME_BUCKET).append(" <= ?");
+            sql.append(" and ").append(storageColumn(GenAIEvaluationRecord.TIME_BUCKET)).append(" <= ?");
             parameters.add(endSecondTB);
         }
         if (StringUtil.isNotEmpty(serviceId)) {
-            sql.append(" and ").append(GenAIEvaluationRecord.SERVICE_ID).append(" = ?");
+            sql.append(" and ").append(storageColumn(GenAIEvaluationRecord.SERVICE_ID)).append(" = ?");
             parameters.add(serviceId);
         }
         if (StringUtil.isNotEmpty(serviceInstanceId)) {
-            sql.append(" and ").append(GenAIEvaluationRecord.SERVICE_INSTANCE_ID).append(" = ?");
+            sql.append(" and ").append(storageColumn(GenAIEvaluationRecord.SERVICE_INSTANCE_ID)).append(" = ?");
             parameters.add(serviceInstanceId);
         }
         if (nonNull(relatedTrace)) {
             if (StringUtil.isNotEmpty(relatedTrace.getTraceId())) {
-                sql.append(" and ").append(GenAIEvaluationRecord.TRACE_ID).append(" = ?");
+                sql.append(" and ").append(storageColumn(GenAIEvaluationRecord.TRACE_ID)).append(" = ?");
                 parameters.add(relatedTrace.getTraceId());
             }
             if (StringUtil.isNotEmpty(relatedTrace.getSegmentId())) {
-                sql.append(" and ").append(GenAIEvaluationRecord.SEGMENT_ID).append(" = ?");
+                sql.append(" and ").append(storageColumn(GenAIEvaluationRecord.SEGMENT_ID)).append(" = ?");
                 parameters.add(relatedTrace.getSegmentId());
             }
             if (nonNull(relatedTrace.getSpanId())) {
-                sql.append(" and ").append(GenAIEvaluationRecord.SPAN_ID).append(" = ?");
+                sql.append(" and ").append(storageColumn(GenAIEvaluationRecord.SPAN_ID)).append(" = ?");
                 parameters.add(String.valueOf(relatedTrace.getSpanId()));
             }
         }
@@ -194,18 +215,43 @@ public class JDBCGenAIEvaluationRecordQueryDAO implements IGenAIEvaluationRecord
                 if (StringUtil.isNotEmpty(tag.getKey())
                     && StringUtil.isNotEmpty(tag.getValue())
                     && QUERYABLE_TAG_KEYS.contains(tag.getKey())) {
-                    sql.append(" and ").append(tag.getKey()).append(" = ?");
+                    sql.append(" and ").append(storageColumn(tag.getKey())).append(" = ?");
                     parameters.add(tag.getValue());
                 }
             }
         }
 
         sql.append(" order by ")
-           .append(GenAIEvaluationRecord.EVALUATION_TIME)
+           .append(storageColumn(GenAIEvaluationRecord.EVALUATION_TIME))
            .append(" ")
            .append(Order.DES.equals(queryOrder) ? "desc" : "asc");
         sql.append(" limit ").append(from + limit);
 
         return new SQLAndParameters(sql.toString(), parameters);
+    }
+
+    private String selectColumns() {
+        return SELECTED_COLUMNS.stream()
+                                 .map(this::selectColumn)
+                                 .collect(java.util.stream.Collectors.joining(", "));
+    }
+
+    private String selectColumn(final String logicalColumn) {
+        final String storageColumn = storageColumn(logicalColumn);
+        if (storageColumn.equals(logicalColumn)) {
+            return storageColumn;
+        }
+        return storageColumn + " as " + logicalColumn;
+    }
+
+    private String storageColumn(final String logicalColumn) {
+        return TableMetaInfo.get(GenAIEvaluationRecord.INDEX_NAME)
+                            .getColumns()
+                            .stream()
+                            .map(ModelColumn::getColumnName)
+                            .filter(it -> logicalColumn.equals(it.getName()))
+                            .findFirst()
+                            .map(ColumnName::getStorageName)
+                            .orElse(logicalColumn);
     }
 }
